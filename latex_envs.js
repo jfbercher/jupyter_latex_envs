@@ -6,8 +6,9 @@
 
 var conversion_to_html = false;
 var config_toolbar_present = false;
-var reprocessEqs;
-var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers; //These variables are initialized in init_config()
+var reprocessEqs; 
+//These variables are initialized in init_config()
+var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present;
 
 if (typeof add_edit_shortcuts === "undefined")
     var add_edit_shortcuts = {}
@@ -79,24 +80,25 @@ function insert_text(identifier) { //must be available in the main scope
 // use AMD-style simplified define wrapper to avoid http://requirejs.org/docs/errors.html#notloaded
 define(function(require, exports, module) {
     var Jupyter = require('base/js/namespace');
+    var MarkdownCell = require('notebook/js/textcell').MarkdownCell;
+    var TextCell = require('notebook/js/textcell').TextCell;
+    var mathjaxutils = require('notebook/js/mathjaxutils');
+    var security = require("base/js/security");
+    var configmod = require("services/config");
+    var utils = require('base/js/utils');
+    var marked = require('components/marked/lib/marked');
+
     var thmsInNb = require('nbextensions/latex_envs/thmsInNb4');
     var bibsInNb = require('nbextensions/latex_envs/bibInNb4');
     require('nbextensions/latex_envs/envsLatex');
     var initNb = require('nbextensions/latex_envs/initNb');
 
-    var MarkdownCell = require('notebook/js/textcell').MarkdownCell;
-    var TextCell = require('notebook/js/textcell').TextCell;
-    var mathjaxutils = require('notebook/js/mathjaxutils');
-    var security = require("base/js/security")
-    var marked = require('components/marked/lib/marked');
-
-    var maps = initmap();
+/*    var maps = initmap();
     environmentMap = maps[0];
     cmdsMap = maps[1];
     eqLabNums = maps[2];
-    cit_table = maps[3];
-
-    init_config();
+    cit_table = maps[3];*/
+    //var initcfg = init_config();
     cfg = Jupyter.notebook.metadata.latex_envs;
 
 
@@ -110,84 +112,86 @@ define(function(require, exports, module) {
 
     };
 
-    var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
+ function load_ipython_extension() {
+    //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
 
-        "use strict";
-        if (Jupyter.version[0] < 3) {
-            console.log("This extension requires Jupyter or IPython >= 3.x")
-            return
-        }
+    "use strict";
+    if (Jupyter.version[0] < 3) {
+        console.log("This extension requires Jupyter or IPython >= 3.x")
+        return
+    }
 
-        var _on_reload = true; /* make sure cells render on reload */
+    var _on_reload = true; /* make sure cells render on reload */
 
-        /* Override original markdown render function */
+    /* Override original markdown render function to include latex_envs 
+    processing */
 
-        MarkdownCell.prototype.render = function(noevent) {
-            if (typeof noevent === "undefined") noevent = false;
+    MarkdownCell.prototype.render = function(noevent) {
+        if (typeof noevent === "undefined") noevent = false;
 
-            var cont = TextCell.prototype.render.apply(this);
-            if (cont || Jupyter.notebook.dirty || _on_reload) {
-                var that = this;
-                var text = this.get_text();
-                var math = null;
-                if (text === "") { text = this.placeholder; }
-                var text_and_math = mathjaxutils.remove_math(text);
-                text = text_and_math[0];
-                math = text_and_math[1];
-                marked(text, function(err, html) {
-                    html = mathjaxutils.replace_math(html, math);
-                    var htmlout = thmsInNbConv(marked, html); //<----- thmsInNb patch here
-                    html = security.sanitize_html(htmlout);
-                    html = $($.parseHTML(html));
-                    // add anchors to headings
-                    html.find(":header").addBack(":header").each(function(i, h) {
-                        h = $(h);
-                        var hash = h.text().replace(/ /g, '-');
-                        h.attr('id', hash);
-                        h.append(
-                            $('<a/>')
-                            .addClass('anchor-link')
-                            .attr('href', '#' + hash)
-                            .text('¶')
-                        );
-                    });
-                    // links in markdown cells should open in new tabs
-                    html.find("a[href]").not('[href^="#"]').attr("target", "_blank");
-                    that.set_rendered(html);
-                    that.typeset();
-                    if (!noevent)
-                        that.events.trigger("rendered.MarkdownCell", { cell: that });
+        var cont = TextCell.prototype.render.apply(this);
+        if (cont || Jupyter.notebook.dirty || _on_reload) {
+            var that = this;
+            var text = this.get_text();
+            var math = null;
+            if (text === "") { text = this.placeholder; }
+            var text_and_math = mathjaxutils.remove_math(text);
+            text = text_and_math[0];
+            math = text_and_math[1];
+            marked(text, function(err, html) {
+                html = mathjaxutils.replace_math(html, math);
+                var htmlout = thmsInNbConv(marked, html); //<----- thmsInNb patch here
+                html = security.sanitize_html(htmlout);
+                html = $($.parseHTML(html));
+                // add anchors to headings
+                html.find(":header").addBack(":header").each(function(i, h) {
+                    h = $(h);
+                    var hash = h.text().replace(/ /g, '-');
+                    h.attr('id', hash);
+                    h.append(
+                        $('<a/>')
+                        .addClass('anchor-link')
+                        .attr('href', '#' + hash)
+                        .text('¶')
+                    );
                 });
-            }
-            return cont;
-        };
+                // links in markdown cells should open in new tabs
+                html.find("a[href]").not('[href^="#"]').attr("target", "_blank");
+                that.set_rendered(html);
+                that.typeset();
+                if (!noevent)
+                    that.events.trigger("rendered.MarkdownCell", { cell: that });
+            });
+        }
+        return cont;
+    };
 
+    var maps = initmap();
+    environmentMap = maps[0];
+    cmdsMap = maps[1];
+    eqLabNums = maps[2];
+    cit_table = maps[3];
 
-        init_nb();
+   // var initcfg = init_config(Jupyter, utils, configmod);
+   // cfg = Jupyter.notebook.metadata.latex_envs;
 
-        // reset eq numbers on each markdown cell modification
-        $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
-
-        // render latex_envs on load 
+    if (Jupyter.notebook.save_notebook instanceof Function) {  
+        // save function available: this tests if the notebook is fully loaded      
+        var initcfg = init_config(Jupyter, utils, configmod);
+        cfg = Jupyter.notebook.metadata.latex_envs;
+        console.log("Notebook fully loaded -- latex_envs initialized ")
+    } else {
         $([Jupyter.events]).on("notebook_loaded.Notebook", function() {
-            init_nb();
+            init_config(Jupyter, utils, configmod);
+            cfg = Jupyter.notebook.metadata.latex_envs;
             console.log("latex_envs initialized (via notebook_loaded)")
         })
+    }
 
-        // render latex_envs if kernel_ready and add/remove a menu
-        $([Jupyter.events]).on("kernel_ready.Kernel", function() {
-                init_nb();
-                console.log("latex_envs initialized (via kernel_ready)")
-            })
-            // on reload 
-        $([Jupyter.events]).on('status_started.Kernel', function() {
-            init_nb()
-            _on_reload = false;
-            console.log("latex_envs: status_started.Kernel")
-        })
+    // reset eq numbers on each markdown cell modification
+    $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
 
-
-
+    // toolbar buttons
         Jupyter.toolbar.add_buttons_group([{
             id: 'doReload',
             label: 'LaTeX_envs: Refresh rendering of labels, equations and citations',
@@ -204,15 +208,14 @@ define(function(require, exports, module) {
         }]);
 
 
-    }); //end of load_ipython_extension function
+    }  //end of load_ipython_extension function
 
     console.log("Loading latex_envs.css");
     load_css('./latex_envs.css')
 
-    //load_ipython_extension();
     return {
         load_ipython_extension: load_ipython_extension,
     };
-}); //End of run_this
+}); //End of main function 
 
 console.log("Loading ./latex_envs.js");
