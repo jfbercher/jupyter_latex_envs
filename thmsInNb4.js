@@ -1,13 +1,111 @@
 
 /*
 This script goes through the input text (actually it is triggered each time a markdown cell is rendered. The imput text is the content of the cell.
-It replaces the latex structures by html tags, typically wit a <div class="latex_environment_name> ... </div>. Then the html rendering 
-can be tailored using a devoted css. The original idea comes from
+It replaces the latex structures by html tags, typically with a <div class="latex_environment_name> ... </div>. Then the html rendering 
+can be customized using a devoted css. The original idea comes from
 https://github.com/benweet/stackedit/issues/187
 where the contributors to stackedit, the online markdown editor, discussed the processing of LaTeX environments. 
-The code has evolved from this base and was adapted to the particular case and specificities of the Jupyter. 
 */
 
+
+/****************************************************************************************************************
+* Series of elementary functions for manipulating nested environments
+* needed to do that because standard regular expressions are not well suited for recursive things
+****************************************************************************************************************/
+var OPENINGENV = '#!<',
+    OPENINGENVre = new RegExp(OPENINGENV, 'g');
+var CLOSINGENV = '#!>',
+    CLOSINGENVre = new RegExp(CLOSINGENV, 'g');
+
+function envSearch(text, env_open, env_close) {
+    var reg = new RegExp(env_open + '[\\S\\s]*?' + env_close, 'gm');
+    var start = text.match(reg);
+    var env_open_re = new RegExp(env_open);
+    var env_close_re = new RegExp(env_close);
+    var retval;
+    var r = "";
+    if (typeof(start[0]) != 'undefined' && start[0] != null) {
+        var r = start[0].substr(1)
+    }
+    var out = env_open_re.test(r) //test if there exists an opening env at level +1 
+        //of the same kind inside
+
+    if (out) { //in such case: replace the new opening at level +1 and the closing at level
+        var rnew = r.replace(env_close_re, CLOSINGENV).replace(env_open_re, OPENINGENV)
+        .replace(/\$\$/g,"!@$!@$") //last replace is because "$$" in the replacement string does not work
+        var text = text.replace(r, rnew).replace(/!@\$/g,"$");
+        if (env_open_re.test(rnew)) { // if it remains nested envs, call the function again
+            retval = envSearch(text, env_open, env_close);
+            if (retval !== undefined) {
+                text = retval;
+            }
+        }
+        return text
+    }
+    return text
+}
+
+function nestedEnvSearch(text, env_open, env_close) {
+    var regtest = new RegExp(env_open + '[\\S\\s]*?' + env_close);
+    var inmatches = text.match(regtest);
+    if (inmatches != null) {
+        for (i = 0; i < inmatches.length; i++) 
+            inmatches[i] = inmatches[i].replace(/\*/g, '\\*')
+        var n = 0;
+        env_open = env_open.replace(/\([\\\+\S ]*?\)/g, function() {
+            return inmatches[++n]
+        })
+        env_close = env_close.replace(/\\\d/g, function(x) {
+            return inmatches[parseInt(x.substr(1))]
+        })
+        var output = envSearch(text, env_open, env_close)
+        var matches = output.match(env_open + '([\\S\\s]*?)' + env_close);
+        matches[0] = matches[0].replace(OPENINGENVre, env_open.replace('\\\\', '\\'))
+            .replace(CLOSINGENVre, env_close.replace('\\\\', '\\'))
+        matches[1] = matches[1].replace(OPENINGENVre, env_open.replace('\\\\', '\\'))
+            .replace(CLOSINGENVre, env_close.replace('\\\\', '\\'))
+        var result = [matches[0], inmatches[1], matches[1]]
+        for (i = 0; i < result.length; i++) 
+            result[i] = result[i].replace(/\\\*\}/g, '*}')
+        return result;
+    } else return [];
+}
+
+
+
+function envReplaceApply(text, matches, replacement) {
+    var output;
+    if (matches.length != 0) {
+        if (replacement instanceof Function) {
+            output = text.replace(matches[0], replacement(matches[0], matches[1], matches[2]))
+        } else if (typeof replacement == "string") {
+            output = text.replace(matches[0], replacement)
+        }
+        return output
+    } else {
+        return text;
+    }
+}
+
+function nestedEnvReplace(text, env_open, env_close, replacement, flags) {
+    var list_of_matches = [];
+    var count = 200; //protection
+    var matches = nestedEnvSearch(text, env_open, env_close);
+    if (flags == undefined) {
+        return envReplaceApply(text, matches, replacement)
+    } else if (flags.indexOf('g') !== -1) {
+        var tmp_text = text; // tmp text
+        while (count-- > 0 & matches.length != 0) {
+            list_of_matches.push(matches[0]);
+            tmp_text = tmp_text.replace(matches[0], ""); //suppress from tmp_text
+            text = envReplaceApply(text, matches, replacement);
+            matches = nestedEnvSearch(tmp_text, env_open, env_close);
+        }
+        return text;
+    } else return text;
+}
+
+/****************************************************************************************/
 //Initialization of conversions maps (useful for direct call of this file)
 
 //**********************************************************************************************************
@@ -16,7 +114,7 @@ function initmap(){
     var thmCounter  = { num: 0 };
     var excsCounter = { num: 0 };
     var figCounter = { num: 0 };
-	var cit_table={}
+    var cit_table={}
 
 
     var environmentMap = {
@@ -68,6 +166,37 @@ cmdsMap=maps[1];
 eqLabNums=maps[2];
 cit_table = maps[3]
 
+/*****************************************************************************************/
+
+function remove_maths(text){
+    var math=[]
+    function replacement(m0,m1,m2) {
+        math.push(m0)
+        return "@@" + math.length + "@@";
+    }
+    text = text.replace(/\\\[([\S\s]*?)\\\]/gm,replacement)
+    text = text.replace(/\\\(([\S\s]*?)\\\)/gm,replacement)
+    text = text.replace(/\$\$([\S\s]*?)\$\$/gm,replacement)    
+    text = text.replace(/\$([\S\s]*?)\$/gm,replacement)    
+    text = nestedEnvReplace(text, '\\\\begin{(\\w+\\\*?)}', '\\\\end{\\1}', replacement, 'g')    
+    return [math, text]
+}
+
+function restore_maths(math_and_text) {
+    var math = math_and_text[0];
+    var text = math_and_text[1];
+    var newtext;
+    var cont = true;
+    while (cont) {
+        var newtext = text.replace(/@@(\d+)@@/gm, function(wholeMatch, n) {
+            return math[n - 1];
+                });
+        cont = text !== newtext; //recurse in text (possible nesting -- just one level)
+        text=newtext;
+    }
+    
+    return text;
+}
 
 /****************************************************************************************************************
 *       Conversion of LaTeX structures, LaTeX environments present in a markdown text; 
@@ -91,15 +220,17 @@ function thmsInNbConv(marked,text) {
                     //Restore incorrect replacements done during mathjaxutils.remove_math(text); [MarkdownCell.prototype.render]
                     //This also allows to highlight text in latex_envs using the highlighter extension
                     var message = message.replace(/&lt;(div|span)[\S\s]*&lt;\/(\1)&gt;/gm,
+                        // this should not occur anymore
                         function(wholeMatch,m1,m2) {
-                            wholeMatch = wholeMatch.replace(/&lt;/gm,'<');
-                            wholeMatch = wholeMatch.replace(/&gt;/gm,'>');
+                               wholeMatch = wholeMatch.replace(/&lt;/gm,'<');
+                               wholeMatch = wholeMatch.replace(/&gt;/gm,'>');
                             return wholeMatch
                         })
 
                     //Look for pairs [ ]
                     var message = message.replace(/^(?:<p>)?\[([\s\S]*?)^(?:<p>)?\]/gm,
                         function(wholeMatch, m1) {
+                            // this should not occur anymore
                             //return "\\["+m1+"\\]";
                             m1 = m1.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
                             m1 = m1.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
@@ -109,42 +240,47 @@ function thmsInNbConv(marked,text) {
 
                     var message = message.replace(/(?:<p>)?([$]{1,2})([\s\S]*?)(?:<p>)?\1/gm,
                         function(wholeMatch, m1) {
-                            //return "\\["+m1+"\\]";
+                            // this should not occur anymore
                             wholeMatch = wholeMatch.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
                             wholeMatch = wholeMatch.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
                             return wholeMatch;
                         }
                     );
 
-                    
-                    var out = message.replace(/\\begin{(\w+)}([\s\S]*?)\\end{\1}/gm, function(wholeMatch, m1, m2) {
+                    var out = nestedEnvReplace(message, '\\\\begin{(\\w+\\\*?)}', '\\\\end{\\1}', function(wholeMatch, m1, m2) {
+                    //var out = message.replace(/\\begin{(\w+)}([\s\S]*?)\\end{\1}/gm, function(wholeMatch, m1, m2) {
 
 
                         //if(!environmentMap[m1]) return wholeMatch;
                         var environment = environmentMap[m1];
                         if (!environment) return wholeMatch;
                         
-
                         var title = environment.title;
                         if (environment.counter) {
                             environment.counter.num++;
                             title += ' ' + environment.counter.num;
                         }
                         //The conversion machinery (see marked.js or mathjaxutils.js) extracts text and math and converts text to markdown. 
-                        //Here, we also want to convert thm like env. 
+                        //Here, we also want to convert the markdown contained in our latex envs. 
                         //So we do it here. However, environments with blank lines are *not* extracted before and thus already converted. 
                         // Thus we avoid to process them again.
                         // Try to check if there is remaining Markdown
                         // |\n\s-[\s]*(\w+)/gm
                         // /\*{1,2}([\s\S]*?)\*{1,2}|\_{1,2}([\s\S]*?)\_{1,2}/gm)
 
+                        // First remove "maths" (maths and included envs)
+                        var math_and_m2=remove_maths(m2)
+                        var math=math_and_m2[0]
+                        var m2=math_and_m2[1]
+                        
+                        // and then convert the content 
+                        //var m2 = marked(m2);
                         if (m2.match(/\*{1,2}([\s\S]*?)\*{1,2}|\_{1,2}([\S]*?)\_{1,2}|```/gm)) {
-                            var m2 = marked(m2.replace("\\\\","\\\\\\")); //marked.parser(marked.lexer(m2));
-                            var m2 = m2.replace(/&amp;amp;/gm,"&amp;")
+                            var m2 = marked(m2);
                         }
 
 
-                        var result = '<span class="latex_title">' + title + '</span> <div class="latex_' + m1 + '">' + m2;
+                        var result = '<br><span class="latex_title">' + title + '</span> <div class="latex_' + m1 + '">' + m2;
 
                         // case of the figure environment. We look for an \includegraphics directive, gobble its parameters except the image name,
                         // look for a caption and a label and construct an image representation with a caption and an anchor. Style can be customized 
@@ -176,14 +312,14 @@ function thmsInNbConv(marked,text) {
                         if (m1 == "enumerate") {
                             var result = "<div><ol>" + m2.replace(/\\item/g, "<li>") + "</ol>";
                         };
-
                         if (m1 != "listing") {
+                            result = restore_maths([math, result])
                             result = EnvReplace(result);
                         }; //try to do further replacements
 
+
                         return result + '</div>';
-                    });
-                    //out = EnvReplace(out);
+                    },'gm'); // end of nestedEnvReplace
 
                     return out; //}
 
