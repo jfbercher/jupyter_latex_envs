@@ -10,11 +10,24 @@ function onMarkdownCellRendering(event, data) {
     );
 };
 
+function toggleLatexMenu() {
+    if (!LaTeX_envs_menu_present) {
+        var identifier = $('#toggleLatexMenu');
+        $('#Latex_envs').remove();
+        identifier.css('color', 'grey')
+            .attr('title', 'Insert LaTeX_envs menu');
+    } else {
+        create_latex_menu();
+        identifier.css('color', 'black')
+            .attr('title', 'Remove LaTeX_envs menu');
+    }
+}
 
 var init_nb = function() {
     readBibliography(function() {
         init_cells();
         create_latex_menu();
+        if (!LaTeX_envs_menu_present) toggleLatexMenu();
         add_help_menu_item();
         createReferenceSection();
         Jupyter.keyboard_manager.edit_shortcuts.add_shortcuts(add_edit_shortcuts);
@@ -49,28 +62,49 @@ var init_cells = function() {
 }
 
 
-var init_config = require(['base/js/namespace'], function(Jupyter) {
-    var default_config = {
-        //EQUATIONS
-        'eqNumInitial': 0, // begins equation numbering at eqNum+1
-        'eqLabelWithNumbers': true, //if true, label equations with equation numbers; otherwise using the tag specified by \label
-        //BIBLIOGRAPHY
-        'current_citInitial': 1, // begins citation numbering at current_cit
-        'cite_by': 'apalike', //cite by 'number', 'key' or 'apalike' 
-        'bibliofile': 'biblio.bib' //or IPython.notebook.notebook_name.split(".")[0]+."bib"
-    }
-    if (Jupyter.notebook.metadata.latex_envs === undefined) {
-        Jupyter.notebook.metadata.latex_envs = default_config;
-    }
-    cfg = Jupyter.notebook.metadata.latex_envs;
-    cite_by = cfg.cite_by; //global
-    bibliofile = cfg.bibliofile;
-    eqNumInitial = cfg.eqNumInitial;
-    eqLabelWithNumbers = cfg.eqLabelWithNumbers;
-    eqNum = cfg.eqNumInitial;
-    reprocessEqs = true;
-})
-
+// ** load configuration (1) default config, (2) system config (3) document config
+// and save at document level
+function init_config(Jupyter,utils,configmod) {
+    var cfg = { // default config
+            //EQUATIONS
+            'eqNumInitial': 0, // begins equation numbering at eqNum+1
+            'eqLabelWithNumbers': true, //if true, label equations with equation numbers; otherwise using the tag specified by \label
+            //BIBLIOGRAPHY
+            'current_citInitial': 1, // begins citation numbering at current_cit
+            'cite_by': 'apalike', //cite by 'number', 'key' or 'apalike' 
+            'bibliofile': 'biblio.bib', //or IPython.notebook.notebook_name.split(".")[0]+."bib"
+            // LaTeX_envs_menu 
+            'LaTeX_envs_menu_present': true
+        }
+    // create config object to load parameters
+    var base_url = utils.get_body_data("baseUrl");
+    var config = new configmod.ConfigSection('notebook', { base_url: base_url });
+    config.loaded.then(function config_loaded_callback() {
+        // config may be specified at system level or at document level.
+        // first, update defaults with config loaded from server
+        for (var key in cfg) {
+            if (config.data.hasOwnProperty(key)) {
+                cfg[key] = config.data[key];
+            }
+        }
+        // update cfg with any found in current notebook metadata
+        // then save in nb metadata (then can be modified per document)
+        cfg = IPython.notebook.metadata.latex_envs = $.extend(true, cfg,
+            IPython.notebook.metadata.latex_envs);
+        // update global variables
+        cite_by = cfg.cite_by; //global
+        bibliofile = cfg.bibliofile;
+        eqNumInitial = cfg.eqNumInitial;
+        eqLabelWithNumbers = cfg.eqLabelWithNumbers;
+        eqNum = cfg.eqNumInitial;
+        LaTeX_envs_menu_present = cfg.LaTeX_envs_menu_present;
+        reprocessEqs = true;
+        // and initialize bibliography and cells 
+        init_nb();
+    })
+    config.load();
+}
+//)
 
 /** help menu **************************************************************/
     function add_help_menu_item() {
@@ -160,195 +194,301 @@ function create_latex_menu(callback) {
 *		- name of biblio file (if applicable)
 *
 *********************************************************************************************/
+function config_toolbar(callback) {
 
-function config_toolbar(callback){
+    if (config_toolbar_present) {
+        config_toolbar_present = false;
+        $("#LaTeX_envs_toolbar").remove();
+        $(site).height($(window).height() - $('#header').height() - $('#footer').height());
+        return
+    } else {
+        config_toolbar_present = true;
+    }
+    cfg = Jupyter.notebook.metadata.latex_envs
 
-	if (config_toolbar_present){
-		config_toolbar_present=false;
-		$("#test").remove();
-	    $(site).height($(window).height()-$('#header').height() - $('#footer').height());
-		return
-	}
-	else{
-			config_toolbar_present=true;
-	}
-	cfg=Jupyter.notebook.metadata.latex_envs
+    //local to this function
+    var cite_by_icon = { 'number': 'fa-sort-numeric-asc', 'key': 'fa-key', 'apalike': 'fa-pencil-square-o' }
+    var cite_by_tmp = cite_by
+    var eqLabel_tmp = eqLabelWithNumbers
+    var eq_by_icon = { true: 'fa-sort-numeric-asc', false: 'fa-tag' }
 
-	//local to this function
-	var cite_by_icon={'number':'fa-sort-numeric-asc', 'key':'fa-key', 'apalike':'fa-pencil-square-o'}
-	var cite_by_tmp=cite_by
-	var eqLabel_tmp = eqLabelWithNumbers
-	var eq_by_icon={true:'fa-sort-numeric-asc', false:'fa-tag'}
+    var eqNumtmp = eqNumInitial + 1;
 
-    var eqNumtmp=eqNumInitial+1;
-    var toolbar = '<b> LaTeX_envs&nbsp;&nbsp;</b>\
-    <span style="display: inline-block; vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></span>\ </span>&nbsp;\
-    <b> Bibliography&nbsp;</b>\
-  <input  type="text" value="'+bibliofile+'" id="biblio" class="edit_mode input-xs" style="vertical-align:middle">\
-&nbsp;  \
-<div id="citeby" class="btn-group ">\
-  <a class="btn btn-default" href="#"><i id="menu-refs" class="fa '+ cite_by_icon[cite_by_tmp] +' fa-fw"></i> References</a>\
-  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">\
-    <span class="fa fa-caret-down"></span></a>\
-  <ul id="choice" class="dropdown-menu">\
-    <li><a href="#"><i class="fa fa-sort-numeric-asc fa-fw"></i> Numbered</a></li>\
-    <li><a href="#"><i class="fa fa-key fa-fw"></i> Key</a></li>\
-    <li><a href="#"><i class="fa fa-pencil-square-o fa-fw"></i> Apa-like</a></li>\
-  </ul>\
-</div>\
-&nbsp;  \
-<span style="display: inline-block; vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></span>\
-&nbsp;  \
-<b> Equations&nbsp;</b>\
-  <input  type="text" value="'+eqNumtmp+' " id="eqnum" size=3 style="vertical-align:middle;text-align:right;" class="edit_mode ">\
-&nbsp;  \
-<div id="eqby" class="btn-group ">\
-  <a class="btn btn-default" href="#"><i id="menu-eqs" class="fa '+ eq_by_icon[eqLabelWithNumbers] +' fa-fw"></i> Equations</a>\
-  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">\
-    <span class="fa fa-caret-down"></span></a>\
-  <ul id="choice_eq" class="dropdown-menu">\
-    <li><a href="#"><i class="fa fa-sort-numeric-asc fa-fw"></i> Numbered</a></li>\
-    <li><a href="#"><i class="fa fa-tag fa-fw"></i> Label</a></li>\
-  </ul>\
-</div>\
-<a class="btn btn-default" style="float:right;" href="#" id="suicide"><i class="fa fa-power-off"></i></a>\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
-</div>'
+    // Defining the toolbar --------------------------------------------------------------
+    var LaTeX_envs_toolbar = $('<div id="LaTeX_envs_toolbar" class="container edit_mode" >')
 
-  $('head').append('<style> input:focus {\
-  border-color: #66afe9;\
-  outline: 0;\
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);\
-	}</style>')
+    var vertical_separator = '&nbsp;&nbsp;<span style="display: inline-block; \
+vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></span>&nbsp;&nbsp;'
 
-    var test = $('<div id="test" class="container edit_mode" >')
-    .append(toolbar)
-//    .draggable()
+    var biblioLabel = $('<b/>').html('Bibliography&nbsp;')
+    var equationLabel = $('<b/>').html('Equations&nbsp;')
 
+    var LaTeX_envs_help_link = $('<a/>').html('LaTeX_envs&nbsp;')
+        .css({
+            textDecoration: 'none',
+            'font-weight': "bold",
+            color: 'black'
+        })
+        .attr('href', '/nbextensions/latex_envs/doc/latex_env_doc.html')
+        .attr('title', 'LaTeX_envs documentation')
+
+    // input bibliography BibTeX filename
+    var input_bibFilename = $('<input/>')
+        .attr('type', "text")
+        .attr('value', bibliofile)
+        .attr('id', "biblio")
+        .attr('title','Enter BibTeX biblio filename (must be present in current directory)')
+        .addClass("edit_mode input-xs")
+        .css("vertical-align", "middle")
+
+    // input equations numbering offset
+    var input_eqNumInitial = $('<input/>')
+        .attr('type', "text")
+        .attr('value', eqNumtmp)
+        .attr('id', "eqnum")
+        .attr('title','Equations numbering begins at...')
+        .attr('size', '3')
+        .addClass("edit_mode")
+        .css("vertical-align", "middle")
+        .css("text-align", "right")
+
+    // dropdown menu for selecting the citation style
+    var bibStyleMenu = $('<div/>').attr('id', 'citeby').addClass('btn-group')
+        .attr('title', 'Select references style: numbered, by key, or apa-like')
+        .append($('<a/>')
+            .addClass("btn btn-default")
+            .append($('<i/>')
+                .attr('id', "menu-refs").addClass("fa " + cite_by_icon[cite_by_tmp] + " fa-fw"))
+            .append('References')
+        )
+        .append($('<a/>')
+            .addClass("btn btn-default dropdown-toggle")
+            .attr('data-toggle', "dropdown")
+            .attr('href', "#")
+            .append($('<span/>').addClass("fa fa-caret-down")))
+        .append($('<ul/>').attr('id', 'choice').addClass("dropdown-menu")
+            .append($('<li/>')
+                .append($('<a/>')
+                    .append($('<i/>').addClass("fa fa-sort-numeric-asc fa-fw"))
+                    .append('Numbered')
+                ))
+            .append($('<li/>')
+                .append($('<a/>')
+                    .append($('<i/>').addClass("fa fa-key fa-fw"))
+                    .append('Key')
+                )
+            )
+            .append($('<li/>')
+                .append($('<a/>')
+                    .append($('<i/>').addClass("fa fa-pencil-square-o fa-fw"))
+                    .append('Apa-like')
+                )
+            )
+        )
+
+    // dropdown menu for selecting the numbering style
+    var eqLabelStyle = $('<div/>').attr('id', 'eqby').addClass('btn-group')
+        .attr('title','Select equations referencing: by number or by label')
+        .append($('<a/>')
+            .addClass("btn btn-default")
+            .append($('<i/>')
+                .attr('id', "menu-refs").addClass("fa " + eq_by_icon[eqLabelWithNumbers] + " fa-fw"))
+            .append('Equations')
+        )
+        .append($('<a/>')
+            .addClass("btn btn-default dropdown-toggle")
+            .attr('data-toggle', "dropdown")
+            .attr('href', "#")
+            .append($('<span/>').addClass("fa fa-caret-down")))
+        .append($('<ul/>').attr('id', 'choice').addClass("dropdown-menu")
+            .append($('<li/>')
+                .append($('<a/>')
+                    .append($('<i/>').addClass("fa fa-sort-numeric-asc fa-fw"))
+                    .append('Numbered')
+                ))
+            .append($('<li/>')
+                .append($('<a/>')
+                    .append($('<i/>').addClass("fa fa-tag  fa-fw"))
+                    .append('Label')
+                )
+            )
+        )
+
+    // toggle the latex_envs dropdown menu
+    var latex_envs_menu_button = $("<a/>")
+        .addClass("btn btn-default")
+        .attr('href', "#")
+        .attr('title', 'Toogle LaTeX_envs menu')
+        .css('color', 'black')
+        .attr('id', 'toggleLatexMenu')
+        .append($("<i/>").addClass('fa fa-caret-square-o-down'))
     
- //$(header).append...   
-$("#maintoolbar-container").append(test);
-$("#test").css({'padding':'5px'});
+    // close button
+    var suicide_button = $("<a/>")
+        .addClass("btn btn-default")
+        .attr('href', "#")
+        .attr('title', 'Close LaTeX_envs toolbar')
+        .css('float', 'right')
+        .attr('id', 'suicide')
+        .attr('title','Close the LaTeX-envs configuration toolbar')
+        .append($("<i/>").addClass('fa fa-power-off'))
 
-                                           
-$('#citeby').on('click', '.dropdown-menu li a', function(){
-    //console.log($(this).text());
-    var tmp_text=$(this).text().trim().toLowerCase()
-    switch (tmp_text) {
-        case 'numbered':
-            cite_by_tmp = 'number';
-            break;
-        case 'key':    
-            cite_by_tmp = 'key';
-            break;
-        case 'apa-like':    
-            cite_by_tmp = 'apalike';
-            break;
-        default:
-            cite_by_tmp = 'apalike';
-               }
-		$('#menu-refs').removeClass().addClass("fa "+cite_by_icon[cite_by_tmp]+" fa-fw");
-		cfg.cite_by=cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
-		cite_by=cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
-		init_nb(); 
-})
-.tooltip({ title : 'Select references style: numbered, by key, or apa-like' , trigger: "hover",  delay: {show: 500, hide: 50}});
-   
+    // Finally the toolbar itself
+    LaTeX_envs_toolbar.append(LaTeX_envs_help_link)
+        .append(vertical_separator)
+        .append(biblioLabel)
+        .append(input_bibFilename)
+        .append(bibStyleMenu)
+        .append(vertical_separator)
+        .append(equationLabel)
+        .append(input_eqNumInitial)
+        .append(eqLabelStyle)
+        .append(vertical_separator)
+        .append(latex_envs_menu_button)
+        .append(suicide_button)
 
-var kmMode="command";    
-$('#biblio').on('focus', function(){
-	kmMode=Jupyter.keyboard_manager.mode;	
-	Jupyter.keyboard_manager.mode="edit";})
-	.on('blur', function() {Jupyter.keyboard_manager.mode=kmMode})
-	.on('keypress', function(e) {if (e.keyCode==13){
-			$('#biblio').blur();
-			cfg.bibliofile=$("#biblio")[0].value; 
-			bibliofile=$("#biblio")[0].value;   
-			init_nb(); }})
-	.tooltip({ title : 'Enter BibTeX biblio filename (default biblio.bib in current directory)' ,trigger: "hover",  delay: {show: 500, hide: 50}});
+    // Appending the new toolbar to the main one
+    $('head').append('<style> input:focus {border-color: #66afe9;\
+outline: 0; box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px \
+rgba(102, 175, 233, 0.6);}</style>')
 
-$('#eqby').on('click', '.dropdown-menu li a', function(){
-    //console.log($(this).text());
-    var tmp_text=$(this).text().trim().toLowerCase()
-    switch (tmp_text) {
-        case 'numbered':
-            {
-            eqLabel_tmp = true;
-            if(MathJaxDefined) MathJax.Hub.Config({ TeX: { equationNumbers: {
-                autoNumber: "AMS", 
-                useLabelIds: true
-                } } 
-            });
+    $("#maintoolbar-container").append(LaTeX_envs_toolbar);
+    $("#LaTeX_envs_toolbar").css({ 'padding': '5px' });
+
+    // Now the callback functions --------------------------------------------  
+
+    $('#toggleLatexMenu').on('click', function() {
+        LaTeX_envs_menu_present = !LaTeX_envs_menu_present
+        toggleLatexMenu();
+    })
+
+    $('#citeby').on('click', '.dropdown-menu li a', function() {
+        var tmp_text = $(this).text().trim().toLowerCase()
+        switch (tmp_text) {
+            case 'numbered':
+                cite_by_tmp = 'number';
+                break;
+            case 'key':
+                cite_by_tmp = 'key';
+                break;
+            case 'apa-like':
+                cite_by_tmp = 'apalike';
+                break;
+            default:
+                cite_by_tmp = 'apalike';
+        }
+        $('#menu-refs').removeClass().addClass("fa " + cite_by_icon[cite_by_tmp] + " fa-fw");
+        cfg.cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
+        cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
+        init_nb();
+    })
+
+
+    var kmMode = "command";
+    $('#biblio').on('focus', function() {
+            kmMode = Jupyter.keyboard_manager.mode;
+            Jupyter.keyboard_manager.mode = "edit";
+        })
+        .on('blur', function() { Jupyter.keyboard_manager.mode = kmMode })
+        .on('keypress', function(e) {
+            if (e.keyCode == 13) {
+                $('#biblio').blur();
+                cfg.bibliofile = $("#biblio")[0].value;
+                bibliofile = $("#biblio")[0].value;
+                init_nb();
             }
-            break;
-        case 'label':    
-            {
-            eqLabel_tmp = false;
-            if(MathJaxDefined) MathJax.Hub.Config({ TeX: { equationNumbers: {
-                autoNumber: "none", 
-                useLabelIds: true
-                } } 
-            });
+        })        
+
+    $('#eqby').on('click', '.dropdown-menu li a', function() {
+            //console.log($(this).text());
+            var tmp_text = $(this).text().trim().toLowerCase()
+            switch (tmp_text) {
+                case 'numbered':
+                    {
+                        eqLabel_tmp = true;
+                        if (MathJaxDefined) MathJax.Hub.Config({
+                            TeX: {
+                                equationNumbers: {
+                                    autoNumber: "AMS",
+                                    useLabelIds: true
+                                }
+                            }
+                        });
+                    }
+                    break;
+                case 'label':
+                    {
+                        eqLabel_tmp = false;
+                        if (MathJaxDefined) MathJax.Hub.Config({
+                            TeX: {
+                                equationNumbers: {
+                                    autoNumber: "none",
+                                    useLabelIds: true
+                                }
+                            }
+                        });
+                    }
+                    break;
+                default:
+                    {
+                        eqLabel_tmp = true;
+                        if (MathJaxDefined) MathJax.Hub.Config({
+                            TeX: {
+                                equationNumbers: {
+                                    autoNumber: "AMS",
+                                    useLabelIds: true
+                                }
+                            }
+                        });
+                    }
             }
-            break;
-        default:
-            {
-            eqLabel_tmp = true;
-            if(MathJaxDefined) MathJax.Hub.Config({ TeX: { equationNumbers: {
-                autoNumber: "AMS", 
-                useLabelIds: true
-                } } 
-            });
+            $('#menu-eqs').removeClass().addClass("fa " + eq_by_icon[eqLabel_tmp] + " fa-fw");
+            cfg.eqLabelWithNumbers = eqLabel_tmp; //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
+            eqLabelWithNumbers = eqLabel_tmp;
+            init_cells();
+        })
+
+
+    $('#eqnum').on('focus', function() {
+            kmMode = Jupyter.keyboard_manager.mode;
+            Jupyter.keyboard_manager.mode = "edit";
+        })
+        .on('blur', function() { Jupyter.keyboard_manager.mode = kmMode })
+        .on('keypress', function(e) {
+            if (e.keyCode == 13) {
+                $('#eqnum').blur();
+                cfg.eqNumInitial = Number($('#eqnum')[0].value) - 1; //Jupyter.notebook.metadata.latex_envs.eqNumInitial 
+                eqNumInitial = Number($('#eqnum')[0].value) - 1;
+                init_cells();
             }
-               }
-		$('#menu-eqs').removeClass().addClass("fa "+eq_by_icon[eqLabel_tmp]+" fa-fw");
-		cfg.eqLabelWithNumbers=eqLabel_tmp; //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
-		eqLabelWithNumbers=eqLabel_tmp;
-		init_cells();
-})
-.tooltip({ title : 'Select equations referencing: by number or by label' , trigger: "hover", delay: {show: 500, hide: 50}});  
+        })
 
+    $('#apply').on('click', function() {
+            //
+            //set the values of global variables
+            cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
+            bibliofile = $("#biblio")[0].value //Jupyter.notebook.metadata.latex_envs.bibliofile 
+            eqNumInitial = Number($('#eqnum')[0].value) - 1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
+            eqLabelWithNumbers = eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
+                //save into notebook's metadata 
+            cfg = Jupyter.notebook.metadata.latex_envs
+            cfg.cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
+            cfg.bibliofile = $("#biblio")[0].value //Jupyter.notebook.metadata.latex_envs.bibliofile 
+            cfg.eqNumInitial = Number($('#eqnum')[0].value) - 1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
+            cfg.eqLabelWithNumbers = eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
+                //apply all this
+            readBibliography(function() {
+                init_cells();
+                createReferenceSection();
+            });
 
-$('#eqnum').on('focus', function(){
-	kmMode=Jupyter.keyboard_manager.mode;	
-	Jupyter.keyboard_manager.mode="edit";})
-	.on('blur', function() {Jupyter.keyboard_manager.mode=kmMode})
-	.on('keypress', function(e) {if (e.keyCode==13){
-			$('#eqnum').blur();   
-			cfg.eqNumInitial=Number($('#eqnum')[0].value)-1; //Jupyter.notebook.metadata.latex_envs.eqNumInitial 
-			eqNumInitial=Number($('#eqnum')[0].value)-1;   
-			init_cells(); }})
-.tooltip({ title : 'Equations numbering begins at...' ,trigger: "hover",  delay: {show: 500, hide: 50}});    
+        })
+        .tooltip({ title: 'Apply the selected values', trigger: "hover", delay: { show: 500, hide: 50 } });
 
-$('#apply').on('click', function (){
-    //
-    //set the values of global variables
-    cite_by=cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
-    bibliofile=$("#biblio")[0].value  //Jupyter.notebook.metadata.latex_envs.bibliofile 
-    eqNumInitial=Number($('#eqnum')[0].value)-1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
-    eqLabelWithNumbers=eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
-    //save into notebook's metadata 
-    cfg=Jupyter.notebook.metadata.latex_envs
-    cfg.cite_by=cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
-    cfg.bibliofile=$("#biblio")[0].value  //Jupyter.notebook.metadata.latex_envs.bibliofile 
-    cfg.eqNumInitial=Number($('#eqnum')[0].value)-1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
-    cfg.eqLabelWithNumbers=eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
-	//apply all this
-	readBibliography(function (){ 
-					init_cells(); 
-					createReferenceSection();
-					});
-    
-})
-.tooltip({ title : 'Apply the selected values' , trigger: "hover", delay: {show: 500, hide: 50}});
+    $('#suicide').on('click', function() {
+        config_toolbar_present = false;
+        $("#LaTeX_envs_toolbar").remove();
+        $(site).height($(window).height() - $('#header').height() - $('#footer').height())
+    })
 
-$('#suicide').on('click', function (){
-    config_toolbar_present=false;
-    $("#test").remove();
-    $(site).height($(window).height()-$('#header').height() - $('#footer').height())
 }
-).tooltip({ title : 'Close the LaTeX-envs configuration toolbar' ,trigger: "hover",  delay: {show: 500, hide: 50}});
-    
-} 
-
-
