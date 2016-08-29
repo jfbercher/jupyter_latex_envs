@@ -1,0 +1,52 @@
+7729d99 - Jean-François Bercher, Mon Aug 29 00:58:38 2016 +0200 : Copy readme to root
+2fbfac4 - Jean-François Bercher, Mon Aug 29 00:51:59 2016 +0200 : merging
+12db55b - Jean-François Bercher, Mon Aug 29 00:46:12 2016 +0200 : Merge branch 'master' of https://github.com/jfbercher/latex_envs
+11496a2 - Jean-François Bercher, Mon Aug 29 00:44:31 2016 +0200 : Copy readme to root
+daa5b6b - Jean-François Bercher, Mon Aug 29 00:15:20 2016 +0200 : updated documentation
+1308eff - Jean-François Bercher, Mon Aug 29 00:14:29 2016 +0200 : Added system parameters that can be specified using the nbextensions_configurator.
+81b8df5 - Jean-François Bercher, Mon Aug 29 00:13:15 2016 +0200 : reworked extension loading. It now detects if the notebook is fully loaded before loading itself.
+6777aad - Jean-François Bercher, Mon Aug 29 00:12:15 2016 +0200 : reworked the configuration toolbar - added a toogle button for the LaTex_envs dropdown menu
+8a68fc5 - Jean-François Bercher, Mon Aug 29 00:10:41 2016 +0200 : Added support for nested environments of the same type + issues 720/731
+0c80afe - Jean-François Bercher, Mon Aug 15 13:59:48 2016 +0200 : latex_envs: small fix for issue #720 (bis)
+52ec29c - Jean-François Bercher, Mon Aug 15 00:05:25 2016 +0200 : latex_envs: small fix for issue #720
+482ca2b - Jean-François Bercher, Mon Aug 15 00:03:17 2016 +0200 : latex_envs: small fix at initialization in case there were no md cells
+5fdb0ab - Jean-François Bercher, Sat Aug 6 15:28:42 2016 +0200 : latex_envs: minor adaptations
+ee293c2 - Jean-François Bercher, Thu Aug 4 01:13:59 2016 +0200 : updated the link to documentation
+ee66d86 - Jean-François Bercher, Wed Aug 3 23:37:32 2016 +0200 : latex_envs: added a menu to insert main enviroments + item in help menu
+4f18c8c - Jean-François Bercher, Fri Jul 29 22:18:32 2016 +0200 : latex_envs: update readme
+250066b - Jean-François Bercher, Thu Jul 28 23:12:12 2016 +0200 : latex_envs: update documentation
+7d168f0 - Jean-François Bercher, Thu Jul 28 19:18:31 2016 +0200 : latex_envs: update for MathJax use and html export
+ec8fbe3 - Jean-François Bercher, Thu Jul 28 18:18:08 2016 +0200 : latex_envs: remove conversion subdirectory
+7c29b53 - Jean-François Bercher, Thu Jul 28 18:14:20 2016 +0200 : latex_envs: update for MathJax use and html export
+b52d0fb - Jean-François Bercher, Sat Jun 25 23:08:31 2016 +0200 : LaTeX_envs: removed useless files
+efb70ba - Jean-François Bercher, Sat Jun 25 23:04:44 2016 +0200 : LaTeX_envs: corrected relative paths + a function def
+9c6720b - Jean-François Bercher, Sun May 22 10:46:39 2016 +0200 : Updated description in .yaml
+20964e6 - jfbercher, Fri Apr 8 11:39:08 2016 +0200 : Update latex_envs.css -- removed non-LaTeX_envs related configuration
+a78e28b - jfbercher, Sun Jan 3 11:37:34 2016 +0100 : Update thmsInNb4.js
+7600397 - Jean-François Bercher, Sun Nov 22 23:56:51 2015 +0100 : small corrections
+b90f61d - jfbercher, Mon Nov 9 20:19:00 2015 +0100 : Update latex_envs.js
+e41f647 - jfbercher, Mon Nov 9 20:15:20 2015 +0100 : Update latex_envs.js
+67a307f - Jean-François Bercher, Thu Nov 5 21:42:20 2015 +0100 : small css update
+b2445f0 - jfbercher, Sun Nov 1 12:57:52 2015 +0100 : Update README.md
+a1d09aa - Jean-François Bercher, Thu Oct 1 22:28:41 2015 +0200 : Merge branch 'master' of https://github.com/jfbercher/latex_envs
+83e8b74 - Jean-François Bercher, Thu Oct 1 22:26:06 2015 +0200 : enable some html in latex envs
+de6cc80 - Jean-François Bercher, Fri Sep 25 00:02:09 2015 +0200 : enable nested envs & <div> in envs
+38905d2 - Jean-François Bercher, Mon Aug 31 18:39:49 2015 +0200 : Update to Jupyter + bibliography
+207881f - Jean-François Bercher, Mon Aug 31 17:42:36 2015 +0200 : updated archive
+a9562ab - Jean-François Bercher, Mon Aug 31 17:41:49 2015 +0200 : Update readme
+ceb0f8e - Jean-François Bercher, Mon Aug 31 17:38:54 2015 +0200 : Update documentation & readme
+d480f48 - Jean-François Bercher, Mon Aug 31 00:18:45 2015 +0200 : better account of nested envs
+2a75d4e - Jean-François Bercher, Mon Aug 31 00:16:55 2015 +0200 : update documentation
+087f6ab - Jean-François Bercher, Sat Aug 29 22:43:44 2015 +0200 : Update to Jupyter + bibliography
+3e6eb3d - Jean-François Bercher, Wed Jun 10 23:59:44 2015 +0200 : update documenation
+bbcf98c - Jean-François Bercher, Wed Jun 10 23:58:25 2015 +0200 : update
+cccea78 - Jean-François Bercher, Wed Jun 10 23:47:30 2015 +0200 : add figure environment & update documentation
+6db99b5 - bercherj, Fri Jun 5 15:42:07 2015 +0200 : latex_env_doc.ipynb (re-added)
+be6fcf1 - bercherj, Fri Jun 5 15:19:03 2015 +0200 : Added Yaml and icon files
+9f1ba21 - bercherj, Fri Jun 5 15:17:43 2015 +0200 : Commented prompt display none
+4e1fe87 - Jean-François Bercher, Fri May 29 18:17:04 2015 +0200 : chmod scripts
+06dc085 - Jean-François Bercher, Fri May 29 18:15:28 2015 +0200 : add a toolbar button for refreshing cells
+991a6a7 - jfbercher, Thu May 28 17:45:30 2015 +0200 : Update readme.md
+ce98241 - bercherj, Thu May 28 17:16:06 2015 +0200 : Update readme
+7177083 - bercherj, Thu May 28 16:59:11 2015 +0200 : First commit of latex_envs extension
+git log --author=bercher --pretty=format:%h - %an, %ad : %s
