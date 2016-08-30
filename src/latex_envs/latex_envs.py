@@ -1,7 +1,7 @@
 """latex_envs Exporter class"""
 
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, the IPython IPython-Contrib Development Team.
+# Copyright (c) 2016, J.-F. Bercher 
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -223,15 +223,15 @@ class LenvsHTMLExporter(HTMLExporter):
             'ExtractOutputPreprocessor': {'enabled': True},
             'latex_envs.LenvsHTMLPreprocessor': {'enabled': True}}
         )
+        c.merge(super(LenvsHTMLExporter, self).default_config)
+        if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
+            c.TemplateExporter.template_path = ['.', 
+               os.path.join(os.path.dirname(__file__),'tempates')]
+        else: 
         from jupyter_contrib_nbextensions.nbconvert_support import (
             templates_directory)
-        c.merge(super(LenvsHTMLExporter, self).default_config)
+            c.TemplateExporter.template_path = ['.', templates_directory()]
 
-        # user_templates = os.path.join(jupyter_core.paths.jupyter_data_dir(),
-        # 'templates')
-        c.TemplateExporter.template_path = ['.', templates_directory()]
-        # c.Exporter.preprocessors = ['tmp.LenvsLatexPreprocessor' ]
-        # c.NbConvertApp.postprocessor_class = 'tmp.TocPostProcessor'
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -336,16 +336,18 @@ class LenvsLatexExporter(LatexExporter):
             'latex_envs.LenvsLatexPreprocessor': {'enabled': True}
         }
         )
+         if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
+            c.TemplateExporter.template_path = ['.', 
+               os.path.join(os.path.dirname(__file__),'tempates')]
+        else: 
         from jupyter_contrib_nbextensions.nbconvert_support import (
             templates_directory)
+            c.TemplateExporter.template_path = ['.', templates_directory()]
+
         c.merge(super(LenvsLatexExporter, self).default_config)
 
-        # user_templates = os.path.join(jupyter_core.paths.jupyter_data_dir(),
-        # 'templates')
         c.TemplateExporter.template_path = ['.', templates_directory()]
 
-        # c.Exporter.preprocessors = ['tmp.LenvsLatexPreprocessor' ]
-        # c.NbConvertApp.postprocessor_class = 'tmp.TocPostProcessor'
         return c
 
     def tocrefrm(self, text):
