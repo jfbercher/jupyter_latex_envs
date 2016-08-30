@@ -41,7 +41,7 @@ MathJax.Hub.Config({ TeX: { equationNumbers: {
 
 
 <!-- stylesheet from CDN -->
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/jfbercher/jupyter_latex_envs/latex_envs/static/latex_envs.css">
+<link rel="stylesheet" type="text/css" href="https://rawgit.com/jfbercher/jupyter_latex_envs/src/latex_envs/static/latex_envs.css">
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
 <link rel="stylesheet" href="custom.css"> 
@@ -49,7 +49,7 @@ MathJax.Hub.Config({ TeX: { equationNumbers: {
 <!-- Load mathjax 
 <script src="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/thmsInNb4.js"></script>
 -->
-<script type="text/javascript"  src="https://rawgit.com/jfbercher/jupyter_latex_envs/latex_envs/static/thmsInNb4.js"> </script>
+<script type="text/javascript"  src="https://rawgit.com/jfbercher/jupyter_latex_envs/src/latex_envs/static/thmsInNb4.js"> </script>
 
 
 

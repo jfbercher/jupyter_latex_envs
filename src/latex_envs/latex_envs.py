@@ -15,7 +15,7 @@
 # import os
 import re
 
-# A small utilitary function
+# IPython imports
 from IPython.display import HTML, display
 from nbconvert.exporters.exporter import Exporter
 from nbconvert.exporters.html import HTMLExporter
@@ -27,9 +27,7 @@ from traitlets import Bool, Dict
 from traitlets.config import Config
 
 
-# IPython imports
-
-
+# A small utilitary function
 def figcaption(text, label=" "):
     display(HTML("<div class=caption><b> Caption: </b> %s</div>"
             % text.replace('\n', '<br>')))
@@ -336,7 +334,9 @@ class LenvsLatexExporter(LatexExporter):
             'latex_envs.LenvsLatexPreprocessor': {'enabled': True}
         }
         )
-         if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
+        c.merge(super(LenvsLatexExporter, self).default_config)
+
+        if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
             c.TemplateExporter.template_path = ['.', 
                os.path.join(os.path.dirname(__file__),'tempates')]
         else: 
@@ -344,9 +344,6 @@ class LenvsLatexExporter(LatexExporter):
             templates_directory)
             c.TemplateExporter.template_path = ['.', templates_directory()]
 
-        c.merge(super(LenvsLatexExporter, self).default_config)
-
-        c.TemplateExporter.template_path = ['.', templates_directory()]
 
         return c
 
