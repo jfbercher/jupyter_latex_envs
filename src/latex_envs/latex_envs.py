@@ -1,7 +1,7 @@
 """latex_envs Exporter class"""
 
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, J.-F. Bercher 
+# Copyright (c) 2016, J.-F. Bercher
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 
 # Stdlib imports
-# import os
+import os
 import re
 
 # IPython imports
@@ -30,7 +30,7 @@ from traitlets.config import Config
 # A small utilitary function
 def figcaption(text, label=" "):
     display(HTML("<div class=caption><b> Caption: </b> %s</div>"
-            % text.replace('\n', '<br>')))
+                 % text.replace('\n', '<br>')))
 
 # -----------------------------------------------------------------------------
 # Preprocessors, Exporters, PostProcessors
@@ -164,26 +164,26 @@ class LenvsHTMLExporter(HTMLExporter):
     """
 
     def __init__(self, config=None, **kw):
-            """
-            Public constructor
+        """
+        Public constructor
 
-            Parameters
-            ----------
-            config : :class:`~traitlets.config.Config`
-                User configuration instance.
-            `**kw`
-                Additional keyword arguments passed to parent __init__
+        Parameters
+        ----------
+        config : :class:`~traitlets.config.Config`
+            User configuration instance.
+        `**kw`
+            Additional keyword arguments passed to parent __init__
 
-            """
-            with_default_config = self.default_config
-            if config:
-                with_default_config.merge(config)
+        """
+        with_default_config = self.default_config
+        if config:
+            with_default_config.merge(config)
 
-            super(HTMLExporter, self).__init__(
-                config=with_default_config, **kw)
-            self.register_preprocessor(LenvsHTMLPreprocessor(), enabled=True)
+        super(HTMLExporter, self).__init__(
+            config=with_default_config, **kw)
+        self.register_preprocessor(LenvsHTMLPreprocessor(), enabled=True)
 
-            self._init_preprocessors()
+        self._init_preprocessors()
 
     def _file_extension_default(self):
         return '.html'
@@ -222,33 +222,33 @@ class LenvsHTMLExporter(HTMLExporter):
             'latex_envs.LenvsHTMLPreprocessor': {'enabled': True}}
         )
         c.merge(super(LenvsHTMLExporter, self).default_config)
-        if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
-            c.TemplateExporter.template_path = ['.', 
-               os.path.join(os.path.dirname(__file__),'tempates')]
-        else: 
-        from jupyter_contrib_nbextensions.nbconvert_support import (
-            templates_directory)
+        if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
+            c.TemplateExporter.template_path = ['.',
+                                                os.path.join(os.path.dirname(__file__), 'templates')]
+        else:
+            from jupyter_contrib_nbextensions.nbconvert_support import (
+                templates_directory)
             c.TemplateExporter.template_path = ['.', templates_directory()]
 
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
-            langinfo = nb.metadata.get('language_info', {})
-            lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
-            self.register_filter('highlight_code',
-                                 Highlight2HTML(pygments_lexer=lexer,
-                                                parent=self))
-            lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
+        langinfo = nb.metadata.get('language_info', {})
+        lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
+        self.register_filter('highlight_code',
+                             Highlight2HTML(pygments_lexer=lexer,
+                                            parent=self))
+        lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
 
-            self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)
-            self._init_preprocessors()
-            nb, resources = lenvshtmlpreprocessor(nb, resources)
-            output, resources = super(LenvsHTMLExporter,
-                                      self).from_notebook_node(
-                                          nb, resources, **kw)
-            # postout = postprocess(output)
-            # print(postout[0:200]) #WORKS
-            return output, resources
+        self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)
+        self._init_preprocessors()
+        nb, resources = lenvshtmlpreprocessor(nb, resources)
+        output, resources = super(LenvsHTMLExporter,
+                                  self).from_notebook_node(
+                                      nb, resources, **kw)
+        # postout = postprocess(output)
+        # print(postout[0:200]) #WORKS
+        return output, resources
 
 ###################
 
@@ -278,25 +278,25 @@ class LenvsLatexExporter(LatexExporter):
     flags = Dict(dict(enable=({'Bar': {'enabled': True}}, "Enable Bar")))
 
     def __init__(self, config=None, **kw):
-            """
-            Public constructor
+        """
+        Public constructor
 
-            Parameters
-            ----------
-            config : :class:`~traitlets.config.Config`
-                User configuration instance.
-            `**kw`
-                Additional keyword arguments passed to parent __init__
+        Parameters
+        ----------
+        config : :class:`~traitlets.config.Config`
+            User configuration instance.
+        `**kw`
+            Additional keyword arguments passed to parent __init__
 
-            """
-            with_default_config = self.default_config
-            if config:
-                with_default_config.merge(config)
+        """
+        with_default_config = self.default_config
+        if config:
+            with_default_config.merge(config)
 
-            super(Exporter, self).__init__(config=with_default_config, **kw)
-            self.register_preprocessor(LenvsLatexPreprocessor(), enabled=True)
+        super(Exporter, self).__init__(config=with_default_config, **kw)
+        self.register_preprocessor(LenvsLatexPreprocessor(), enabled=True)
 
-            self._init_preprocessors()
+        self._init_preprocessors()
 
     def _file_extension_default(self):
         return '.tex'
@@ -336,15 +336,13 @@ class LenvsLatexExporter(LatexExporter):
         )
         c.merge(super(LenvsLatexExporter, self).default_config)
 
-        if os.path.isdir(os.path.join(os.path.dirname(__file__),'templates')):
-            c.TemplateExporter.template_path = ['.', 
-               os.path.join(os.path.dirname(__file__),'tempates')]
-        else: 
-        from jupyter_contrib_nbextensions.nbconvert_support import (
-            templates_directory)
+        if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
+            c.TemplateExporter.template_path = ['.',
+                                                os.path.join(os.path.dirname(__file__), 'templates')]
+        else:
+            from jupyter_contrib_nbextensions.nbconvert_support import (
+                templates_directory)
             c.TemplateExporter.template_path = ['.', templates_directory()]
-
-
         return c
 
     def tocrefrm(self, text):
@@ -410,22 +408,22 @@ class LenvsLatexExporter(LatexExporter):
         return nb_text
 
     def from_notebook_node(self, nb, resources=None, **kw):
-            langinfo = nb.metadata.get('language_info', {})
-            lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
-            self.register_filter('highlight_code',
-                                 Highlight2Latex(pygments_lexer=lexer,
-                                                 parent=self))
-            lenvslatexpreprocessor = LenvsLatexPreprocessor()
+        langinfo = nb.metadata.get('language_info', {})
+        lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
+        self.register_filter('highlight_code',
+                             Highlight2Latex(pygments_lexer=lexer,
+                                             parent=self))
+        lenvslatexpreprocessor = LenvsLatexPreprocessor()
 
-            self.register_preprocessor(lenvslatexpreprocessor, enabled=True)
-            self._init_preprocessors()
-            nb, resources = lenvslatexpreprocessor(nb, resources)
-            output, resources = super(LenvsLatexExporter, self).from_notebook_node(nb, resources, **kw)  # noqa
-            postout = self.postprocess(output)
-            # postout = postout.replace('sklearn','Tonio')
-            # print(postout[0:200]) #WORKS
+        self.register_preprocessor(lenvslatexpreprocessor, enabled=True)
+        self._init_preprocessors()
+        nb, resources = lenvslatexpreprocessor(nb, resources)
+        output, resources = super(LenvsLatexExporter, self).from_notebook_node(nb, resources, **kw)  # noqa
+        postout = self.postprocess(output)
+        # postout = postout.replace('sklearn','Tonio')
+        # print(postout[0:200]) #WORKS
 
-            return postout, resources
+        return postout, resources
 
 # jupyter nbconvert --to latex_envs.LenvsLatexExporter
 # --LenvsLatexExporter.removeHeaders=True
