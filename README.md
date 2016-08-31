@@ -4,14 +4,14 @@
 This extension for IPython 3.x or Jupyter enables to use some LaTeX commands and environments in the notebook's markdown cells. 
 
 1. **LaTeX commands and environments**
-- support for some LaTeX commands within markdown cells, *e.g.* `\textit`, `\textbf`, `\underline`
-- support for **theorems-like environments**, support for labels and cross references
-- support for **lists**: *enumerate, itemize*,  
-- limited support for a **figure environment**,
-- support for an environment *listing*,
-- additional *textboxa* environment
+    - support for some LaTeX commands within markdown cells, *e.g.* `\textit`, `\textbf`, `\underline`
+    - support for **theorems-like environments**, support for labels and cross references
+    - support for **lists**: *enumerate, itemize*,  
+    - limited support for a **figure environment**,
+    - support for an environment *listing*,
+    - additional *textboxa* environment
 2. **Citations and bibliography**
-- support for `\cite` with creation of a References section
+    - support for `\cite` with creation of a References section
 3. **Document-wide numbering of equations and environments, support for `\label` and `\ref`**
 4. **Configuration toolbar**
 5. **LaTeX_envs dropdown menu for a quick insertion of environments**
