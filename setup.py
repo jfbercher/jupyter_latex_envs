@@ -16,6 +16,11 @@ from os.path import join, dirname
 from sys import exit, prefix
 import pypandoc
 
+readme_file = open('README.rst', 'r')
+try:
+    detailed_description = readme_file.read()
+finally:
+    readme_file.close()
 
 def read(*names, **kwargs):
     return io.open(
@@ -30,7 +35,7 @@ setup(name='jupyter_latex_envs',
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
       # '\n'.join(__doc__.split("\n")[2:]).strip(),
-      # long_description=read('README.md'),
+      long_description=detailed_description,
       url='http://github.com/jfbercher/jupyter_latex_envs',
       author='Jean-François Bercher',
       author_email='jf.bercher@gmail.com',

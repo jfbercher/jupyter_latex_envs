@@ -1,6 +1,6 @@
 # explicit includes
 include LICENSE.txt
-include README.md
+include README.rst
 include tox.ini
 
 # explicit excludes
@@ -19,3 +19,4 @@ global-exclude __pycache__
 global-exclude *.py[cod]
 global-exclude .git
 global-exclude .ipynb_checkpoints
+
