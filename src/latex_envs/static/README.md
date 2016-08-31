@@ -28,15 +28,15 @@ or
 ```bash
 jupyter nbconvert --to latex_with_lenvs FILE.ipynb
 ```
-to convert `FILE.ipynb` into html/latex while keeping all the features of the `latex_envs` notebook extension in the converted version. The LaTeX converter also expose several conversion options (read the [docs](https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/doc/latex_envs_doc.html). 
+to convert `FILE.ipynb` into html/latex while keeping all the features of the `latex_envs` notebook extension in the converted version. The LaTeX converter also expose several conversion options (read the [docs](https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_envs_doc.html). 
 
 
 Demo/documentation
 ==================
 
 The `doc` subdirectory that constains an example notebook and its html and pdf versions. This serves as the documentation. 
-A demo notebook `latex_env_doc.ipynb` is provided. Its html version is [latex_env_doc.html](https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/doc/latex_env_doc.html) and a pdf resulting 
-from conversion to LaTeX is available as [documentation](https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/doc/documentation.pdf). 
+A demo notebook `latex_env_doc.ipynb` is provided. Its html version is [latex_env_doc.html](https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html) and a pdf resulting 
+from conversion to LaTeX is available as [documentation](https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/documentation.pdf). 
 
 
 Installation
@@ -96,6 +96,6 @@ I also studied and used examples and code from [https://github.com/ipython-contr
 **Contributions will be welcome and deeply appreciated.** 
 
 - If you have issues, please post an issue at 
-`https://github.com/jfbercher/latex_envs/issues` [here](https://github.com/jfbercher/latex_envs/issues). 
+`https://github.com/jfbercher/jupyter_latex_envs/issues` [here](https://github.com/jfbercher/jupyter_latex_envs/issues). 
 
 **Self-Promotion --** Like `latex_envs`? Please star and follow the [repository](https://github.com/jfbercher/jupyter_latex_envs) on GitHub. 
