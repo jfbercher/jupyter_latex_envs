@@ -11770,7 +11770,7 @@ div#notebook {
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
 <!-- stylesheet from CDN -->
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/latex_envs.css">
+<link rel="stylesheet" type="text/css" href="https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/latex_envs.css">
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
 <link rel="stylesheet" href="custom.css"> 
@@ -11778,7 +11778,7 @@ div#notebook {
 <!-- Load mathjax 
 <script src="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/thmsInNb4.js"></script>
 -->
-<script type="text/javascript"  src="https://rawgit.com/jfbercher/jupyter_contrib_nbextensions/latex_envs/src/jupyter_contrib_nbextensions/nbextensions/latex_envs/thmsInNb4.js"> </script>
+<script type="text/javascript"  src="https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/thmsInNb4.js"> </script>
 
 <link rel="stylesheet" type="text/css" href="https://rawgit.com/ipython-contrib/Jupyter-notebook-extensions/master/src/jupyter_contrib_nbextensions/nbextensions/toc2/main.css">
 
@@ -11845,80 +11845,6 @@ $( document ).ready(function(){
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span class="o">%%</span><span class="k">html</span>
-&lt;style&gt;
-    .prompt{
-        display: none;
-    }    
-
-&lt;/style&gt;
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-
-<div class="output_html rendered_html output_subarea ">
-<style>
-    .prompt{
-        display: none;
-    }    
-
-</style>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="-What's-new-"><strong> What's new </strong><a class="anchor-link" href="#-What's-new-">&#182;</a></h2><p><strong>July 27, 2016</strong> -</p>
-<ul>
-<li>In this version we have reworked <strong>equation numbering</strong>. In the previous version, we have implemented a specialized counter and detected equations rendering for updating the counter. Meanwhile, this feature has been introduced in <code>MathJax</code> and now we rely on MathJax implementation. We still have keep the capability of displaying only equation labels (instead of numbers). The numbering is automatically updated and is document-wide.</li>
-<li>We have completely reworked the <strong>notebook conversion</strong> to plain $\LaTeX$ and html. We provide specialized exporters, pre and post processors, templates. We also added entry-points to simplify the conversion process. It is now as simple as<div class="highlight"><pre>jupyter nbconvert --to html_lenvs FILE.ipynb
-</pre></div>
-to convert <code>FILE.ipynb</code> into html while keeping all the features of the <code>latex_envs</code> notebook extension in the converted version. </li>
-</ul>
-<p><strong>August 03, 2016</strong> -</p>
-<ul>
-<li>Added a template to also keep the toc2 features when exporting to html:<div class="highlight"><pre>jupyter nbconvert --to html_toclenvs FILE.ipynb
-</pre></div>
-</li>
-<li><p>Added a dropdown menu that enables to insert all main LaTeX_envs environments using a simple click. Two keybards shortcuts (Ctrl-E and Ctrl-I) for equations/itemize are also provided. More environments and shortcuts can be added in the file <code>envsLatex.js</code>.</p>
-</li>
-<li><p>Added a link in the general help menu that points to the documentation.</p>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Presentation-and-main-features">Presentation and main features<a class="anchor-link" href="#Presentation-and-main-features">&#182;</a></h1>
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -11929,7 +11855,7 @@ to convert <code>FILE.ipynb</code> into html while keeping all the features of t
 \item **LaTeX commands and environments**
 \begin{itemize}
 \item support for some LaTeX commands within markdown cells, *e.g.* `\textit`, `\textbf`, `\underline`
-\item support for **theorems-like environments**
+\item support for **theorems-like environments**, support for labels and cross references
 \item support for **lists**: *enumerate, itemize*,  
 \item limited support for a **figure environment**,
 \item support for an environment *listing*,
@@ -11939,8 +11865,10 @@ to convert <code>FILE.ipynb</code> into html while keeping all the features of t
 \begin{itemize}
 \item support for `\cite` with creation of a References section
 \end{itemize}
-\item **Document-wide numbering of equations, support for `\label` and `\ref`**
+\item **Document-wide numbering of equations and environments, support for `\label` and `\ref`**
 \item **Configuration toolbar**
+\item **LaTeX_envs dropdown menu for a quick insertion of environments**
+\item **Export to HTML and LaTeX with a customized exporter**
 \item Styles can be customized in the `latex_env.css` stylesheet
 \end{enumerate}<p>A simple illustration is as follows: on can type the following in a markdown cell</p>
 \begin{listing}
@@ -11971,7 +11899,36 @@ where $\theta$ is the angle between $u$ and $v$ ...
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation-principle">Implementation principle<a class="anchor-link" href="#Implementation-principle">&#182;</a></h2>
+<h2 id="-What's-new-"><strong> What's new </strong><a class="anchor-link" href="#-What's-new-">&#182;</a></h2><p><strong>August 28, 2016</strong> - version 1.2</p>
+<ul>
+<li><p><strong>Added support for nested environments of the same type</strong>. Nesting environments of different type was already possible, but there was a limitation for nesting environments of the same kind; eg itemize in itemize in itemize. This was due to to the fact that regular expressions are not suited to recursivity. I have developped a series of functions that enable to extract nested environments and thus cope with such situations.</p>
+</li>
+<li><p>Corrected various issues, eg <a href="https://github.com/ipython-contrib/jupyter_contrib_nbextensions/issues/731">#731</a>, <a href="https://github.com/ipython-contrib/jupyter_contrib_nbextensions/issues/720">#720</a> where the content of nested environments was incorrectly converted to markdown.</p>
+</li>
+<li><p>Completely reworked the configuration toolbar. Re-added tips.</p>
+</li>
+<li>Added a toggle-button for the LaTeX_envs menu</li>
+<li>Added system parameters that can be specified using the <a href="https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator/tree/master/src/jupyter_nbextensions_configurator/static/nbextensions_configurator">nbextensions_configurator</a>. Thus reworked the configuration loading/saving. </li>
+<li>Reworked extension loading. It now detects if the notebook is fully loaded before loading itself.</li>
+</ul>
+<p><strong>August 03, 2016</strong> - version 1.13</p>
+<ul>
+<li>Added a template to also keep the toc2 features when exporting to html:
+<pre><code>jupyter nbconvert --to html_toclenvs FILE.ipynb</code></pre>
+</li>
+<li><p>Added a dropdown menu that enables to insert all main LaTeX_envs environments using a simple click. Two keybards shortcuts (Ctrl-E and Ctrl-I) for equations and itemize are also provided. More environments and shortcuts can be added in the file <code>envsLatex.js</code>.</p>
+</li>
+<li><p>Added a link in the general help menu that points to the documentation.</p>
+</li>
+</ul>
+<p><strong>July 27, 2016</strong> - version 1.1</p>
+<ul>
+<li>In this version I have reworked <strong>equation numbering</strong>. In the previous version, I used a specialized counter and detected equations rendering for updating this counter. Meanwhile, this feature has been introduced in <code>MathJax</code> and now we rely on MathJax implementation. rendering is significantly faster. We still have keep the capability of displaying only equation labels (instead of numbers). The numbering is automatically updated and is document-wide.</li>
+<li>I have completely reworked the <strong>notebook conversion</strong> to plain $\LaTeX$ and html. We provide specialized exporters, pre and post processors, templates. We also added entry-points to simplify the conversion process. It is now as simple as<div class="highlight"><pre><span></span>jupyter nbconvert --to html_with_lenvs FILE.ipynb
+</pre></div>
+to convert <code>FILE.ipynb</code> into html while keeping all the features of the <code>latex_envs</code> notebook extension in the converted version. </li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -11980,7 +11937,16 @@ where $\theta$ is the angle between $u$ and $v$ ...
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The main idea is to override the standard Markdown renderer in order to add a <em>small</em> parsing of LaTeX expressions and environments. This heavily uses regular expressions. The LaTeX expression are then rendered using an html version. For instance <code>\underline {something}</code> is rendered as <code>&lt;u&gt; something &lt;/u&gt;</code>, that is \underline{something}. The environments are replaced by an html tag with a class derived from the name of the environment. For example, a <code>definition</code> denvronment will be replaced by an html rendering corresponding to the class <code>latex_definition</code>. The styles associated with the different classes are sepcified in <code>latex_env.css</code>. These substitutions are implemented in <code>thsInNb4.js</code>.</p>
+<h1 id="Main-features">Main features<a class="anchor-link" href="#Main-features">&#182;</a></h1><h2 id="Implementation-principle">Implementation principle<a class="anchor-link" href="#Implementation-principle">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The main idea is to override the standard Markdown renderer in order to add a <em>small</em> parsing of LaTeX expressions and environments. This heavily uses regular expressions. The LaTeX expression are then rendered using an html version. For instance <code>\underline {something}</code> is rendered as <code>&lt;u&gt; something &lt;/u&gt;</code>, that is \underline{something}. The environments are replaced by an html tag with a class derived from the name of the environment. For example, a <code>definition</code> denvronment will be replaced by an html rendering corresponding to the class <code>latex_definition</code>. The styles associated with the different classes are specified in <code>latex_env.css</code>. These substitutions are implemented in <code>thsInNb4.js</code>.</p>
 
 </div>
 </div>
@@ -12059,7 +12025,7 @@ An anchor is created for any label which enables to links things within the docu
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>\label{example:mixing} A simple example is as follows, featuring automatic numerotation, and the use of labels and references. Also note that standard markdown can be present in the environment and is interpreted. 
-<em>The rendering is done according to the stylesheet <code>latex_env.css</code>, which of course, can be tailored to specific uses and tastes</em>.</p>
+<em>The rendering is done according to the stylesheet <code>latex_env.css</code>, which of course, can be customized to specific uses and tastes</em>.</p>
 \begin{listing}
 \begin{definition} \label{def:FT}
 Let $x[n]$ be a sequence of length $N$. Then, its **Fourier transform** is given by
@@ -12224,7 +12190,9 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For Python user, we have added in passing a simple function in the <code>latex_envs.py</code> library. This function can be imported classicaly, eg <code>from latex_envs import figcaption</code>. Then, this function enables to specify a caption and a label for the next plot. In turn, when exporting to $\LaTeX$, the corresponding plot is converted to a nice figure environement with a label and a caption.</p>
+<p>For Python user, we have added in passing a simple function in the <code>latex_envs.py</code> library.</p>
+<p>This function can be imported classically, eg <code>from latex_envs.latex_envs import figcaption</code> (or <code>from jupyter_contrib_nbextensions.nbconvert_support.latex_envs import figcaption</code> if you installed from the jupyter_contrib repo).</p>
+<p>Then, this function enables to specify a caption and a label for the next plot. In turn, when exporting to $\LaTeX$, the corresponding plot is converted to a nice figure environement with a label and a caption.</p>
 
 </div>
 </div>
@@ -12234,7 +12202,7 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">jupyter_contrib_nbextensions.nbconvert_support.latex_envs</span> <span class="k">import</span> <span class="n">figcaption</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">arange</span>
@@ -12271,7 +12239,7 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 
 
 <div class="output_png output_subarea ">
-<img src="latex_env_doc_files/latex_env_doc_26_2.png"
+<img src="latex_env_doc_files/latex_env_doc_24_2.png"
 >
 </div>
 
@@ -12296,9 +12264,43 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>As shown in the examples, eg \ref{example:mixing}, it is possible to mix LaTeX and markdown markup in environments  </li>
-<li>Environments can be nested. However, it is not possible, because of limlitations of regular expressions, to nest environments of the same king (eg itemize into itemize into itemize...)</li>
+<li><p>As shown in the examples, eg \ref{example:mixing} (or just below), <strong>it is possible to mix LaTeX and markdown markup in environments</strong></p>
+</li>
+<li><p>Environments can be nested. egg:</p>
+</li>
 </ul>
+\begin{listing}
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\item A **nested enumerate**
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\item And **another one**
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+\end{listing}<p>which results in</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\item A **nested enumerate**
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\item And **another one**
+\begin{enumerate}
+\item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+\end{enumerate}<p>\end{enumerate}
+\end{enumerate}</p>
 
 </div>
 </div>
@@ -12355,7 +12357,7 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Installation,-usage-and-further-examples">Installation, usage and further examples<a class="anchor-link" href="#Installation,-usage-and-further-examples">&#182;</a></h1>
+<h1 id="Conversion-to-LaTeX-and-HTML">Conversion to LaTeX and HTML<a class="anchor-link" href="#Conversion-to-LaTeX-and-HTML">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12364,18 +12366,142 @@ Figure \ref{fig:example} shows a second filter with input $X_2$, output $Y_2$  a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Installation">Installation<a class="anchor-link" href="#Installation">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The extension consists in several javascript scripts: <code>latex_envs.js</code>, <code>thmsInNb4.js</code>, <code>bibInNb4.js</code> and <code>initNb.js</code>, together with a stylesheet <code>latex_envs.css</code>. You may follow the instructions in the <a href="https://github.com/ipython-contrib/IPython-notebook-extensions/wiki">wiki</a> to install the extension.</p>
-<p>Definitively, the simplest way to install and enable the extension is to follow the instrutions in the <a href="https://github.com/ipython-contrib/Jupyter-notebook-extensions/blob/master/README.md">Jupyter-notebook-extensions repo</a>. Once this is done, you can open a tab at <code>http://localhost:8888/nbextensions</code> to enable and configurate the various extensions.</p>
+<p>The extension works in the live-notebook. Since it relies on a bunch of javascript, the notebook does not render as is in services such as <code>nbviewer</code> or <code>github</code> viewer. Similarly, <code>nbconvert</code> does not know of the LaTeX constructs which are used here and therefore does not fully convert notebooks using this extension.</p>
+<p>Therefore, we provide specialized templates and exporters to achieve these conversions.</p>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conversion-to-html">Conversion to html<a class="anchor-link" href="#Conversion-to-html">&#182;</a></h2><p>We provide a template <code>latex_envs.tpl</code> and an exporter class <code>LenvsHTMLExporter</code> (in library <code>latex_envs.py</code>). Using that class, conversion simply amounts to</p>
+
+<pre><code>jupyter nbconvert --to latex_envs.LenvsHTMLExporter FILE.ipynb</code></pre>
+<p>A shortcut is also provided</p>
+
+<pre><code>jupyter nbconvert --to html_with_lenvs FILE.ipynb</code></pre>
+<p>It should be noted that the rendering is done exactly in the same way as in the livenotebook. Actually, it is the very same javascript which is run in the html file. The javascript functions are available on the extension github as well as in the <code>jupyter_notebook_extensions</code> CDN, which means that the rendering of the html files requires an internet connection (this is also true for the rendering of equations with MathJax).</p>
+<p>Another template <code>latex_envs_toc.tpl</code> is provided which enables to also 
+keep the toc2 features when exporting to html (<em>it even works if you do not have the <code>toc2</code> extension!</em>):</p>
+<div class="highlight"><pre><span></span>jupyter nbconvert --to html_with_toclenvs FILE.ipynb
+</pre></div>
+<p><strong>If you use the version included in the jupyter_notebook_extensions collection</strong>, the entry-points (conversion shortcuts) are a little different: use instead</p>
+<ul>
+<li>
+<pre><code>jupyter nbconvert --to html_lenvs FILE.ipynb</code></pre>
+</li>
+<li>
+<pre><code>jupyter nbconvert --to html_toclenvs FILE.ipynb</code></pre>
+</li>
+</ul>
+<h2 id="Conversion-to-LaTeX">Conversion to LaTeX<a class="anchor-link" href="#Conversion-to-LaTeX">&#182;</a></h2><p>We provide two templates <code>thmsInNb_article.tplx</code> and <code>thmsInNb_report.tplx</code> for article and report styles respectively. Anyway one can also use the standard article, report, book templates provided with nbconvert. Simply, we have improved some of the internals styles. More importantly, we provide an exporter class <code>LenvsLatexExporter</code> (also in library <code>latex_envs.py</code>). Using that class, conversion simply amounts to</p>
+
+<pre><code>jupyter nbconvert --to latex_envs.LenvsLatexExporter FILE.ipynb</code></pre>
+<p>A shortcut is also provided</p>
+
+<pre><code>jupyter nbconvert --to latex_with_lenvs FILE.ipynb</code></pre>
+<p>In addition, we provide several further options:</p>
+<ul>
+<li><strong>removeHeaders</strong>: Remove headers and footers, (default false)</li>
+<li><strong>figcaptionProcess</strong>: Process figcaptions, (default true)</li>
+<li><strong>tocrefRemove</strong> Remove tocs and ref sections, + some cleaning, (default true), </li>
+</ul>
+<p>These options can be specified on the command line as, eg,</p>
+
+<pre><code>jupyter nbconvert --to latex_with_lenvs --LenvsLatexExporter.removeHeaders=True -- LenvsLatexExporter.tocrefRemove=False FILE.ipynb</code></pre>
+<p><strong>If you use the version included in the jupyter_notebook_extensions collection</strong>, the entry-points (conversion shortcuts) are a little different: use instead</p>
+
+<pre><code>jupyter nbconvert --to latex_lenvs FILE.ipynb</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+\begin{example}
+As for an example, the present document has been converted using   
+```
+jupyter nbconvert --to latex_with_lenvs --LenvsLatexExporter.removeHeaders=True latex_env_doc.ipynb
+```
+
+Then the resulting file (without header/footer) has been included in the main file `documentation.tex`, where some LaTeX definitions of environments are done (namely listings, colors, etc) and compiled using 
+
+- `xelatex -interaction=nonstopmode documentation`
+- `bibTeX documentation`
+- `xelatex -interaction=nonstopmode documentation`
+
+The output can be consulted [here](documentation.pdf).    
+\end{example}
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Installation">Installation<a class="anchor-link" href="#Installation">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The extension consists in a package that includes a javascript notebook extension. Since Jupyter 4.2, this is the recommended way to distribute nbextensions. The extension can be installed</p>
+<ul>
+<li>from the master version on the github repo (this will be always the most recent version)</li>
+<li>via pip for the version hosted on Pypi</li>
+<li>as part of the great <a href="https://github.com/ipython-contrib/Jupyter-notebook-extensions">Jupyter-notebook-extensions</a> collection. Follow the instructions there for installing. Once this is done, you can open a tab at  <code>http://localhost:8888/nbextensions</code> to enable and configure the various extensions. </li>
+</ul>
+<p>From the github repo or from Pypi,</p>
+<ul>
+<li><strong>step 1</strong>: install the package<ul>
+<li><code>pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]</code></li>
+<li><span style="color:blue"> or</span> <code>pip3 install jupyter_latex_envs [--user][--upgrade]</code></li>
+<li><span style="color:blue"> or</span> clone the repo and install
+<pre><code>git clone https://github.com/jfbercher/jupyter_latex_envs.git
+python3 setup.py install</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>With Jupyter &gt;= 4.2,</p>
+<ul>
+<li><p><strong>step 2</strong>: install the notebook extension</p>
+
+<pre><code>jupyter nbextension install --py latex_envs [--user]</code></pre>
+</li>
+<li><p><strong>step 3</strong>: and enable it</p>
+
+<pre><code>jupyter nbextension enable latex_envs [--user] --py</code></pre>
+</li>
+</ul>
+<p>For Jupyter versions before 4.2, the situation is more tricky since you will have to find the location of the source files (instructions from @jcb91 found <a href="https://github.com/jcb91/jupyter_highlight_selected_word">here</a>): execute</p>
+
+<pre><code>python -c "import os.path as p; from jupyter_highlight_selected_word import __file__ as f, _jupyter_nbextension_paths as n; print(p.normpath(p.join(p.dirname(f), n()[0]['src'])))"</code></pre>
+<p>Then, issue</p>
+
+<pre><code>jupyter nbextension install &lt;output source directory&gt;
+jupyter nbextension enable latex_envs/latex_envs</code></pre>
+<p>where <code>&lt;output source directory&gt;</code> is the output of the python command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Usage-and-further-examples">Usage and further examples<a class="anchor-link" href="#Usage-and-further-examples">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12432,7 +12558,7 @@ modulo $N$. This is illustrated in the following simple script:</p>
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
 <span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="k">import</span> <span class="n">fft</span>
@@ -12457,7 +12583,7 @@ modulo $N$. This is illustrated in the following simple script:</p>
 
 
 <div class="output_png output_subarea ">
-<img src="latex_env_doc_files/latex_env_doc_41_0.png"
+<img src="latex_env_doc_files/latex_env_doc_44_0.png"
 >
 </div>
 
@@ -12581,7 +12707,7 @@ The solution of exercise \ref{ex:exofilter}, which uses a difference equation as
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
 <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">lfilter</span>
@@ -12589,7 +12715,7 @@ The solution of exercise \ref{ex:exofilter}, which uses a difference equation as
 <span class="n">alist</span><span class="o">=</span><span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">,</span> <span class="mf">1.001</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alist</span><span class="p">:</span>
     <span class="n">h</span><span class="o">=</span><span class="n">lfilter</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="p">],</span><span class="n">d</span><span class="p">)</span>
-    <span class="n">_</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;a={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    <span class="n">_</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;a=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
 <span class="n">_</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -12607,7 +12733,7 @@ The solution of exercise \ref{ex:exofilter}, which uses a difference equation as
 
 
 <div class="output_png output_subarea ">
-<img src="latex_env_doc_files/latex_env_doc_47_0.png"
+<img src="latex_env_doc_files/latex_env_doc_50_0.png"
 >
 </div>
 
@@ -12692,80 +12818,6 @@ The following \textit{environments} are available:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Conversion-to-LaTeX-and-HTML">Conversion to LaTeX and HTML<a class="anchor-link" href="#Conversion-to-LaTeX-and-HTML">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The extension works in the live-notebook. Since it relies on a bunch of javascript, the notebook does not render as is in services such as <code>nbviewer</code> or <code>github</code> viewer. Similarly, <code>nbconvert</code> does not know of the LaTeX constructs which are used here and therefore does not fully convert notebooks using this extension.</p>
-<p>Therefore, we provide specialized templates and exporters to achieve these conversions.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conversion-to-html">Conversion to html<a class="anchor-link" href="#Conversion-to-html">&#182;</a></h2><p>We provide a template <code>latex_envs.tpl</code> and an exporter class <code>LenvsHTMLExporter</code> (in library <code>latex_envs.py</code>). Using that class, conversion simply amounts to</p>
-
-<pre><code>jupyter nbconvert --to latex_envs.LenvsHTMLExporter FILE.ipynb</code></pre>
-<p>A shortcut is also provided</p>
-
-<pre><code>jupyter nbconvert --to html_lenvs FILE.ipynb</code></pre>
-<p>It should be noted that the rendering is done exactly in the same way as in the livenotebook. Actually, it is the very same javascript which is run in the html file. The javascript functions are available on the <code>jupyter_notebook_extensions</code> CDN, which means that the rendering of the html files requires an internet connection (this is also true for the rendering of equations with MathJax).</p>
-<p>Another template <code>latex_envs_toc.tpl</code> is provided which enables to also 
-keep the toc2 features when exporting to html:</p>
-<div class="highlight"><pre>jupyter nbconvert --to html_toclenvs FILE.ipynb
-</pre></div>
-<h2 id="Conversion-to-LaTeX">Conversion to LaTeX<a class="anchor-link" href="#Conversion-to-LaTeX">&#182;</a></h2><p>We provide two templates <code>thmsInNb_article.tplx</code> and <code>thmsInNb_report.tplx</code> for article and report styles respectively. Anyway one can also use the standard article, report, book templates provided with nbconvert. Simply, we have improved some of the internals styles. More importantly, we provide an exporter class <code>LenvsLatexExporter</code> (also in library <code>latex_envs.py</code>). Using that class, conversion simply amounts to</p>
-
-<pre><code>jupyter nbconvert --to latex_envs.LenvsLatexExporter FILE.ipynb</code></pre>
-<p>A shortcut is also provided</p>
-
-<pre><code>jupyter nbconvert --to latex_lenvs FILE.ipynb</code></pre>
-<p>In addition, we provide several further options:</p>
-<ul>
-<li><strong>removeHeaders</strong>: Remove headers and footers, (default false)</li>
-<li><strong>figcaptionProcess</strong>: Process figcaptions, (default true)</li>
-<li><strong>tocrefRemove</strong> Remove tocs and ref sections, + some cleaning, (default true), </li>
-</ul>
-<p>These options can be specified on the command line as, eg,</p>
-
-<pre><code>jupyter nbconvert --to latex_lenvs --LenvsLatexExporter.removeHeaders=True --  --LenvsLatexExporter.tocrefRemove=False FILE.ipynb</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-\begin{example}
-As for an example, the present document has been converted using
-
-    jupyter nbconvert --to latex_lenvs --LenvsLatexExporter.removeHeaders=True latex_env_doc.ipynb
-
-Then the resulting file (without header/footer) has been included in the main file `documentation.tex`, where some LaTeX definitions of environments are done (namely listings, colors, etc) and compiled using 
-
-    xelatex documentation
-
-The output can be consulted [here](documentation.pdf).    
-\end{example}
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Disclaimer,-sources-and-thanks">Disclaimer, sources and thanks<a class="anchor-link" href="#Disclaimer,-sources-and-thanks">&#182;</a></h1>
 </div>
 </div>
@@ -12775,10 +12827,17 @@ The output can be consulted [here](documentation.pdf).
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This is done in the hope it can be useful. However there are many impovements possible, in the code and in the documentation.</p>
-<p><strong>Contributions will be welcome and deeply appreciated.</strong></p>
 <p>Originally, I used a piece of code from the nice online markdown editor <code>stackedit</code> <a href="https://github.com/benweet/stackedit/issues/187">https://github.com/benweet/stackedit/issues/187</a>, where the authors also considered the problem of incorporating LaTeX markup in their markdown.</p>
 <p>I also studied and used examples and code from <a href="https://github.com/ipython-contrib/IPython-notebook-extensions">https://github.com/ipython-contrib/IPython-notebook-extensions</a>.</p>
+<ul>
+<li><p>This is done in the hope it can be useful. However there are many impovements possible, in the code and in the documentation. 
+<strong>Contributions will be welcome and deeply appreciated.</strong></p>
+</li>
+<li><p>If you have issues, please post an issue at 
+<code>https://github.com/jfbercher/latex_envs/issues</code> <a href="https://github.com/jfbercher/latex_envs/issues">here</a>.</p>
+</li>
+</ul>
+<p><strong>Self-Promotion --</strong> Like <code>latex_envs</code>? Please star and follow the <a href="https://github.com/jfbercher/jupyter_latex_envs">repository</a> on GitHub.</p>
 
 </div>
 </div>
@@ -12795,6 +12854,45 @@ The output can be consulted [here](documentation.pdf).
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">html</span>
+&lt;style&gt;
+    .prompt{
+        display: none;
+    }    
+
+&lt;/style&gt;
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+    .prompt{
+        display: none;
+    }    
+
+</style>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
     </div>
   </div>
