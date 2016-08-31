@@ -14,6 +14,7 @@ import io
 from setuptools import setup, find_packages
 from os.path import join, dirname
 from sys import exit, prefix
+import pypandoc
 
 
 def read(*names, **kwargs):
@@ -24,12 +25,12 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.2.0',
-      description=("Jupyter notebook extension which supports (some) LaTeX environments"  # noqa
-      "within markdown cells. Also provides support for labels and crossreferences,"  # noqa
+      version='1.2.3',
+      description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
+      "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
       # '\n'.join(__doc__.split("\n")[2:]).strip(),
-      long_description=read('README.md'),
+      # long_description=read('README.md'),
       url='http://github.com/jfbercher/jupyter_latex_envs',
       author='Jean-François Bercher',
       author_email='jf.bercher@gmail.com',
