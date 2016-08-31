@@ -81,13 +81,11 @@ class LenvsLatexPreprocessor(Preprocessor):
         theenv = match.group(1)
         tobetranslated = match.group(2)
         out = "!sl!begin!op!" + theenv + '!cl!' + tobetranslated + "!sl!end!op!" + theenv + '!cl!'  # noqa
-        out = out.replace('\n', '!nl!')
+        # out = out.replace('\n', '!nl!') #dont remember why I did that
         if theenv in self.environmentMap:
             return out
         else:
-            tobetranslated = tobetranslated.replace('\\begin', '/begin')
-            tobetranslated = tobetranslated.replace('\\end', '/end')
-            return out
+            return match.group(0).replace('\\begin', '/begin').replace('\\end', '/end')#out
 
     def preprocess_cell(self, cell, resources, index):
         """
@@ -105,12 +103,11 @@ class LenvsLatexPreprocessor(Preprocessor):
         """
         if cell.cell_type == "markdown":
             data = cell.source
+            data = data.replace(r"{enumerate}", r"{enum}")
             code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
-            # data=data.replace(r"{enumerate}",r"{enum}")
             while (code is not None):
                 data = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
                               self.replacement, data)
-                data = data.replace(r"{enum}", r"{enumerate}")
                 data = data.replace(r'\item', r'/item')
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
             # cell.source = cell.source.replace('\n','!nl!')
@@ -393,8 +390,8 @@ class LenvsLatexExporter(LatexExporter):
         nb_text = nb_text.replace('!cl!', '}')
         nb_text = nb_text.replace('!sl!', '\\')
         nb_text = nb_text.replace(r'/item', r'\item')
+        nb_text = nb_text.replace(r"{enum}", r"{enumerate}")
 
-        # print('SELF--->',dir(self))
         if self.removeHeaders:
             tex_text = re.search('begin{document}([\s\S]*?)\\\\end{document}', nb_text, flags=re.M)  # noqa
             newtext = tex_text.group(1)
@@ -420,7 +417,6 @@ class LenvsLatexExporter(LatexExporter):
         nb, resources = lenvslatexpreprocessor(nb, resources)
         output, resources = super(LenvsLatexExporter, self).from_notebook_node(nb, resources, **kw)  # noqa
         postout = self.postprocess(output)
-        # postout = postout.replace('sklearn','Tonio')
         # print(postout[0:200]) #WORKS
 
         return postout, resources
