@@ -212,6 +212,15 @@ function restore_maths(math_and_text) {
 
 function thmsInNbConv(marked,text) {
 
+    // Modify marked renderer for paragraphs
+    var MyRenderer = new marked.Renderer()
+    MyRenderer.paragraph = function(text) {
+        return text + '\n';
+    };
+    marked.setOptions({
+        renderer: MyRenderer,
+    });
+
     var listings = [];
 
             { //****************************************************************************
@@ -320,7 +329,6 @@ function thmsInNbConv(marked,text) {
 
                         return result + '</div>';
                     },'gm'); // end of nestedEnvReplace
-
                     return out; //}
 
                 }
