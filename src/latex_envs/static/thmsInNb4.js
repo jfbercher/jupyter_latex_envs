@@ -1,4 +1,3 @@
-
 /*
 This script goes through the input text (actually it is triggered each time a markdown cell is rendered. The imput text is the content of the cell.
 It replaces the latex structures by html tags, typically with a <div class="latex_environment_name> ... </div>. Then the html rendering 
