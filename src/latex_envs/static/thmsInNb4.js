@@ -72,12 +72,14 @@ function nestedEnvSearch(text, env_open, env_close) {
 }
 
 
-
 function envReplaceApply(text, matches, replacement) {
     var output;
     if (matches.length != 0) {
         if (replacement instanceof Function) {
-            output = text.replace(matches[0], replacement(matches[0], matches[1], matches[2]))
+            output = text.replace(matches[0], 
+                replacement(matches[0], matches[1], matches[2])
+                .replace(/\$\$/g,"!@$!@$")).replace(/!@\$/g,"$") 
+                //last line because "$$" in the replacement string does not work
         } else if (typeof replacement == "string") {
             output = text.replace(matches[0], replacement)
         }
@@ -102,7 +104,9 @@ function nestedEnvReplace(text, env_open, env_close, replacement, flags) {
             matches = nestedEnvSearch(tmp_text, env_open, env_close);
         }
         return text;
-    } else return text;
+    } else {
+        return text;
+    }
 }
 
 /****************************************************************************************/
@@ -258,7 +262,6 @@ function thmsInNbConv(marked,text) {
 
                     var out = nestedEnvReplace(message, '\\\\begin{(\\w+\\\*?)}', '\\\\end{\\1}', function(wholeMatch, m1, m2) {
                     //var out = message.replace(/\\begin{(\w+)}([\s\S]*?)\\end{\1}/gm, function(wholeMatch, m1, m2) {
-
 
                         //if(!environmentMap[m1]) return wholeMatch;
                         var environment = environmentMap[m1];
