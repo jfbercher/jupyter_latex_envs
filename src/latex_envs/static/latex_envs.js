@@ -122,6 +122,7 @@ define(function(require, exports, module) {
     }
 
     var _on_reload = true; /* make sure cells render on reload */
+    
 
     /* Override original markdown render function to include latex_envs 
     processing */
@@ -165,6 +166,7 @@ define(function(require, exports, module) {
         }
         return cont;
     };
+    
 
     var maps = initmap();
     environmentMap = maps[0];
