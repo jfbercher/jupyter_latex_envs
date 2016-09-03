@@ -92,3 +92,12 @@ ENV/
 README
 makerst
 README2.rst
+src/latex_envs/latex_envs_prev.py
+
+# Latex compilation
+*.bbl
+*.blg
+*.aux
+*.out
+*.toc
+
