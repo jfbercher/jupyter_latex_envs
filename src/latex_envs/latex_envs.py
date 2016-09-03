@@ -110,7 +110,9 @@ class LenvsLatexPreprocessor(Preprocessor):
                               self.replacement, data)
                 data = data.replace(r'\item', r'/item')
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
-            # cell.source = cell.source.replace('\n','!nl!')
+            #data = data.replace('\n', '!nl!\n')
+            data = data.replace('\\\\', '!sl!!sl!')
+            data = data.replace('%', '!cc!')
             data = data.replace("/begin", "\\begin")
             data = data.replace("/end", "\\end")
             cell.source = data
@@ -388,6 +390,7 @@ class LenvsLatexExporter(LatexExporter):
         nb_text = nb_text.replace('!nl!', '\n')
         nb_text = nb_text.replace('!op!', '{')
         nb_text = nb_text.replace('!cl!', '}')
+        nb_text = nb_text.replace('!cc!', '%')
         nb_text = nb_text.replace('!sl!', '\\')
         nb_text = nb_text.replace(r'/item', r'\item')
         nb_text = nb_text.replace(r"{enum}", r"{enumerate}")
