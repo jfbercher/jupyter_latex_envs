@@ -1,3 +1,4 @@
+
 /*
 This script goes through the input text (actually it is triggered each time a markdown cell is rendered. The imput text is the content of the cell.
 It replaces the latex structures by html tags, typically with a <div class="latex_environment_name> ... </div>. Then the html rendering 
@@ -215,7 +216,7 @@ function restore_maths(math_and_text) {
 
 function thmsInNbConv(marked,text) {
 
-    // Modify marked renderer for paragraphs
+  /*  // Modify marked renderer for paragraphs
     var MyRenderer = new marked.Renderer()
     MyRenderer.paragraph = function(text) {
         return text + '\n';
@@ -223,6 +224,7 @@ function thmsInNbConv(marked,text) {
     marked.setOptions({
         renderer: MyRenderer,
     });
+    */
 
     var listings = [];
 
@@ -230,15 +232,15 @@ function thmsInNbConv(marked,text) {
                 var EnvReplace = function(message) {
                     
                     //Restore incorrect replacements done during mathjaxutils.remove_math(text); [MarkdownCell.prototype.render]
+                    // This may occur if the environment is NOT extracted, which occurs when there is a blank line in it
                     //This also allows to highlight text in latex_envs using the highlighter extension
                     var message = message.replace(/&lt;(div|span)[\S\s]*&lt;\/(\1)&gt;/gm,
-                        // this should not occur anymore
+                        
                         function(wholeMatch,m1,m2) {
                                wholeMatch = wholeMatch.replace(/&lt;/gm,'<');
                                wholeMatch = wholeMatch.replace(/&gt;/gm,'>');
                             return wholeMatch
                         })
-
                     //Look for pairs [ ]
                     var message = message.replace(/^(?:<p>)?\[([\s\S]*?)^(?:<p>)?\]/gm,
                         function(wholeMatch, m1) {
@@ -246,26 +248,41 @@ function thmsInNbConv(marked,text) {
                             //return "\\["+m1+"\\]";
                             m1 = m1.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
                             m1 = m1.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
+                            m1 = m1.replace(/right}/g, "right\\}"); //correct possible incorrect md remplacements in eqs
                             return "\\[" + m1 + "\\]";
                         }
                     );
-
                     var message = message.replace(/(?:<p>)?([$]{1,2})([\s\S]*?)(?:<p>)?\1/gm,
                         function(wholeMatch, m1) {
-                            // this should not occur anymore
                             wholeMatch = wholeMatch.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
                             wholeMatch = wholeMatch.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
+                            wholeMatch = wholeMatch.replace(/right}/g, "right\\}"); //correct possible incorrect md remplacements in eqs
                             return wholeMatch;
                         }
                     );
 
                     var out = nestedEnvReplace(message, '\\\\begin{(\\w+\\\*?)}', '\\\\end{\\1}', function(wholeMatch, m1, m2) {
                     //var out = message.replace(/\\begin{(\w+)}([\s\S]*?)\\end{\1}/gm, function(wholeMatch, m1, m2) {
-
                         //if(!environmentMap[m1]) return wholeMatch;
                         var environment = environmentMap[m1];
                         if (!environment) return wholeMatch;
-                        
+
+                        if (m2.match(/<\/p>[\n]*<p>/) !== null) {
+                            // means that the environment has a blank line in it -- **this shoud  not occur**
+                            // because in such a case, markdown to html conversion already occured
+                            // Try to compensate this for <, >, &, \left{ \right} at least
+                            m2 = m2.replace(/&lt;/gm, '<');
+                            m2 = m2.replace(/&gt;/gm, '>');
+                           // m2 = m2.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
+                           // m2 = m2.replace(/<[/]?strong>/g, "_"); //correct possible incorrect md remplacements in eqs
+                           // m2 = m2.replace(/\\[\s]/g, "\\\\\n"); //correct possible incorrect md remplacements in eqs
+                            m2 = m2.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
+                            m2 = m2.replace(/right}/g, "right\\}"); //correct possible incorrect md remplacements in eqs
+                        }
+
+                        //support for comments (mask them in rendered version)
+                        m2 = m2.replace(/^%[\S ]*/gm,'')
+
                         var title = environment.title;
                         if (environment.counter) {
                             environment.counter.num++;
@@ -289,8 +306,8 @@ function thmsInNbConv(marked,text) {
                         if (m2.match(/\*{1,2}([\s\S]*?)\*{1,2}|\_{1,2}([\S]*?)\_{1,2}|```/gm)) {
                             var m2 = marked(m2);
                         }
-
-
+                        m2 = m2.replace(/^[\s]*<\/p>/,"<br>")    // opening <div> tag (below) automatically closes the <p>
+                                                            // so we replace the </p> by a <br>
                         var result = '<br><span class="latex_title">' + title + '</span> <div class="latex_' + m1 + '">' + m2;
 
                         // case of the figure environment. We look for an \includegraphics directive, gobble its parameters except the image name,
@@ -464,6 +481,7 @@ function thmsInNbConv(marked,text) {
 
 
                 {
+
 //*********************** Environments replacements *****************
                     text = EnvReplace(text);
 //********************************************************************
@@ -483,7 +501,9 @@ function thmsInNbConv(marked,text) {
                     });
                     var text = text.replace(/\\noindent/g, "");
                     var text = text.replace(/\\(?:<\/p>)/g, "</p>");
-
+                    
+                    //Suport for \\ for line breaks
+                    var text = text.replace(/[\\]{1,2}[\s]/g, "<br>");
 
 
                 };
@@ -495,7 +515,6 @@ function thmsInNbConv(marked,text) {
             text = text.replace(/!@!Listing(\d+)!@!/gm, function(wholeMatch, n) {
                         return '<pre>' + listings[n-1] + '</pre>';
             });
-
             return text;
 
         };
