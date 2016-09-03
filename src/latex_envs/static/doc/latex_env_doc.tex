@@ -301,11 +301,11 @@ var cit_tpl = {
 \end{verbatim}
 
 The keys are the main types of documents, eg inproceedings, article,
-inbook, etc. To each key is associated a string where the \%KEYWORDS\%
-are the fields of the bibtex entry. The keywords are replaced by the
-correponding bibtex entry value. The template string can formatted with
-additional words and effects (markdown or LaTeX are commands are
-supported)
+inbook, etc. To each key is associated a string where the
+%KEYWORDS% are the fields of the bibtex entry. The keywords are
+replaced by the correponding bibtex entry value. The template string can
+formatted with additional words and effects (markdown or LaTeX are
+commands are supported)
 
     \subsection{Figure environment}\label{figure-environment}
 
@@ -394,32 +394,53 @@ plt.plot(sin(2*pi*0.01*arange(100)))
   \textbf{it is possible to mix LaTeX and markdown markup in
   environments}
 \item
+  Support for \textbf{line-comments} (within environments): lines
+  beginning with a % will be masked when rendering
+\item
+  Support for \textbf{linebreaks}: \\\\\_, where \_ denotes
+  any space, tab, linefeed, cr, is replaced by a linebreak
+\item
   Environments can be nested. egg:
 
   \begin{listing}
+  This is an example of nested environments, with equations inside\\
+  \begin{proof} Demo
+  % This is a comment
   \begin{enumerate}
   \item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
   \item A **nested enumerate**
+  \item second item 
+  \begin{enumerate}
+  \item $ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $
+  \item And *another one*
+  \item second item 
   \begin{enumerate}
   \item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
-  \item And **another one**
-  \begin{enumerate}
-  \item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
+  \item second item 
   \end{enumerate}
   \end{enumerate}
   \end{enumerate}
+  \end{proof}
   \end{listing}
 
   which results in
 \end{itemize}
 
-    \begin{enumerate} \item
+    This is an example of nested environments, with equations inside\\
+\begin{proof} Demo % This is a comment \begin{enumerate}
+\item
+
+\begin{equation}\label{eq:}
+\left\{ p_1, p_2, p_3 \ldots p_n \right\}
+\end{equation}
+
 \[ \left\{ p_1, p_2, p_3 \ldots p_n \right\} \] \item A \textbf{nested
-enumerate} \begin{enumerate} \item
-\[ \left\{ p_1, p_2, p_3 \ldots p_n \right\} \] \item And
-\textbf{another one} \begin{enumerate} \item
-\[ \left\{ p_1, p_2, p_3 \ldots p_n \right\} \] \end{enumerate}
-\end{enumerate} \end{enumerate}
+enumerate} \item second item \begin{enumerate} \item
+\(\left\{ p_1, p_2, p_3 \ldots p_n \right\}\) \item And \emph{another
+one} \item second item \begin{enumerate} \item
+\[ \left\{ p_1, p_2, p_3 \ldots p_n \right\} \] \item second item
+\end{enumerate} \end{enumerate} \end{enumerate}
+\end{proof}
 
     \subsection{User interface}\label{user-interface}
 
