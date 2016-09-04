@@ -267,21 +267,6 @@ function thmsInNbConv(marked,text) {
                         var environment = environmentMap[m1];
                         if (!environment) return wholeMatch;
 
-                        if (m2.match(/<\/p>[\n]*<p>/) !== null) {
-                            // means that the environment has a blank line in it -- **this shoud  not occur**
-                            // because in such a case, markdown to html conversion already occured
-                            // Try to compensate this for <, >, &, \left{ \right} at least
-                            m2 = m2.replace(/&lt;/gm, '<');
-                            m2 = m2.replace(/&gt;/gm, '>');
-                           // m2 = m2.replace(/<[/]?em>/g, "_"); //correct possible incorrect md remplacements in eqs
-                           // m2 = m2.replace(/<[/]?strong>/g, "_"); //correct possible incorrect md remplacements in eqs
-                           // m2 = m2.replace(/\\[\s]/g, "\\\\\n"); //correct possible incorrect md remplacements in eqs
-                            m2 = m2.replace(/left{/g, "left\\{"); //correct possible incorrect md remplacements in eqs
-                            m2 = m2.replace(/right}/g, "right\\}"); //correct possible incorrect md remplacements in eqs
-                        }
-
-                        //support for comments (mask them in rendered version)
-                        m2 = m2.replace(/^%[\S ]*/gm,'')
 
                         var title = environment.title;
                         if (environment.counter) {
@@ -338,7 +323,7 @@ function thmsInNbConv(marked,text) {
                         };
 
                         if (m1 == "enumerate") {
-                            var result = "<div><ol>" + m2.replace(/\\item/g, "<li>") + "</ol>";
+                            var result = "<div class='latex_list'><ol>" + m2.replace(/\\item/g, "<li>") + "</ol>";
                         };
                         if (m1 != "listing") {
                             result = restore_maths([math, result])
@@ -403,7 +388,7 @@ function thmsInNbConv(marked,text) {
                             } 
                             return '\\tag{' + m2 + '}' + '<!--' + wholeMatch + '-->';
                }
-                    return '<a id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
+                    return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
                 });
 
 
@@ -494,6 +479,8 @@ function thmsInNbConv(marked,text) {
                         var tag = cmd.replacement;
                         return '<' + tag + '>' + m2 + '</' + tag + '>';
                     });
+                    //support for comments (mask them in rendered version)
+                    text = text.replace(/^(<p>)?%[\S ]*\n/gm,'$1')
 
                     //Other small replacements
                     var text = text.replace(/\\index{(.+?)}/g, function(wholeMatch, m1) {
@@ -502,9 +489,42 @@ function thmsInNbConv(marked,text) {
                     var text = text.replace(/\\noindent/g, "");
                     var text = text.replace(/\\(?:<\/p>)/g, "</p>");
                     
-                    //Suport for \\ for line breaks
-                    var text = text.replace(/[\\]{1,2}[\s]/g, "<br>");
+                    //Support for \par for line breaks
+                    var text = text.replace(/\\par\s/g, "<br/>");
+                    // quad and \qquad 
+                    var text = text.replace(/\\quad\s/g, "&nbsp;");
+                    var text = text.replace(/\\qquad\s/g, "&nbsp;&nbsp;");
+                    // \vspace
+                    var text = text.replace(/\\vspace{(.+?)}/g, function(wholeMatch, m1) {
+                        var pat=/[\s]*(-?)\d+/;
+                        var thisspace="";
+                        var part1='<p class="mspace" style="padding-left:0.5em;';
+                        var part2='display:block;"></p>';
+                        var them=m1.match(pat);
+                        if(them[1]=="-"){
+                            thisspace="margin-top:"+m1+";";
+                        }
+                        else{
+                        thisspace='height:'+m1+ ';';
+                        }
+                        return part1+thisspace+part2;
+                    });    
 
+                    // \hspace 
+                    var text = text.replace(/\\hspace{(.+?)}/g, function(wholeMatch, m1) {
+                        var pat=/[\s]*(-?)\d+/;
+                        var thisspace="";
+                        var part1='<span class="mspace" style="padding-left:0.5em;height: 0em; vertical-align: 0em;';
+                        var part2='display: inline-block; overflow: hidden;"></span>';
+                        var them=m1.match(pat);
+                        if(them[1]=="-"){
+                            thisspace="margin-left:"+m1+";";
+                        }
+                        else{
+                        thisspace='width:'+m1+ ';';
+                        }
+                        return part1+thisspace+part2;
+                    }); 
 
                 };
                 
