@@ -7,13 +7,24 @@
 # upgrade with a --upgrade.
 # A system install can be done by omitting the --user switch.
 
-"""Setup script for jupyter_latex_envs."""
 from __future__ import print_function
 import io
 
 from setuptools import setup, find_packages
 from os.path import join, dirname
-from sys import exit, prefix
+from sys import exit, prefix, argv
+
+
+msg="""
+----------------- INSTALLATION -------------------------
+step 1: pip3 install jupyter_latex_envs [--user][--upgrade]
+--> Now:
+step 2: install the notebook extension
+jupyter nbextension install --py latex_envs [--user]
+step 3: and enable it
+jupyter nbextension enable latex_envs [--user] --py
+----------------------------------------------------------
+"""
 
 readme_file = open('README.rst', 'r')
 try:
@@ -29,7 +40,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.2.8',
+      version='1.2.999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
@@ -62,3 +73,7 @@ setup(name='jupyter_latex_envs',
                 'Topic :: Utilities',
             ],
   )
+
+
+if 'install' in argv:
+    print(msg)
