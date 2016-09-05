@@ -14,9 +14,8 @@ import io
 from setuptools import setup, find_packages
 from os.path import join, dirname
 from sys import exit, prefix
-import pypandoc
 
-readme_file = open('README2.rst', 'r')
+readme_file = open('README.rst', 'r')
 try:
     detailed_description = readme_file.read()
 finally:
@@ -30,7 +29,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.2.7',
+      version='1.2.8',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),

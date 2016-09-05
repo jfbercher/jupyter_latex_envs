@@ -50,6 +50,7 @@ of the ``latex_envs`` notebook extension in the converted version. The
 LaTeX converter also expose several conversion options (read the
 `docs <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_envs_doc.html>`__.
 
+
 Demo/documentation
 ==================
 
@@ -59,6 +60,7 @@ and pdf versions. This serves as the documentation. A demo notebook
 `latex\_env\_doc.html <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html>`__
 and a pdf resulting from conversion to LaTeX is available as
 `documentation <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/documentation.pdf>`__.
+
 
 Installation
 ============
@@ -76,14 +78,14 @@ nbextensions. The extension can be installed
    is done, you can open a tab at ``http://localhost:8888/nbextensions``
    to enable and configure the various extensions.
 
+
 From the github repo or from Pypi,
 
 -  **step 1**: install the package
+    -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
+    -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
+    -   or clone the repo and install ``git clone https://github.com/jfbercher/jupyter_latex_envs.git python3 setup.py install``
 
-   -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
-   -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
-   -   or clone the repo and install
-      ``git clone https://github.com/jfbercher/jupyter_latex_envs.git    python3 setup.py install``
 
 With Jupyter >= 4.2,
 
