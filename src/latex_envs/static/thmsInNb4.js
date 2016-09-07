@@ -122,32 +122,32 @@ function initmap(){
 
 
     var environmentMap = {
-                    thm:      { title: "Theorem"    ,counter: thmCounter  },
-                    lem:      { title: "Lemma"      ,counter: thmCounter  },
-                    cor:      { title: "Corollary"  ,counter: thmCounter  },
-                    prop:     { title: "Property"   ,counter: thmCounter  },
-                    defn:     { title: "Definition" ,counter: thmCounter  },
-                    rem:      { title: "Remark"     ,counter: thmCounter  },
-                    prob:     { title: "Problem"    ,counter: excsCounter },
-                    excs:     { title: "Exercise"   ,counter: excsCounter },
-                    examp:    { title: "Example"    ,counter: excsCounter },
-                    property:     { title: "Property"   ,counter: thmCounter  },
-                    theorem:      { title: "Theorem"    ,counter: thmCounter  },
-                    lemma:        { title: "Lemma"      ,counter: thmCounter  },
-                    corollary:    { title: "Corollary"  ,counter: thmCounter  },
-                    proposition:  { title: "Proposition" ,counter: thmCounter },
-                    definition:   { title: "Definition" ,counter: thmCounter  },
-                    remark:       { title: "Remark"     ,counter: thmCounter  },
-                    problem:      { title: "Problem"    ,counter: excsCounter },
-                    exercise:     { title: "Exercise"   ,counter: excsCounter },
-                    example:      { title: "Example"    ,counter: excsCounter },
-                    figure:       { title: "Figure"    ,counter: figCounter },
-                    itemize:      { title: "Itemize"     },
-                    enumerate:    { title: "Enumerate"    },
-                    listing:      { title: " "    },
-                    textboxa:     { title: " "  },
-                    proof:        { title: "Proof" }
-                };
+             thm:      { title: "Theorem"    ,counter: thmCounter  },
+             lem:      { title: "Lemma"      ,counter: thmCounter  },
+             cor:      { title: "Corollary"  ,counter: thmCounter  },
+             prop:     { title: "Property"   ,counter: thmCounter  },
+             defn:     { title: "Definition" ,counter: thmCounter  },
+             rem:      { title: "Remark"     ,counter: thmCounter  },
+             prob:     { title: "Problem"    ,counter: excsCounter },
+             excs:     { title: "Exercise"   ,counter: excsCounter },
+             examp:    { title: "Example"    ,counter: excsCounter },
+             property:     { title: "Property"   ,counter: thmCounter  },
+             theorem:      { title: "Theorem"    ,counter: thmCounter  },
+             lemma:        { title: "Lemma"      ,counter: thmCounter  },
+             corollary:    { title: "Corollary"  ,counter: thmCounter  },
+             proposition:  { title: "Proposition" ,counter: thmCounter },
+             definition:   { title: "Definition" ,counter: thmCounter  },
+             remark:       { title: "Remark"     ,counter: thmCounter  },
+             problem:      { title: "Problem"    ,counter: excsCounter },
+             exercise:     { title: "Exercise"   ,counter: excsCounter },
+             example:      { title: "Example"    ,counter: excsCounter },
+             figure:       { title: "Figure"    ,counter: figCounter },
+             itemize:      { title: "Itemize"     },
+             enumerate:    { title: "Enumerate"    },
+             listing:      { title: " "    },
+             textboxa:     { title: " "  },
+             proof:        { title: "Proof" }
+         };
 
 
     //This is to substitute simple LaTeX+argument commands 
