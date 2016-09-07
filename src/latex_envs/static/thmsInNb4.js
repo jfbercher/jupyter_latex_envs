@@ -135,18 +135,18 @@ function initmap(){
                     theorem:      { title: "Theorem"    ,counter: thmCounter  },
                     lemma:        { title: "Lemma"      ,counter: thmCounter  },
                     corollary:    { title: "Corollary"  ,counter: thmCounter  },
-                    proposition:  { title: "Property"   ,counter: thmCounter  },
+                    proposition:  { title: "Proposition" ,counter: thmCounter },
                     definition:   { title: "Definition" ,counter: thmCounter  },
                     remark:       { title: "Remark"     ,counter: thmCounter  },
                     problem:      { title: "Problem"    ,counter: excsCounter },
                     exercise:     { title: "Exercise"   ,counter: excsCounter },
                     example:      { title: "Example"    ,counter: excsCounter },
-                    figure:      { title: "Figure"    ,counter: figCounter },
+                    figure:       { title: "Figure"    ,counter: figCounter },
                     itemize:      { title: "Itemize"     },
                     enumerate:    { title: "Enumerate"    },
-                    listing:    { title: " "    },
+                    listing:      { title: " "    },
                     textboxa:     { title: " "  },
-                    proof:    { title: "Proof" }
+                    proof:        { title: "Proof" }
                 };
 
 
@@ -158,7 +158,7 @@ function initmap(){
         textbf:     {  replacement: "b"  },
         textem:     {  replacement: "em" },
         section:    {  replacement: "h1" },
-        subsection: { replacement: "h2"  },
+        subsection: {  replacement: "h2" },
     }
     return [environmentMap, cmdsMap, eqLabNums, cit_table]
 }
@@ -170,7 +170,7 @@ cmdsMap=maps[1];
 eqLabNums=maps[2];
 cit_table = maps[3]
 
-/*****************************************************************************************/
+/******************************************************************************/
 
 function remove_maths(text){
     var math=[]
@@ -198,7 +198,6 @@ function restore_maths(math_and_text) {
         cont = text !== newtext; //recurse in text (possible nesting -- just one level)
         text=newtext;
     }
-    
     return text;
 }
 
