@@ -40,7 +40,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.2.999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999',
+      version='1.2.11',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
@@ -74,6 +74,21 @@ setup(name='jupyter_latex_envs',
             ],
   )
 
-
 if 'install' in argv:
     print(msg)
+    import site, importlib
+    importlib.reload(site)
+    import latex_envs
+    import notebook.nbextensions as nb
+    user = False
+    sys_prefix = False
+    if "--user" in argv: 
+        user=True
+    if "--sys-prefix" in argv: 
+        sys_prefix=True
+    print("[Step 2]: Installing the javascript nbextension")
+    nb.install_nbextension_python('latex_envs',
+            user=user, sys_prefix=sys_prefix)
+    print("[Step3]: Enabing the nbextension")
+    nb.enable_nbextension_python('latex_envs',
+            user=user, sys_prefix=sys_prefix)
