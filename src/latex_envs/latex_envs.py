@@ -79,8 +79,10 @@ class LenvsLatexPreprocessor(Preprocessor):
 
     def replacement(self, match):
         theenv = match.group(1)
-        tobetranslated = match.group(2)
-        out = "!sl!begin!op!" + theenv + '!cl!' + tobetranslated + "!sl!end!op!" + theenv + '!cl!'  # noqa
+        tobetranslated = match.group(3)
+        opt_parameter = ''
+        if match.group(2) is not None: opt_parameter =  match.group(2).replace('[','!lb!').replace(']','!rb!') 
+        out = "!sl!begin!op!" + theenv + '!cl@' + opt_parameter + tobetranslated + "!sl!end!op!" + theenv + '!cl@'  # noqa
         # out = out.replace('\n', '!nl!') #dont remember why I did that
         if theenv in self.environmentMap:
             return out
@@ -106,7 +108,8 @@ class LenvsLatexPreprocessor(Preprocessor):
             data = data.replace(r"{enumerate}", r"{enum}")
             code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
             while (code is not None):
-                data = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
+                data = re.sub(r'\\begin{(\w+)}(\[[\S\s]*?\])?([\s\S]*?)\\end{\1}',
+                #data = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
                               self.replacement, data)
                 data = data.replace(r'\item', r'/item')
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
@@ -389,9 +392,11 @@ class LenvsLatexExporter(LatexExporter):
     def postprocess(self, nb_text):
         nb_text = nb_text.replace('!nl!', '\n')
         nb_text = nb_text.replace('!op!', '{')
-        nb_text = nb_text.replace('!cl!', '}')
+        nb_text = nb_text.replace('!cl@', '}')
         nb_text = nb_text.replace('!cc!', '%')
         nb_text = nb_text.replace('!sl!', '\\')
+        nb_text = nb_text.replace('!lb!', '[')
+        nb_text = nb_text.replace('!rb!', ']')
         nb_text = nb_text.replace(r'/item', r'\item')
         nb_text = nb_text.replace(r"{enum}", r"{enumerate}")
 
