@@ -76,8 +76,12 @@ setup(name='jupyter_latex_envs',
 
 if 'install' in argv:
     print(msg)
-    import site, importlib
-    importlib.reload(site)
+    import site 
+    try: 
+        import importlib
+        importlib.reload(site)
+    except:
+        reload(site)
     import latex_envs
     import notebook.nbextensions as nb
     user = False
