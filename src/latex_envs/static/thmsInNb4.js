@@ -169,6 +169,7 @@ environmentMap=maps[0];
 cmdsMap=maps[1];
 eqLabNums=maps[2];
 cit_table = maps[3]
+labelsMap = {};
 
 /******************************************************************************/
 
@@ -292,8 +293,20 @@ function thmsInNbConv(marked,text) {
                         }
                         m2 = m2.replace(/^[\s]*<\/p>/,"<br>")    // opening <div> tag (below) automatically closes the <p>
                                                             // so we replace the </p> by a <br>
+
+                        //LABELS -- replace all labels by an anchor and build a Map
+                        // linking label to environment.counter value
+                        var m2 = m2.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                            m2 = m2.replace(/<[/]?em>/g, "_");
+                            labelsMap[m1+m2] = environment.counter.num;
+                            $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
+                            return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
+                        });
+
+                        // result 
                         var result = '<br><span class="latex_title">' + title + '</span> <div class="latex_' + m1 + '">' + m2;
 
+                        // SPECIAL CASES OF ENVIRONMENTS
                         // case of the figure environment. We look for an \includegraphics directive, gobble its parameters except the image name,
                         // look for a caption and a label and construct an image representation with a caption and an anchor. Style can be customized 
                         // via the class latex_img
@@ -303,9 +316,10 @@ function thmsInNbConv(marked,text) {
                             var captionPresent = /\\caption{([\s\S]*?)}/gm.exec(m2);
 							if (captionPresent!=null) {var caption=captionPresent[1]} 
 							else var caption="";
+                            var labelInCaption = caption.match(/<a class="latex_label_anchor" id=([\s\S]*?)a>/gm);
                             var graphic = /\\includegraphics(?:[\S\s]*?){([\s\S]*?)}/gm.exec(m2)[1];
-                            var label = m2.match(/<a id=([\s\S]*?)a>/gm); //label is already replaced
-                            if (!caption.match(/<a id=([\s\S]*?)a>/gm)) {caption=label+caption};
+                            var label = m2.match(/<a class="latex_label_anchor" id=([\s\S]*?)a>/gm); //label is already replaced
+                            if (!labelInCaption && label != null ) {caption=label+caption};
                             
                             var result = '<div class="latex_figure"> <img class="latex_img" src="'+graphic+'"> '
 							if (captionPresent!=null) {result+='<p class="latex_img"> ' +  title+': ' + caption + '</p>';};
@@ -323,14 +337,15 @@ function thmsInNbConv(marked,text) {
 
                         if (m1 == "enumerate") {
                             var result = "<div class='latex_list'><ol>" + m2.replace(/\\item/g, "<li>") + "</ol>";
-                        };
+                        };               
+                        // ITERATE
                         if (m1 != "listing") {
                             result = restore_maths([math, result])
                             result = EnvReplace(result);
                         }; //try to do further replacements
 
 
-                        return result + '</div>';
+                        return result + '</div>'; //close the env div
                     },'gm'); // end of nestedEnvReplace
                     return out; //}
 
@@ -365,11 +380,11 @@ function thmsInNbConv(marked,text) {
 
 
             {
-                // This is to replace references by links to the correct environment, 
 
 
                 // FOR EQUATIONS, LABELS ARE DETECTED AS eq:something and an anchor is inserted 
-                // before the environment (this used for labels as eq reference)
+                // before the environment - The label is removed from the equation 
+                // this avoid a rendering issue in MathJax where a second execution of the cell leads to duplicates ids 
 
                 var text = text.replace(/\\begin{([\S\s]*?)}[\S\s]*?\\label{eq:([\S\s]*?)}[\S\s]*?\\end{\1}/g, 
                 function(wholeMatch, m1, m2) {
@@ -377,31 +392,15 @@ function thmsInNbConv(marked,text) {
                 return '<a id="mjx-eqn-' + 'eq' + m2 + '">'+'</a>' + wholeMatch; //+withoutLabel;
                 }); 
 
-                //LABELS
-                var text = text.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
-                    m2 = m2.replace(/<[/]?em>/g, "_");
-                    if (m1 == "eq") {
-                            if (eqLabelWithNumbers) {
-                                return wholeMatch;
-                                // This is now delegated to MathJax
-                            } 
-                            return '\\tag{' + m2 + '}' + '<!--' + wholeMatch + '-->';
-               }
-                    return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
-                });
-
-
-                //REFERENCES
-                var text = text.replace(/\\ref{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
-                    m2 = m2.replace(/<[/]?em>/g, "_");
-                        if (m1 == "eq") {
-                        if (!eqLabelWithNumbers) { // this is for displayin the label
-                        return '<a class="latex_ref" href="#mjx-eqn-' + m1 + m2 + '">' + m2 + '</a>'; //m1 + ':' + m2;
+                var text = text.replace(/\\label{eq:(\S+)}/g, function(wholeMatch, m1) {
+                        if (eqLabelWithNumbers) {
+                            return wholeMatch;
+                            // This is now delegated to MathJax
                         }
-                         else  return wholeMatch;
-                         }
-                    return '<a class="latex_ref" href="#' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
+                        return '\\tag{' + m1 + '}' + '<!--' + wholeMatch + '-->';
                 });
+
+
 
                 //CITATIONS
                 var text = text.replace(/\\cite(\[[\S\s]+\])?{([\w\s-_,:]+)}/g, function(wholeMatch, additional_text, keys) {
@@ -463,12 +462,29 @@ function thmsInNbConv(marked,text) {
                 });
 
 
-
                 {
 
 //*********************** Environments replacements *****************
                     text = EnvReplace(text);
 //********************************************************************
+
+                // This is to replace references by links to the correct environment, 
+                //REFERENCES
+                var text = text.replace(/\\ref{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                    m2 = m2.replace(/<[/]?em>/g, "_");
+                    if (m1 == "eq") {
+                        if (!eqLabelWithNumbers) { // this is for displaying the label
+                            return '<a class="latex_ref" href="#mjx-eqn-' + m1 + m2 + '">' + m2 + '</a>'; //m1 + ':' + m2;
+                        } else return wholeMatch;
+                    }
+                    if (labelsMap[m1 + m2]) {
+                        var indata = labelsMap[m1 + m2]
+                    } else {
+                        var indata = '[' + m1 + ':' + m2 + ']'
+                    }
+
+                    return '<a class="latex_ref_' + m1 + m2 + '"' + ' href="#' + m1 + m2 + '">' + indata + '</a>';
+                });
 
                     // LaTeX commands replacements (eg \textbf, \texit, etc)
                     var text = text.replace(/\\([\w]*){(.+?)}/g, function(wholeMatch, m1, m2) {
