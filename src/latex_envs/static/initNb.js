@@ -12,13 +12,12 @@ function onMarkdownCellRendering(event, data) {
 
 function toggleLatexMenu() {
     if (!LaTeX_envs_menu_present) {
-        var identifier = $('#toggleLatexMenu');
         $('#Latex_envs').remove();
-        identifier.css('color', 'grey')
+        $('#toggleLatexMenu').css('color', 'grey')
             .attr('title', 'Insert LaTeX_envs menu');
     } else {
         create_latex_menu();
-        identifier.css('color', 'black')
+        $('#toggleLatexMenu').css('color', 'black')
             .attr('title', 'Remove LaTeX_envs menu');
     }
 }
@@ -28,6 +27,7 @@ var init_nb = function() {
         init_cells();
         create_latex_menu();
         if (!LaTeX_envs_menu_present) toggleLatexMenu();
+        $('.latex_label_anchor').toggle(labels_anchors); 
         add_help_menu_item();
         createReferenceSection();
         Jupyter.keyboard_manager.edit_shortcuts.add_shortcuts(add_edit_shortcuts);
@@ -74,7 +74,9 @@ function init_config(Jupyter,utils,configmod) {
             'cite_by': 'apalike', //cite by 'number', 'key' or 'apalike' 
             'bibliofile': 'biblio.bib', //or IPython.notebook.notebook_name.split(".")[0]+."bib"
             // LaTeX_envs_menu 
-            'LaTeX_envs_menu_present': true
+            'LaTeX_envs_menu_present': true,
+            // Show anchors for labels
+            'labels_anchors':false
         }
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
@@ -98,6 +100,7 @@ function init_config(Jupyter,utils,configmod) {
         eqLabelWithNumbers = cfg.eqLabelWithNumbers;
         eqNum = cfg.eqNumInitial;
         LaTeX_envs_menu_present = cfg.LaTeX_envs_menu_present;
+        labels_anchors = cfg.labels_anchors; 
         reprocessEqs = true;
         // and initialize bibliography and cells 
         init_nb();
@@ -230,6 +233,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
             color: 'black'
         })
         .attr('href', '/nbextensions/latex_envs/doc/latex_env_doc.html')
+        .attr('target', "_blank")
         .attr('title', 'LaTeX_envs documentation')
 
     // input bibliography BibTeX filename
@@ -237,6 +241,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .attr('type', "text")
         .attr('value', bibliofile)
         .attr('id', "biblio")
+        .attr('size', '15')
         .attr('title','Enter BibTeX biblio filename (must be present in current directory)')
         .addClass("edit_mode input-xs")
         .css("vertical-align", "middle")
@@ -292,7 +297,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .append($('<a/>')
             .addClass("btn btn-default")
             .append($('<i/>')
-                .attr('id', "menu-refs").addClass("fa " + eq_by_icon[eqLabelWithNumbers] + " fa-fw"))
+                .attr('id', "menu-eqs").addClass("fa " + eq_by_icon[eqLabelWithNumbers] + " fa-fw"))
             .append('Equations')
         )
         .append($('<a/>')
@@ -314,6 +319,54 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
             )
         )
 
+    // dropdown menu for parameter selection and toggle
+
+
+    var configMenu = $('<div/>').attr('id', 'cfgby').addClass('btn-group')
+        .attr('title', 'Select/Toogle parameters')
+        .append($('<a/>')
+            .addClass("btn btn-default")
+            .append($('<i/>')
+                .attr('id', "menu-config").addClass("fa fa-wrench fa-fw"))
+            .append('Toggles')
+        )
+        .append($('<a/>')
+            .addClass("btn btn-default dropdown-toggle")
+            .attr('data-toggle', "dropdown")
+            .attr('href', "#")
+            .append($('<span/>').addClass("fa fa-caret-down")))
+        .append($('<ul/>').attr('id', 'choice').addClass("dropdown-menu")        
+        .attr('min-width', '300px')
+            .append($('<li/>') 
+                .append($('<a/>')
+                    .attr('id','latex_envs_Menu')
+                    .text('Show LaTeX menu')
+                    .css('width', '200px')
+                    .attr('href', '#')
+                    .attr('title', 'Toogle visibility of LaTeX_envs menu')
+                    .on('click',function (){
+                        cfg.LaTeX_envs_menu_present = LaTeX_envs_menu_present = LaTeX_envs_menu_present = !LaTeX_envs_menu_present
+                        $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
+                        toggleLatexMenu();
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )
+            .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','labels_anchors_menu')
+                    .text('Show Labels anchors')
+                    .attr('href', '#')
+                    .attr('title', 'Toogle visibility of labels anchors')
+                    .on('click',function (){
+                        cfg. labels_anchors = labels_anchors = !labels_anchors
+                        $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors);
+                        $('.latex_label_anchor').toggle(labels_anchors)
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )
+        )
     // toggle the latex_envs dropdown menu
     var latex_envs_menu_button = $("<a/>")
         .addClass("btn btn-default")
@@ -345,6 +398,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .append(eqLabelStyle)
         .append(vertical_separator)
         .append(latex_envs_menu_button)
+        .append(configMenu)
         .append(suicide_button)
 
     // Appending the new toolbar to the main one
@@ -355,10 +409,13 @@ rgba(102, 175, 233, 0.6);}</style>')
     $("#maintoolbar-container").append(LaTeX_envs_toolbar);
     $("#LaTeX_envs_toolbar").css({ 'padding': '5px' });
 
+    // Initializing toogles checks
+    $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors)
+    $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
     // Now the callback functions --------------------------------------------  
 
     $('#toggleLatexMenu').on('click', function() {
-        LaTeX_envs_menu_present = !LaTeX_envs_menu_present
+        cfg.LaTeX_envs_menu_present = LaTeX_envs_menu_present = !LaTeX_envs_menu_present
         toggleLatexMenu();
     })
 
