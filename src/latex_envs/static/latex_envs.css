@@ -106,10 +106,10 @@ LaTeX things
         border-radius:8px;-webkit-border-radius:8px;-moz-border-radius:8px;border-radius:8px
     }
 
-/* enumerate ----------------------------------------------*/
+/* enumerate ----------------------------------------------
 
 div.latex_list OL { counter-reset: item }
 div.latex_list LI { display: block }
 div.latex_list LI:before { content: counters(item, ".") " "; counter-increment: item }
 
-/* enumerate end ----------------------------------------------*/
+ enumerate end ----------------------------------------------*/
