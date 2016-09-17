@@ -111,5 +111,24 @@ LaTeX things
 div.latex_list OL { counter-reset: item }
 div.latex_list LI { display: block }
 div.latex_list LI:before { content: counters(item, ".") " "; counter-increment: item }
+*/
+/* User can change the class enum below to customize items in enumerate environment 
+Similarly, a class item, with ul.item and li.item is available to customize unordered 
+lists*/
 
- enumerate end ----------------------------------------------*/
+ol.enum {
+    counter-reset: item;
+}
+ol.enum li.enum {
+    display: block;
+    position: relative;
+}
+ol.enum > li.enum:before {
+    content: counters(item, ".")".";
+    counter-increment: item;
+    position: absolute;
+    margin-right: 100%;
+    right: 10px; /* space between number and text */
+} 
+
+/* enumerate end ----------------------------------------------*/

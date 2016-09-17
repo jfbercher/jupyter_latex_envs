@@ -22,14 +22,30 @@ function toggleLatexMenu() {
     }
 }
 
+function loadLatexUserDefs() {
+    $.get('latexdefs.tex').done(function(data) {
+        data = data.replace(/^/gm, '\$\$\$').replace(/$/gm, '\$\$\$');
+        if ($('#latexdefs').length > 0) $('#latexdefs').remove();
+        $('body').append($('<div/>').attr('id', 'latexdefs').text(data));
+        console.log('latex_envs: loaded user LaTeX definitions latexdefs.tex');
+        onMarkdownCellRendering();
+    }).fail(function() {
+        console.log('latex_envs: failed to load user LaTeX definitions latexdefs.tex')
+    });
+    //MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById('latexdefs')])();
+    //MathJax.Hub.Queue( ["Reprocess", MathJax.Hub]   );
+    
+}
+
 var init_nb = function() {
     readBibliography(function() {
-        init_cells();
         create_latex_menu();
         if (!LaTeX_envs_menu_present) toggleLatexMenu();
         $('.latex_label_anchor').toggle(labels_anchors); 
+        if (latex_user_defs) loadLatexUserDefs();
         add_help_menu_item();
         createReferenceSection();
+        init_cells();
         Jupyter.keyboard_manager.edit_shortcuts.add_shortcuts(add_edit_shortcuts);
     });
 }
@@ -76,7 +92,9 @@ function init_config(Jupyter,utils,configmod) {
             // LaTeX_envs_menu 
             'LaTeX_envs_menu_present': true,
             // Show anchors for labels
-            'labels_anchors':false
+            'labels_anchors':false,
+            // Load LaTeX user definitions
+            'latex_user_defs': false
         }
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
@@ -101,6 +119,7 @@ function init_config(Jupyter,utils,configmod) {
         eqNum = cfg.eqNumInitial;
         LaTeX_envs_menu_present = cfg.LaTeX_envs_menu_present;
         labels_anchors = cfg.labels_anchors; 
+        latex_user_defs = cfg.latex_user_defs;
         reprocessEqs = true;
         // and initialize bibliography and cells 
         init_nb();
@@ -359,14 +378,38 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                     .attr('href', '#')
                     .attr('title', 'Toogle visibility of labels anchors')
                     .on('click',function (){
-                        cfg. labels_anchors = labels_anchors = !labels_anchors
+                        cfg.labels_anchors = labels_anchors = !labels_anchors
                         $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors);
                         $('.latex_label_anchor').toggle(labels_anchors)
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
             )
+             .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','latex_user_defs')
+                    .text('LaTeX user definitions')
+                    .attr('href', '#')
+                    .attr('title', 'Load LaTeX user definitions (file latexdefs.tex)')
+                    .on('click',function (){
+                        cfg.latex_user_defs = latex_user_defs = !latex_user_defs
+                        $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
+                        if (latex_user_defs) {
+                            loadLatexUserDefs();
+                            setTimeout(function(){ //there is a race condition somewhere
+                                init_cells(); 
+                                onMarkdownCellRendering();},1000);                            
+                        }
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )
         )
+
+
+
+
+
     // toggle the latex_envs dropdown menu
     var latex_envs_menu_button = $("<a/>")
         .addClass("btn btn-default")
@@ -412,6 +455,8 @@ rgba(102, 175, 233, 0.6);}</style>')
     // Initializing toogles checks
     $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors)
     $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
+    $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
+    
     // Now the callback functions --------------------------------------------  
 
     $('#toggleLatexMenu').on('click', function() {

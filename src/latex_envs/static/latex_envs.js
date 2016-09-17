@@ -8,7 +8,7 @@ var conversion_to_html = false;
 var config_toolbar_present = false;
 var reprocessEqs; 
 //These variables are initialized in init_config()
-var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present;
+var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, latex_user_defs;
 
 if (typeof add_edit_shortcuts === "undefined")
     var add_edit_shortcuts = {}

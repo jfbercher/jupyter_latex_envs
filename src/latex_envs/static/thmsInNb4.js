@@ -332,12 +332,18 @@ function thmsInNbConv(marked,text) {
                         }
 
                         if (m1 == "itemize") {
-                            var result = "<div><ul>" + m2.replace(/\\item/g, "<li>") + "</ul>";
+                            var result = "<div><ul>" 
+                                + m2.replace(/\\item/g, "<li>") + "</ul>";
                         };
 
+                        /*if (m1 == "enumerate") {
+                            var result = "<div><ol class='enum'>" 
+                                + m2.replace(/\\item/g, "<li class='enum'>") + "</ol>";
+                        };*/
                         if (m1 == "enumerate") {
-                            var result = "<div class='latex_list'><ol>" + m2.replace(/\\item/g, "<li>") + "</ol>";
-                        };               
+                            var result = "<div><ol class='enum'>" 
+                                + m2.replace(/\\item/g, "<li class='enum'>") + "</ol>";
+                        };              
                         // ITERATE
                         if (m1 != "listing") {
                             result = restore_maths([math, result])
