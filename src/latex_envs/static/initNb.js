@@ -32,8 +32,6 @@ function loadLatexUserDefs() {
     }).fail(function() {
         console.log('latex_envs: failed to load user LaTeX definitions latexdefs.tex')
     });
-    //MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById('latexdefs')])();
-    //MathJax.Hub.Queue( ["Reprocess", MathJax.Hub]   );
     
 }
 
@@ -73,7 +71,7 @@ var init_cells = function() {
             lastmd_cell = cell;
         };
     }
-    if(typeof lastmd !== "undefined") lastmd_cell.render(); // re-render last md cell and issue rendered.MarkdownCell event
+    if(typeof lastmd_cell !== "undefined") lastmd_cell.render(); // re-render last md cell and issue rendered.MarkdownCell event
     onMarkdownCellRendering();
 }
 
@@ -83,7 +81,7 @@ var init_cells = function() {
 function init_config(Jupyter,utils,configmod) {
     var cfg = { // default config
             //EQUATIONS
-            'eqNumInitial': 0, // begins equation numbering at eqNum+1
+            'eqNumInitial': 1, // begins equation numbering at eqNum
             'eqLabelWithNumbers': true, //if true, label equations with equation numbers; otherwise using the tag specified by \label
             //BIBLIOGRAPHY
             'current_citInitial': 1, // begins citation numbering at current_cit
@@ -102,13 +100,9 @@ function init_config(Jupyter,utils,configmod) {
     config.loaded.then(function config_loaded_callback() {
         // config may be specified at system level or at document level.
         // first, update defaults with config loaded from server
-        for (var key in cfg) {
-            if (config.data.hasOwnProperty(key)) {
-                cfg[key] = config.data[key];
-            }
-        }
-        // update cfg with any found in current notebook metadata
-        // then save in nb metadata (then can be modified per document)
+        cfg = $.extend(true, cfg, config.data.latex_envs);
+        // then update cfg with any found in current notebook metadata
+        // and save in nb metadata (then can be modified per document)
         cfg = IPython.notebook.metadata.latex_envs = $.extend(true, cfg,
             IPython.notebook.metadata.latex_envs);
         // update global variables
@@ -234,7 +228,7 @@ function config_toolbar(callback) {
     var eqLabel_tmp = eqLabelWithNumbers
     var eq_by_icon = { true: 'fa-sort-numeric-asc', false: 'fa-tag' }
 
-    var eqNumtmp = eqNumInitial + 1;
+    var eqNumtmp = eqNumInitial;
 
     // Defining the toolbar --------------------------------------------------------------
     var LaTeX_envs_toolbar = $('<div id="LaTeX_envs_toolbar" class="container edit_mode" >')
@@ -559,8 +553,8 @@ rgba(102, 175, 233, 0.6);}</style>')
         .on('keypress', function(e) {
             if (e.keyCode == 13) {
                 $('#eqnum').blur();
-                cfg.eqNumInitial = Number($('#eqnum')[0].value) - 1; //Jupyter.notebook.metadata.latex_envs.eqNumInitial 
-                eqNumInitial = Number($('#eqnum')[0].value) - 1;
+                cfg.eqNumInitial = Number($('#eqnum')[0].value); //Jupyter.notebook.metadata.latex_envs.eqNumInitial 
+                eqNumInitial = Number($('#eqnum')[0].value);
                 init_cells();
             }
         })
@@ -570,13 +564,13 @@ rgba(102, 175, 233, 0.6);}</style>')
             //set the values of global variables
             cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
             bibliofile = $("#biblio")[0].value //Jupyter.notebook.metadata.latex_envs.bibliofile 
-            eqNumInitial = Number($('#eqnum')[0].value) - 1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
+            eqNumInitial = Number($('#eqnum')[0].value)  //Jupyter.notebook.metadata.latex_envs.eqNumInitial
             eqLabelWithNumbers = eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
                 //save into notebook's metadata 
             cfg = Jupyter.notebook.metadata.latex_envs
             cfg.cite_by = cite_by_tmp //Jupyter.notebook.metadata.latex_envs.cite_by 
             cfg.bibliofile = $("#biblio")[0].value //Jupyter.notebook.metadata.latex_envs.bibliofile 
-            cfg.eqNumInitial = Number($('#eqnum')[0].value) - 1 //Jupyter.notebook.metadata.latex_envs.eqNumInitial
+            cfg.eqNumInitial = Number($('#eqnum')[0].value) //Jupyter.notebook.metadata.latex_envs.eqNumInitial
             cfg.eqLabelWithNumbers = eqLabel_tmp //Jupyter.notebook.metadata.latex_envs.eqLabelWithNumbers
                 //apply all this
             readBibliography(function() {
