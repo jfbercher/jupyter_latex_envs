@@ -267,11 +267,19 @@ function thmsInNbConv(marked,text) {
                         var environment = environmentMap[m1];
                         if (!environment) return wholeMatch;
 
+                        // get optional parameter
+                        var opt_tst=m2.match(/^\[([\S\s]*?)\]/)
+                        var opt=''; 
+                        if (opt_tst) {
+                            opt = '<span class="latex_title_opt">' +
+                             opt_tst[1] + '</span>';
+                            m2 = m2.replace(/^\[([\S\s]*?)\]/,'')
+                        }
 
                         var title = environment.title;
                         if (environment.counter) {
                             environment.counter.num++;
-                            title += ' ' + environment.counter.num;
+                            title += ' ' + environment.counter.num + opt;
                         }
                         //The conversion machinery (see marked.js or mathjaxutils.js) extracts text and math and converts text to markdown. 
                         //Here, we also want to convert the markdown contained in our latex envs. 
