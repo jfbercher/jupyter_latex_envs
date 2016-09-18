@@ -1,3 +1,56 @@
+
+2254f79 - Jean-François Bercher, Sun Sep 18 19:37:40 2016 +0200 : Updated templates to insert user's latex_defs.tex when exporting to html/latex
+1a974f6 - Jean-François Bercher, Sun Sep 18 19:35:23 2016 +0200 : When inserting an environment, selected text is inserted within the new environment
+8467213 - Jean-François Bercher, Sun Sep 18 19:32:50 2016 +0200 : Added style for enumerate and for optional parameters in math environments
+17f425c - Jean-François Bercher, Sun Sep 18 19:26:48 2016 +0200 : - Added support for optional parameters in environments, eg \\begin{theorem}[Option] - a class latex_title_opt is available to customize styling - Modified processing for enumerate and itemize environment in order to provide classes ul.item/li.item and ol.enum/li.enum for style customization.
+4e8bde9 - Jean-François Bercher, Sun Sep 18 19:21:32 2016 +0200 : - Added loading of user's personnal LaTeX definitions - Added a menu option to load these definitions - Changed the way the system configuration/document configuration are loaded and merged (using jquery extend)
+7864b2f - Jean-François Bercher, Sun Sep 18 19:19:42 2016 +0200 : Enable to include user's LaTeX definitions in html export
+186778c - Jean-François Bercher, Sun Sep 18 19:14:52 2016 +0200 : Put system config (in notebook.json) into a single object latex_env
+3e5ac01 - Jean-François Bercher, Sat Sep 17 17:43:26 2016 +0200 : - Enable loading of user personal LaTeX definitions - updated toogle menu to toggle loading of user's LaTeX definitions - Changed style for nested enumerate environments
+1ab12f5 - Jean-François Bercher, Tue Sep 13 00:58:00 2016 +0200 : 1.2.14
+503048b - Jean-François Bercher, Tue Sep 13 00:56:47 2016 +0200 : revert styling for nested enumerates
+c33be80 - Jean-François Bercher, Sun Sep 11 23:45:16 2016 +0200 : version 1.2.13
+2094da7 - Jean-François Bercher, Sun Sep 11 23:43:39 2016 +0200 : Added a Toogle menu in the config toolbat to: - toggle the display of the LaTeX_envs dropdown menu, - toggle the display of labels keys, - more to come...
+46de6e0 - Jean-François Bercher, Sun Sep 11 23:41:10 2016 +0200 : Cross references now use the true environment number instead of the reference//label key. References are updated immediately. This works document wide and works for pre and post references
+0e994a1 - jf.bercher, Thu Sep 8 14:59:49 2016 +0200 : add support for LaTeX of optional parameters in theorems (but not in html for now)
+5450973 - jf.bercher, Thu Sep 8 14:58:21 2016 +0200 : added support for python 2 in setup
+9be1ccc - jf.bercher, Wed Sep 7 19:03:04 2016 +0200 : minor cosmetic changes
+501fecf - jf.bercher, Wed Sep 7 18:52:56 2016 +0200 : minor cosmetic changes
+476d392 - jf.bercher, Wed Sep 7 13:56:13 2016 +0200 : modified install procedure to 'one shot'
+467be29 - jf.bercher, Mon Sep 5 11:50:26 2016 +0200 : 1.2.9 modified setup.py to show an installation message
+a89c95b - jf.bercher, Mon Sep 5 10:40:21 2016 +0200 : 1.2.8 removed reference to pypandoc
+a916987 - Jean-François Bercher, Sun Sep 4 23:54:06 2016 +0200 : version 1.2.7
+e50da3e - Jean-François Bercher, Sun Sep 4 23:53:05 2016 +0200 : Added css for nested numbered lists
+25efdfb - Jean-François Bercher, Sun Sep 4 23:52:12 2016 +0200 : issue #3: removed support for \\, added \par, corrected <,
+7ea9842 - Jean-François Bercher, Sat Sep 3 10:16:05 2016 +0200 : version 1.2.6
+00e9401 - Jean-François Bercher, Sat Sep 3 10:11:09 2016 +0200 : updated documentation
+4009776 - Jean-François Bercher, Sat Sep 3 10:10:37 2016 +0200 : updated .gitignore
+8491c56 - Jean-François Bercher, Sat Sep 3 09:59:21 2016 +0200 : corrected linebreaks issue #1 + support for % and \\
+efbdfd5 - Jean-François Bercher, Sat Sep 3 09:58:41 2016 +0200 : corrected nebreaks issue #1
+a9a4682 - Jean-François Bercher, Sat Sep 3 09:57:51 2016 +0200 : improved conversion to latex
+e8d1f7e - Jean-François Bercher, Fri Sep 2 00:49:38 2016 +0200 : corrected $$  in environments interpreted as $
+c6e9f7d - Jean-François Bercher, Fri Sep 2 00:45:48 2016 +0200 : version 1.2.5
+5b28935 - Jean-François Bercher, Fri Sep 2 00:44:05 2016 +0200 : corrected 22416  in environments interpreted as $
+6b8846e - Jean-François Bercher, Thu Sep 1 20:57:53 2016 +0200 : Modified reference to README in yaml file
+be3da07 - Jean-François Bercher, Wed Aug 31 23:53:16 2016 +0200 : updated setup files
+ef3c430 - Jean-François Bercher, Wed Aug 31 23:00:22 2016 +0200 : Add rst README.rst
+ef893f7 - Jean-François Bercher, Wed Aug 31 19:42:15 2016 +0200 : modified setup
+c5c2fbe - Jean-François Bercher, Wed Aug 31 18:50:44 2016 +0200 : Removed redundant readme
+927dec2 - Jean-François Bercher, Wed Aug 31 18:31:51 2016 +0200 : Support files in docs (images)
+d8cbc2d - Jean-François Bercher, Wed Aug 31 17:09:14 2016 +0200 : Updated READMEs
+8ffa17d - Jean-François Bercher, Wed Aug 31 17:06:38 2016 +0200 : Updated READMEs
+6ea9e57 - Jean-François Bercher, Wed Aug 31 17:05:43 2016 +0200 : Updated links in docs
+338036c - Jean-François Bercher, Wed Aug 31 16:48:24 2016 +0200 : Updated READMEs
+c58d88e - Jean-François Bercher, Wed Aug 31 16:31:52 2016 +0200 : Updated documentation
+4894804 - Jean-François Bercher, Wed Aug 31 16:31:00 2016 +0200 : Improved conversion to LaTeX for nested envs
+3a5fd0e - Jean-François Bercher, Wed Aug 31 14:06:18 2016 +0200 : Improved conversion of paragraphs in markdown
+918bcd0 - Jean-François Bercher, Tue Aug 30 18:57:39 2016 +0200 : Added setup files
+e86a00f - Jean-François Bercher, Tue Aug 30 17:13:48 2016 +0200 : Added package files
+07e4520 - Jean-François Bercher, Tue Aug 30 17:12:38 2016 +0200 : Modified paths to css/js URLs
+7507bb8 - Jean-François Bercher, Tue Aug 30 17:08:19 2016 +0200 : added .gitignore for Python builds
+ace7da1 - Jean-François Bercher, Tue Aug 30 15:16:10 2016 +0200 : Uppercase README.md
+3bcec37 - Jean-François Bercher, Tue Aug 30 12:43:44 2016 +0200 : move src files in src/
+75434ca - Jean-François Bercher, Mon Aug 29 14:37:29 2016 +0200 : added HTML/LaTeX exporter classes and pre/post processors
 7729d99 - Jean-François Bercher, Mon Aug 29 00:58:38 2016 +0200 : Copy readme to root
 2fbfac4 - Jean-François Bercher, Mon Aug 29 00:51:59 2016 +0200 : merging
 12db55b - Jean-François Bercher, Mon Aug 29 00:46:12 2016 +0200 : Merge branch 'master' of https://github.com/jfbercher/latex_envs

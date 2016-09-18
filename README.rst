@@ -1,8 +1,8 @@
 (some) LaTeX environments for Jupyter notebook
 ==============================================
 
-This extension for IPython 3.x or Jupyter enables to use some LaTeX
-commands and environments in the notebook's markdown cells.
+This extension for Jupyter notebook enables to use some LaTeX commands
+and environments markdown cells.
 
 1. **LaTeX commands and environments**
 
@@ -23,8 +23,9 @@ commands and environments in the notebook's markdown cells.
    ``\label`` and ``\ref``**
 4. **Configuration toolbar**
 5. **LaTeX\_envs dropdown menu for a quick insertion of environments**
-6. **Export to HTML and LaTeX with a customized exporter**
-7. Styles can be customized in the ``latex_env.css`` stylesheet
+6. **User's LaTeX definitions** file can be loaded and used
+7. **Export to HTML and LaTeX with a customized exporter**
+8. Styles can be customized in the ``latex_env.css`` stylesheet
 
 More environments can be simply added in the source file
 (``thmsInNb4.js``).
@@ -50,7 +51,6 @@ of the ``latex_envs`` notebook extension in the converted version. The
 LaTeX converter also expose several conversion options (read the
 `docs <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_envs_doc.html>`__.
 
-
 Demo/documentation
 ==================
 
@@ -60,7 +60,6 @@ and pdf versions. This serves as the documentation. A demo notebook
 `latex\_env\_doc.html <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html>`__
 and a pdf resulting from conversion to LaTeX is available as
 `documentation <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/documentation.pdf>`__.
-
 
 Installation
 ============
@@ -78,16 +77,18 @@ nbextensions. The extension can be installed
    is done, you can open a tab at ``http://localhost:8888/nbextensions``
    to enable and configure the various extensions.
 
-
 From the github repo or from Pypi,
 
 -  **step 1**: install the package
-    -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
-    -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
-    -   or clone the repo and install ``git clone https://github.com/jfbercher/jupyter_latex_envs.git python3 setup.py install``
+   -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
+   -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
+   -   or clone the repo and install
+      ``git clone https://github.com/jfbercher/jupyter_latex_envs.git    python3 setup.py install``
 
-
-With Jupyter >= 4.2,
+With Jupyter >= 4.2, step 1 should sufficient as the files will be
+automatically copied to the target drectories and the extension enabled.
+For ealier versions of Jupyter or if something fails, you will have to
+add two more steps.
 
 -  **step 2**: install the notebook extension
 

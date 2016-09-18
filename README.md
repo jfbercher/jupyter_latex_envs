@@ -1,7 +1,7 @@
 (some) LaTeX environments for Jupyter notebook
 ==============================================
 
-This extension for IPython 3.x or Jupyter enables to use some LaTeX commands and environments in the notebook's markdown cells. 
+This extension for Jupyter notebook enables to use some LaTeX commands and environments markdown cells. 
 
 1. **LaTeX commands and environments**
     - support for some LaTeX commands within markdown cells, *e.g.* `\textit`, `\textbf`, `\underline`
@@ -15,8 +15,9 @@ This extension for IPython 3.x or Jupyter enables to use some LaTeX commands and
 3. **Document-wide numbering of equations and environments, support for `\label` and `\ref`**
 4. **Configuration toolbar**
 5. **LaTeX_envs dropdown menu for a quick insertion of environments**
-6. **Export to HTML and LaTeX with a customized exporter**
-7. Styles can be customized in the `latex_env.css` stylesheet
+6. **User's LaTeX definitions** file can be loaded and used 
+7. **Export to HTML and LaTeX with a customized exporter**
+8. Styles can be customized in the `latex_env.css` stylesheet
 
 More environments can be simply added in the source file (`thmsInNb4.js`). 
 
@@ -58,9 +59,8 @@ From the github repo or from Pypi,
    git clone https://github.com/jfbercher/jupyter_latex_envs.git
    python3 setup.py install
    ```
-   
-   
-With Jupyter >= 4.2,
+ 
+With Jupyter >= 4.2, step 1 should sufficient as the files will be automatically copied to the target drectories and the extension enabled. For ealier versions of Jupyter or if something fails, you will have to add two more steps. 
 
 - **step 2**: install the notebook extension 
 ```
