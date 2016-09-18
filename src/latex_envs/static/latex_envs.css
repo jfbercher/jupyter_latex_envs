@@ -28,6 +28,17 @@ LaTeX things
         padding-right: 10px;
     }
 
+    .latex_title_opt {
+        padding-left: 10px;
+        /*text-transform: capitalize;
+        color: blue;*/
+    }
+
+    .latex_title_opt:before {
+        content: "-";
+        padding-right: 10px;
+    }
+
     .latex_proofend {
         float: right;
     }
