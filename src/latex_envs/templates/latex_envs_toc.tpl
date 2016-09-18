@@ -105,10 +105,13 @@ $( document ).ready(function(){
 
 {% block body %}
 
+{% if nb['metadata']['latex_envs']['latex_user_defs'] == True %}
+<div id='latex_user_defs'>
+        {{ include_latexdefs('latexdefs.tex') }}
+</div>
+{% endif %}
 
 {{ super() }}
-
-
 
 {%- endblock body %}
 
