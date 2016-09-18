@@ -9,8 +9,6 @@
 
 ((* block abstract *))
 \tableofcontents
-%~\par
-%\newpage 
 ((* endblock abstract *))
 
 %or?
@@ -24,9 +22,6 @@
 % and "Output #" cell prompts.
 
 ((*- block in_prompt -*))
-% No prompt!
-%\textbf{Input \#{}(((cell.prompt_number)))}
-
 ((*- endblock in_prompt -*))
 
 ((*- block input -*))
@@ -41,8 +36,6 @@
 %but may be this?
 
 %((*- block output_prompt -*))
-% No prompt!
-%\textbf{Output \#{}(((cell.prompt_number)))}
 %((*- endblock output_prompt -*))
 
 
@@ -56,7 +49,8 @@
 
 ((* block packages *))
 ((( super() )))
-\usepackage{listings}
+    \usepackage{listings} % Used to define pretty listings for code sections [jfb]
+    \usepackage{float}   
 ((* endblock packages *))
 
 %or -- both work
@@ -71,14 +65,14 @@
     \sloppy
     % Setup hyperref package
     \hypersetup{
-      breaklinks=true, % so long urls are correctly broken across lines
+    breaklinks=true, % so long urls are correctly broken across lines
 	pdftitle={\@title},
 	pdfauthor={\@author},
-	colorlinks=true, %colorise les liens
-	breaklinks=true, %permet le retour à la ligne dans les liens trop longs
-	urlcolor= blue, %couleur des hyperliens
-	linkcolor= blue, %couleur des liens internes
-	citecolor=blue,    %couleur des liens de citations
+	colorlinks=true, % color links 
+	breaklinks=true, % enable to break long links
+	urlcolor= blue,  % color for external links
+	linkcolor= blue, % color for external links
+	citecolor=blue,  
 	bookmarksopen=false,
 	pdftoolbar=false,
 	pdfmenubar=false,
@@ -127,6 +121,13 @@ framesep=10pt,
 }
 ((* endblock commands *))
 
+((* block predoc *))
+    ((*- if nb['metadata']['latex_envs']['latex_user_defs'] == True -*))
+        ((= if user's latex_defs.tex were used in notebook, also loads them =))
+\input{latexdefs.tex} 
+   ((*- endif -*))
+((( super() )))
+((* endblock predoc *))
 
 % Display latex
 
@@ -138,7 +139,7 @@ framesep=10pt,
         \end{equation}
     ((*- else -*))
         ((( output.latex )))
-    ((*- endif *))
+    ((*- endif -*))
 ((* endblock data_latex *))
 
 
