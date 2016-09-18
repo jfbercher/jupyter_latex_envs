@@ -82,8 +82,7 @@ From the github repo or from Pypi,
 -  **step 1**: install the package
    -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
    -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
-   -   or clone the repo and install
-      ``git clone https://github.com/jfbercher/jupyter_latex_envs.git    python3 setup.py install``
+   -   or clone the repo and install ``git clone https://github.com/jfbercher/jupyter_latex_envs.git  python3 setup.py install``
 
 With Jupyter >= 4.2, step 1 should sufficient as the files will be
 automatically copied to the target drectories and the extension enabled.
