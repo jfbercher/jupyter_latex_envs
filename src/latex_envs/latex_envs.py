@@ -81,7 +81,7 @@ class LenvsLatexPreprocessor(Preprocessor):
         theenv = match.group(1)
         tobetranslated = match.group(3)
         opt_parameter = ''
-        if match.group(2) is not None: opt_parameter =  match.group(2).replace('[','!lb!').replace(']','!rb!') 
+        if match.group(2) is not None: opt_parameter =  match.group(2).replace('[','!lb!').replace(']','!rb!')
         out = "!sl!begin!op!" + theenv + '!cl@' + opt_parameter + tobetranslated + "!sl!end!op!" + theenv + '!cl@'  # noqa
         # out = out.replace('\n', '!nl!') #dont remember why I did that
         if theenv in self.environmentMap:
@@ -198,6 +198,20 @@ class LenvsHTMLExporter(HTMLExporter):
     def _raw_mimetypes_default(self):
         return ['text/markdown', 'text/html', '']
 
+    def include_latexdefs(self, name):
+        '''This function is used to include latex user definitions
+        in the html template, using the syntax
+        {{ include_latexdefs('latexdefs.tex') }}
+        This function is included in jinja2 environment'''
+        text = ''
+        try:
+            with open(name) as f:
+                for line in f:
+                    text += '$$' + line[:-1] + '$$\n'
+        except:
+            pass
+        return text
+
     @property
     def default_config(self):
         # import jupyter_core.paths
@@ -220,7 +234,7 @@ class LenvsHTMLExporter(HTMLExporter):
             'HighlightMagicsPreprocessor': {
                 'enabled': True
             },
-            'ExtractOutputPreprocessor': {'enabled': True},
+            'ExtractOutputPreprocessor': {'enabled': False},
             'latex_envs.LenvsHTMLPreprocessor': {'enabled': True}}
         )
         c.merge(super(LenvsHTMLExporter, self).default_config)
@@ -240,6 +254,7 @@ class LenvsHTMLExporter(HTMLExporter):
         self.register_filter('highlight_code',
                              Highlight2HTML(pygments_lexer=lexer,
                                             parent=self))
+        self.environment.globals['include_latexdefs'] = self.include_latexdefs
         lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
 
         self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)
