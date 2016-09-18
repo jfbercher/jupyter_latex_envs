@@ -24,9 +24,9 @@ if (MathJaxDefined) {
             equationNumbers: {
                 autoNumber: "AMS", // All AMS equations are numbered
                 useLabelIds: true, // labels as ids
-                // format the equation number - uses an offset eqNumInitial (default 0)
+                // format the equation number - uses an offset eqNumInitial-1 (default 0) ie number from 1
                 formatNumber: function(n) {
-                    return String(Number(n) + Number(eqNumInitial)) }
+                    return String(Number(n) + Number(eqNumInitial) - 1) }
             }
         }
     });
@@ -69,12 +69,15 @@ function insert_text(identifier) { //must be available in the main scope
     var selected_cell = Jupyter.notebook.get_selected_cell();
     Jupyter.notebook.edit_mode();
     var cursorPos = selected_cell.code_mirror.getCursor()
+    var selectedText = selected_cell.code_mirror.getSelection();
     selected_cell.code_mirror.replaceSelection(
         String($(identifier).data('text')), 'start');
     if (typeof $(identifier).data('position') !== "undefined") {
         var deltaPos = $(identifier).data('position').split(',').map(Number)
     }
     selected_cell.code_mirror.setCursor(cursorPos['line'] + deltaPos[0], deltaPos[1])
+    var cursorPos = selected_cell.code_mirror.getCursor()    
+    selected_cell.code_mirror.replaceRange(selectedText, cursorPos);    
 }
 
 // use AMD-style simplified define wrapper to avoid http://requirejs.org/docs/errors.html#notloaded
@@ -93,14 +96,7 @@ define(function(require, exports, module) {
     require('nbextensions/latex_envs/envsLatex');
     var initNb = require('nbextensions/latex_envs/initNb');
 
-/*    var maps = initmap();
-    environmentMap = maps[0];
-    cmdsMap = maps[1];
-    eqLabNums = maps[2];
-    cit_table = maps[3];*/
-    //var initcfg = init_config();
     cfg = Jupyter.notebook.metadata.latex_envs;
-
 
     var load_css = function(name) {
         var link = document.createElement("link");
