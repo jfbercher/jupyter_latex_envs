@@ -15,9 +15,9 @@ LaTeX things
         font-style: normal;
         text-align: justify;
         margin-left: 0px;
-	margin-right: 10px;
-	margin-top: 0px;
-        margin-bottom: 15px;
+	    margin-right: 10px;
+	    margin-top: 10px;
+        margin-bottom: 0px;
         background-color: #CCFFCC;
         display: block;
     }
@@ -25,6 +25,7 @@ LaTeX things
     .latex_title {
         float: left;
         font-weight: bold;
+        margin-top: 10px;        
         padding-right: 10px;
     }
 
@@ -59,9 +60,9 @@ LaTeX things
         display: block;
         text-align: justify;
         margin-right: 10px;
-	margin-left: 0px;
-	margin-top: 0px;
-        margin-bottom: 15px;
+	    margin-left: 0px;
+	    margin-top: 10px;
+        margin-bottom: 0px;
         font-style: italic;
         color:black;
         background-color: beige;
