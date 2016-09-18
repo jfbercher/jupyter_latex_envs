@@ -8,6 +8,7 @@ function onMarkdownCellRendering(event, data) {
         ["PreProcess", MathJax.Hub], 
         ["Reprocess", MathJax.Hub]
     );
+    $('.latex_label_anchor').toggle(labels_anchors); 
 };
 
 function toggleLatexMenu() {
@@ -39,7 +40,6 @@ var init_nb = function() {
     readBibliography(function() {
         create_latex_menu();
         if (!LaTeX_envs_menu_present) toggleLatexMenu();
-        $('.latex_label_anchor').toggle(labels_anchors); 
         if (latex_user_defs) loadLatexUserDefs();
         add_help_menu_item();
         createReferenceSection();
@@ -73,6 +73,7 @@ var init_cells = function() {
     }
     if(typeof lastmd_cell !== "undefined") lastmd_cell.render(); // re-render last md cell and issue rendered.MarkdownCell event
     onMarkdownCellRendering();
+    //$('.latex_label_anchor').toggle(labels_anchors); 
 }
 
 
