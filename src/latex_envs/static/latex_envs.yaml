@@ -6,15 +6,15 @@ Icon: icon.png
 Main: latex_envs.js
 Compatibility: Jupyter (4.x) 
 Parameters:
-- name: LaTeX_envs_menu_present
+- name: latex_envs.LaTeX_envs_menu_present
   description: LaTeX_envs menu (insert environments) present
   input_type: checkbox
   default: true
-- name: eqLabelWithNumbers
+- name: latex_envs.eqLabelWithNumbers
   description: Label equation with numbers (otherwise with their \label{} key)
   input_type: checkbox
   default: true  
-- name: bibliofile
+- name: latex_envs.bibliofile
   description: BibTeX filename (in current directory)
   input_type: text
   default: biblio.bib  
