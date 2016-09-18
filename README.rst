@@ -80,6 +80,7 @@ nbextensions. The extension can be installed
 From the github repo or from Pypi,
 
 -  **step 1**: install the package
+  
    -  ``pip3 install https://github.com/jfbercher/jupyter_latex_envs/archive/master.zip [--user][--upgrade]``
    -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
    -   or clone the repo and install ``git clone https://github.com/jfbercher/jupyter_latex_envs.git  python3 setup.py install``
