@@ -71,7 +71,7 @@ $( document ).ready(function(){
         var html_to_analyse = $('body').html()
         var html_converted = thmsInNbConv(marked,html_to_analyse);
         $('body').html(html_converted)
-
+        $('.latex_label_anchor').toggle({{nb['metadata']['latex_envs']['labels_anchors']})
     });
 </script>
 
