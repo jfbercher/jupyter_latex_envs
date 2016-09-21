@@ -8,7 +8,7 @@
 # A system install can be done by omitting the --user switch.
 
 from __future__ import print_function
-import io
+import io, sys
 
 from setuptools import setup, find_packages
 from os.path import join, dirname
@@ -40,7 +40,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.3.0.1',
+      version='1.3.0.2',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
@@ -75,14 +75,14 @@ setup(name='jupyter_latex_envs',
   )
 
 if 'install' in argv:
-    print(msg)
+    import sys
+    x=sys.stdout.write(msg)
     import site 
     try: 
         import importlib
         importlib.reload(site)
     except:
         reload(site)
-    import sys
     import latex_envs
     import notebook.nbextensions as nb
     user = False
@@ -91,9 +91,9 @@ if 'install' in argv:
         user=True
     if "--sys-prefix" in argv: 
         sys_prefix=True
-    print("[Step 2]: Installing the javascript nbextension")
+    x=sys.stdout.write("[Step 2]: Installing the javascript nbextension"+"\n")
     nb.install_nbextension_python('latex_envs',
             user=user, sys_prefix=sys_prefix)
-    print("[Step3]: Enabing the nbextension")
+    x=sys.stdout.write("[Step 3]: Enabing the nbextension"+"\n")
     nb.enable_nbextension_python('latex_envs',
             user=user, sys_prefix=sys_prefix)
