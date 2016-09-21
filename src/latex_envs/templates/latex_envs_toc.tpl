@@ -72,6 +72,7 @@ $( document ).ready(function(){
         // fire the main function with these parameters
         var html_to_analyse = $('body').html()
         var html_converted = thmsInNbConv(marked,html_to_analyse);
+        html_converted = html_converted.replace(/%[\S\t ]*<\/p>/gm,"</p>")
         $('body').html(html_converted)
         var labels_anchors = "{{nb['metadata']['latex_envs']['labels_anchors']}}"=="True" ? true : false;
         $('.latex_label_anchor').toggle(labels_anchors)
