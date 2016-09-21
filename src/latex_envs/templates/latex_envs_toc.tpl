@@ -17,7 +17,7 @@ MathJax.Hub.Config({ TeX: { equationNumbers: {
     autoNumber: "AMS", // All AMS equations are numbered
     useLabelIds: true, // labels as ids
     // format the equation number - uses an offset eqNumInitial (default 0)
-    formatNumber: function (n) {return String(Number(n)+Number({{nb['metadata']['latex_envs']['eqNumInitial']}} ))} 
+    formatNumber: function (n) {return String(Number(n)+Number({{nb['metadata']['latex_envs']['eqNumInitial']}})-1)} 
     } } 
 });
 </script>
