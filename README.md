@@ -1,6 +1,8 @@
 (some) LaTeX environments for Jupyter notebook
 ==============================================
 
+[![Join the chat at https://gitter.im/jupyter_latex_envs/Lobby](https://badges.gitter.im/jupyter_latex_envs/Lobby.svg)](https://gitter.im/jupyter_latex_envs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This extension for Jupyter notebook enables to use some LaTeX commands and environments markdown cells. 
 
 1. **LaTeX commands and environments**
