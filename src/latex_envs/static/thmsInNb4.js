@@ -570,12 +570,12 @@ function thmsInNbConv(marked,text) {
                     var author_match = text.match(/\\author{([\S ]*?)}/)
                     if (author_match){
                         text = text.replace(/\\author{([\S ]*?)}/,"")
-                        Jupyter.notebook.metadata.author= author_match[1]
+                        if (Jupyter) Jupyter.notebook.metadata.author= author_match[1]
                     } 
                     var title_match = text.match(/\\title{([\S ]*?)}/)
                     if (title_match){
                         text = text.replace(/\\title{([\S ]*?)}/,"")
-                        Jupyter.notebook.metadata.author= title_match[1]
+                        if (Jupyter) Jupyter.notebook.metadata.author= title_match[1]
                     } 
                     if (text.match(/\\maketitle/)) {
                         var maketitle = `<div class = "latex_maintitle"> ${title_match[1]} </div>\
