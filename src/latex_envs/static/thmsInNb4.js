@@ -269,6 +269,7 @@ function thmsInNbConv(marked,text) {
     });
     */
 
+    var liveNotebook = !(typeof Jupyter == "undefined")
     var listings = [];
 
             { //****************************************************************************
@@ -570,12 +571,12 @@ function thmsInNbConv(marked,text) {
                     var author_match = text.match(/\\author{([\S ]*?)}/)
                     if (author_match){
                         text = text.replace(/\\author{([\S ]*?)}/,"")
-                        if (Jupyter) Jupyter.notebook.metadata.author= author_match[1]
+                        if (liveNotebook) Jupyter.notebook.metadata.author= author_match[1]
                     } 
                     var title_match = text.match(/\\title{([\S ]*?)}/)
                     if (title_match){
                         text = text.replace(/\\title{([\S ]*?)}/,"")
-                        if (Jupyter) Jupyter.notebook.metadata.author= title_match[1]
+                        if (liveNotebook) Jupyter.notebook.metadata.author= title_match[1]
                     } 
                     if (text.match(/\\maketitle/)) {
                         var maketitle = `<div class = "latex_maintitle"> ${title_match[1]} </div>\
