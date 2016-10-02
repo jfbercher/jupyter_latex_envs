@@ -184,6 +184,7 @@ function reset_counters() {
 function renumberAllEnvs() {
     if (report_style_numbering) {
         var listH1 = $.find('h1');
+        //console.log("LIST H1", listH1)
         var old_sec_number = '';
     }
 
@@ -193,11 +194,14 @@ function renumberAllEnvs() {
         sec_number = $(elt).parent().parent().siblings('h1').find('.toc-item-num').contents()[0].nodeValue
         }*/
         if (report_style_numbering) {
-            var section = $(elt).parent().siblings('h1')
-            if (section.length == 0) {
-                section = $(elt).parent().parent().siblings('h1')
+            var section = $(elt).parents('.text_cell').find('h1')[0] //$(elt).parent().siblings('h1')
+            console.log("Section 1", section)
+            console.log($(elt).parents('.text_cell'))
+            if (typeof section == "undefined") {
+                section = $(elt).parents('.text_cell').prevAll().find('h1') //parent().parent().siblings('h1')
+                section = section[section.length-1]
             }
-            var sec_number = listH1.indexOf(section[0]) + 1;
+            var sec_number = listH1.indexOf(section) + 1;
             if (sec_number != old_sec_number) {
                 reset_counters();
                 old_sec_number = sec_number;
@@ -208,9 +212,11 @@ function renumberAllEnvs() {
     })
 
     $("[class^='latex_ref']").each(function(index, elt) {
-        var num = $($($(elt)).attr('href'))
-            .parent().prev($('.latex_envs_num'))
-            .find($('.latex_envs_num')).text()
+        var numref = $($($(elt)).attr('href'))
+            .prev($('.latex_envs_num'))
+        var num = numref.parent().find($('.latex_envs_num')).text()
+        if (num == "") {num = numref.parent().parent()
+            .find($('.latex_envs_num')).text()}  // this happens with an extra <p>  
         $(elt).text(num)
     })
 }
@@ -359,7 +365,9 @@ function thmsInNbConv(marked,text) {
                         });
 
                         // result 
-                        var result = '<p><div class="latex_title">' + title + '</div> <div class="latex_' + m1 + '">' + m2;
+                        //var result = '<p><div class="latex_title">' + title + '</div> <div class="latex_' + m1 + '">' + m2;
+                        var result = '<p><div class="latex_' + m1 + '">'  + 
+                        '<div class="latex_title">' + title + '</div>' + m2;
 
                         // SPECIAL CASES OF ENVIRONMENTS
                         // case of the figure environment. We look for an \includegraphics directive, gobble its parameters except the image name,
@@ -529,8 +537,9 @@ function thmsInNbConv(marked,text) {
                     text = EnvReplace(text);
 //********************************************************************
                 //LABELS -- After envs replacements, it can remain \labels
-                // in plain text. rStill replace them by an anchor and update the labelsMap
+                // in plain text. Still replace them by an anchor and update the labelsMap
                 var text = text.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                    if (m1=="eq") return wholeMatch  //excepted in equations
                     m2 = m2.replace(/<[/]?em>/g, "_");
                     labelsMap[m1+m2] = '[' + m1 + ':' + m2 + ']' //environment.counter.num;
                     $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
