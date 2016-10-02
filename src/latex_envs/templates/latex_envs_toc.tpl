@@ -74,8 +74,13 @@ $( document ).ready(function(){
         var html_converted = thmsInNbConv(marked,html_to_analyse);
         html_converted = html_converted.replace(/%[\S\t ]*<\/p>/gm,"</p>")
         $('body').html(html_converted)
+        // Show/hide anchors
         var labels_anchors = "{{nb['metadata']['latex_envs']['labels_anchors']}}"=="True" ? true : false;
         $('.latex_label_anchor').toggle(labels_anchors)
+        // Number all environments
+        report_style_numbering = "{{nb['metadata']['latex_envs']['report_style_numbering']}}"=="True" ? true : false;
+        reset_counters();
+        renumberAllEnvs();
 
             var cfg={'threshold':6,     // depth of toc (number of levels)
              'number_sections':true,    // sections numbering

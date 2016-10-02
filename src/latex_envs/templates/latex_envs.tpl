@@ -76,7 +76,7 @@ $( document ).ready(function(){
         var labels_anchors = "{{nb['metadata']['latex_envs']['labels_anchors']}}"=="True" ? true : false;
         $('.latex_label_anchor').toggle(labels_anchors)
         // Number all environments
-        var report_style_numbering = " {{nb['metadata']['latex_envs']['report_style_numbering']}}"=="True" ? true : false;
+        report_style_numbering = "{{nb['metadata']['latex_envs']['report_style_numbering']}}"=="True" ? true : false;
         reset_counters();
         renumberAllEnvs();
     });
