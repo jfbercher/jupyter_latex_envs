@@ -109,10 +109,9 @@ function nestedEnvReplace(text, env_open, env_close, replacement, flags) {
     }
 }
 
-/****************************************************************************************/
-//Initialization of conversions maps (useful for direct call of this file)
-
-//**********************************************************************************************************
+/*********************************************************************************
+*   Initialization of conversions maps (useful for direct call of this file)
+*********************************************************************************/
 function initmap(){
     var eqLabNums = {};
     var thmCounter  = { num: 0 };
@@ -171,8 +170,52 @@ eqLabNums=maps[2];
 cit_table = maps[3]
 labelsMap = {};
 
-/******************************************************************************/
+/******************************************************************************
+***  Numbering environments
+*******************************************************************************/
+function reset_counters() {
+    // reset counters
+    $.each(environmentMap, function(ind, val) {
+        if (environmentMap[ind].counter)
+            environmentMap[ind].counter.num = 1;
+    })
+}
 
+function renumberAllEnvs() {
+    if (report_style_numbering) {
+        var listH1 = $.find('h1');
+        var old_sec_number = '';
+    }
+
+    $('.latex_envs_num').each(function(index, elt) {
+        /*var sec_number = $(elt).parent().siblings('h1').find('.toc-item-num').contents()[0]
+        if(sec_number) {sec_number=sec_number.nodeValue} else {
+        sec_number = $(elt).parent().parent().siblings('h1').find('.toc-item-num').contents()[0].nodeValue
+        }*/
+        if (report_style_numbering) {
+            var section = $(elt).parent().siblings('h1')
+            if (section.length == 0) {
+                section = $(elt).parent().parent().siblings('h1')
+            }
+            var sec_number = listH1.indexOf(section[0]) + 1;
+            if (sec_number != old_sec_number) {
+                reset_counters();
+                old_sec_number = sec_number;
+            }
+        }
+        var num = environmentMap[$(elt).data('envname')].counter.num++;
+        report_style_numbering ? $(elt).text(sec_number + '.' + num) : $(elt).text(num);
+    })
+
+    $("[class^='latex_ref']").each(function(index, elt) {
+        var num = $($($(elt)).attr('href'))
+            .parent().prev($('.latex_envs_num'))
+            .find($('.latex_envs_num')).text()
+        $(elt).text(num)
+    })
+}
+
+/******************************************************************************/
 function remove_maths(text){
     var math=[]
     function replacement(m0,m1,m2) {
@@ -279,7 +322,9 @@ function thmsInNbConv(marked,text) {
                         var title = environment.title;
                         if (environment.counter) {
                             environment.counter.num++;
-                            title += ' ' + environment.counter.num + opt;
+                            title += ' ' + `<span class="latex_envs_num" data-envname="${m1}">` 
+                            + environment.counter.num + '</span>' + opt;
+                            // title += ' ' + environment.counter.num + opt;
                         }
                         //The conversion machinery (see marked.js or mathjaxutils.js) extracts text and math and converts text to markdown. 
                         //Here, we also want to convert the markdown contained in our latex envs. 
@@ -308,11 +353,12 @@ function thmsInNbConv(marked,text) {
                             m2 = m2.replace(/<[/]?em>/g, "_");
                             labelsMap[m1+m2] = environment.counter.num;
                             $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
-                            return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>';
+                            return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>'
+                            + '<a id="' + m1 + m2 + '_">' + '</a>';;
                         });
 
                         // result 
-                        var result = '<br><span class="latex_title">' + title + '</span> <div class="latex_' + m1 + '">' + m2;
+                        var result = '<p><div class="latex_title">' + title + '</div> <div class="latex_' + m1 + '">' + m2;
 
                         // SPECIAL CASES OF ENVIRONMENTS
                         // case of the figure environment. We look for an \includegraphics directive, gobble its parameters except the image name,
@@ -481,6 +527,15 @@ function thmsInNbConv(marked,text) {
 //*********************** Environments replacements *****************
                     text = EnvReplace(text);
 //********************************************************************
+                //LABELS -- After envs replacements, it can remain \labels
+                // in plain text. rStill replace them by an anchor and update the labelsMap
+                var text = text.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                    m2 = m2.replace(/<[/]?em>/g, "_");
+                    labelsMap[m1+m2] = '[' + m1 + ':' + m2 + ']' //environment.counter.num;
+                    $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
+                    return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>'
+                    + '<a id="' + m1 + m2 + '_">' + '</a>';;
+                });
 
                 // This is to replace references by links to the correct environment, 
                 //REFERENCES
@@ -497,7 +552,7 @@ function thmsInNbConv(marked,text) {
                         var indata = '[' + m1 + ':' + m2 + ']'
                     }
 
-                    return '<a class="latex_ref_' + m1 + m2 + '"' + ' href="#' + m1 + m2 + '">' + indata + '</a>';
+                    return '<a class="latex_ref_' + m1 + m2 + '"' + ' href="#' + m1 + m2 + '_">' + indata + '</a>';
                 });
 
                     // LaTeX commands replacements (eg \textbf, \texit, etc)
@@ -510,6 +565,25 @@ function thmsInNbConv(marked,text) {
                     });
                     //support for comments (mask them in rendered version)
                     text = text.replace(/^(<p>)?%[\S ]*\n/gm,'$1')
+
+                    //support for author, title, ...
+                    var author_match = text.match(/\\author{([\S ]*?)}/)
+                    if (author_match){
+                        text = text.replace(/\\author{([\S ]*?)}/,"")
+                        Jupyter.notebook.metadata.author= author_match[1]
+                    } 
+                    var title_match = text.match(/\\title{([\S ]*?)}/)
+                    if (title_match){
+                        text = text.replace(/\\title{([\S ]*?)}/,"")
+                        Jupyter.notebook.metadata.author= title_match[1]
+                    } 
+                    if (text.match(/\\maketitle/)) {
+                        var maketitle = `<div class = "latex_maintitle"> ${title_match[1]} </div>\
+                        <div class="latex_author">\ 
+                        ${author_match[1]} </div>`
+                        text = text.replace(/\\maketitle/, maketitle)
+                    }
+                     
 
                     //Other small replacements
                     var text = text.replace(/\\index{(.+?)}/g, function(wholeMatch, m1) {

@@ -2,6 +2,20 @@
 /*****************************************************************
 LaTeX things
 *****************************************************************/
+.latex_maintitle{
+    margin-top: 22px;
+    font-size:40px; 
+    color:blue;
+    text-align: center; 
+    font-weight: bold;
+}
+.latex_author{
+    margin-top: 22px;
+    font-size:20px; 
+    color:blue;
+    text-align: center; 
+    font-weight: normal;
+}
 
     .latex_tmp {text-align: justify;}
 
@@ -25,7 +39,7 @@ LaTeX things
     .latex_title {
         float: left;
         font-weight: bold;
-        margin-top: 10px;        
+        /*margin-top: 10px;        */
         padding-right: 10px;
     }
 

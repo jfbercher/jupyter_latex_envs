@@ -4,12 +4,14 @@
 function onMarkdownCellRendering(event, data) {
     // console.log("recomputing eqs")
     if (MathJaxDefined) MathJax.Hub.Queue(
-        ["resetEquationNumbers", MathJax.InputJax.TeX], 
-        ["PreProcess", MathJax.Hub], 
-        ["Reprocess", MathJax.Hub]
+        ["resetEquationNumbers", MathJax.InputJax.TeX], ["PreProcess", MathJax.Hub], ["Reprocess", MathJax.Hub]
     );
-    $('.latex_label_anchor').toggle(labels_anchors); 
+    $('.latex_label_anchor').toggle(labels_anchors);
+    
+    reset_counters();
+    renumberAllEnvs();
 };
+//$('.latex_label_anchor').each(function(ind,elt){$(elt).css('visibility','show')})
 
 function toggleLatexMenu() {
     if (!LaTeX_envs_menu_present) {
@@ -93,7 +95,10 @@ function init_config(Jupyter,utils,configmod) {
             // Show anchors for labels
             'labels_anchors':false,
             // Load LaTeX user definitions
-            'latex_user_defs': false
+            'latex_user_defs': false,
+            // Use section numbers for numbering environments
+            // ie Book/Report numbering style
+            'report_style_numbering' : false
         }
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
@@ -115,6 +120,7 @@ function init_config(Jupyter,utils,configmod) {
         LaTeX_envs_menu_present = cfg.LaTeX_envs_menu_present;
         labels_anchors = cfg.labels_anchors; 
         latex_user_defs = cfg.latex_user_defs;
+        report_style_numbering = cfg.report_style_numbering;
         reprocessEqs = true;
         // and initialize bibliography and cells 
         init_nb();
@@ -380,7 +386,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
             )
-             .append($('<li/>')
+            .append($('<li/>')
                 .append($('<a/>')
                     .attr('id','latex_user_defs')
                     .text('LaTeX user definitions')
@@ -395,6 +401,20 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                                 init_cells(); 
                                 onMarkdownCellRendering();},1000);                            
                         }
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )
+            .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','report_style_numbering')
+                    .text('Report style numbering')
+                    .attr('href', '#')
+                    .attr('title', 'Book/Report style numbering (use section numbers for numbering environments)')
+                    .on('click',function (){
+                        cfg.report_style_numbering = report_style_numbering = !report_style_numbering
+                        $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
+                        onMarkdownCellRendering();                           
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
@@ -451,6 +471,7 @@ rgba(102, 175, 233, 0.6);}</style>')
     $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors)
     $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
     $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
+    $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
     
     // Now the callback functions --------------------------------------------  
 
