@@ -8,7 +8,7 @@ var conversion_to_html = false;
 var config_toolbar_present = false;
 var reprocessEqs; 
 //These variables are initialized in init_config()
-var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, latex_user_defs;
+var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, latex_user_defs, user_envs_cfg;
 
 if (typeof add_edit_shortcuts === "undefined")
     var add_edit_shortcuts = {}
@@ -164,11 +164,11 @@ define(function(require, exports, module) {
     };
     
 
-    var maps = initmap();
-    environmentMap = maps[0];
+    //var maps = initmap();
+    /*environmentMap = maps[0];
     cmdsMap = maps[1];
     eqLabNums = maps[2];
-    cit_table = maps[3];
+    cit_table = maps[3];*/
 
    // var initcfg = init_config(Jupyter, utils, configmod);
    // cfg = Jupyter.notebook.metadata.latex_envs;

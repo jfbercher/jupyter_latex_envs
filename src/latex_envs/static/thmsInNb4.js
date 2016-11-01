@@ -113,34 +113,49 @@ function nestedEnvReplace(text, env_open, env_close, replacement, flags) {
 *   Initialization of conversions maps (useful for direct call of this file)
 *********************************************************************************/
 function initmap(){
-    var eqLabNums = {};
+    eqLabNums = {};
     var thmCounter  = { num: 0 };
     var excsCounter = { num: 0 };
     var figCounter = { num: 0 };
-    var cit_table={}
+    cit_table={}
+
+    envCounters = { 
+        "problem" : {num: 0},
+        "exercise" : {num: 0},
+        "example" : {num: 0},        
+        "property" : {num: 0},
+        "theorem" : {num: 0},
+        "lemma" : {num: 0},
+        "corollary" : {num: 0},
+        "proposition" : {num: 0},
+        "definition" : {num: 0},
+        "remark" : {num: 0},
+        "figure" : {num: 0},
+        "definition" : {num: 0},
+    }
 
 
-    var environmentMap = {
-             thm:      { title: "Theorem"    ,counter: thmCounter  },
-             lem:      { title: "Lemma"      ,counter: thmCounter  },
-             cor:      { title: "Corollary"  ,counter: thmCounter  },
-             prop:     { title: "Property"   ,counter: thmCounter  },
-             defn:     { title: "Definition" ,counter: thmCounter  },
-             rem:      { title: "Remark"     ,counter: thmCounter  },
-             prob:     { title: "Problem"    ,counter: excsCounter },
-             excs:     { title: "Exercise"   ,counter: excsCounter },
-             examp:    { title: "Example"    ,counter: excsCounter },
-             property:     { title: "Property"   ,counter: thmCounter  },
-             theorem:      { title: "Theorem"    ,counter: thmCounter  },
-             lemma:        { title: "Lemma"      ,counter: thmCounter  },
-             corollary:    { title: "Corollary"  ,counter: thmCounter  },
-             proposition:  { title: "Proposition" ,counter: thmCounter },
-             definition:   { title: "Definition" ,counter: thmCounter  },
-             remark:       { title: "Remark"     ,counter: thmCounter  },
-             problem:      { title: "Problem"    ,counter: excsCounter },
-             exercise:     { title: "Exercise"   ,counter: excsCounter },
-             example:      { title: "Example"    ,counter: excsCounter },
-             figure:       { title: "Figure"    ,counter: figCounter },
+    environmentInitialMap = {
+             thm:      { title: "Theorem"    , counterName : "theorem"  },
+             lem:      { title: "Lemma"      , counterName : "theorem" },
+             cor:      { title: "Corollary"  , counterName : "theorem" },
+             prop:     { title: "Property"   , counterName : "theorem" },
+             defn:     { title: "Definition" , counterName : "definition" },
+             rem:      { title: "Remark"     , counterName : "remark"},
+             prob:     { title: "Problem"    , counterName : "exercise"},
+             excs:     { title: "Exercise"   , counterName : "exercise"},
+             examp:    { title: "Example"    , counterName : "example"},
+             property:     { title: "Property"   , counterName : "theorem"},
+             theorem:      { title: "Theorem"    , counterName : "theorem"},
+             lemma:        { title: "Lemma"      , counterName : "theorem"},
+             corollary:    { title: "Corollary"  , counterName : "theorem"},
+             proposition:  { title: "Proposition" , counterName : "theorem"},
+             definition:   { title: "Definition" , counterName : "definition"},
+             remark:       { title: "Remark"     , counterName : "remark"},
+             problem:      { title: "Problem"    , counterName : "exercise"},
+             exercise:     { title: "Exercise"   , counterName : "exercise"},
+             example:      { title: "Example"    , counterName : "example"},
+             figure:       { title: "Figure"    , counterName : "figure"},
              itemize:      { title: "Itemize"     },
              enumerate:    { title: "Enumerate"    },
              listing:      { title: " "    },
@@ -151,7 +166,7 @@ function initmap(){
 
     //This is to substitute simple LaTeX+argument commands 
     // For instance \textbf{foo} is replaced by <b> foo </b>
-    var cmdsMap =  {
+    cmdsMap =  {
         underline:  {  replacement: "u"  },
         textit:     {  replacement: "i"  },
         textbf:     {  replacement: "b"  },
@@ -159,15 +174,16 @@ function initmap(){
         section:    {  replacement: "h1" },
         subsection: {  replacement: "h2" },
     }
-    return [environmentMap, cmdsMap, eqLabNums, cit_table]
+    //return [environmentMap, cmdsMap, eqLabNums, cit_table]
 }
 
-// init maps and tables
-var maps = initmap();
-environmentMap=maps[0];
+// init maps and tables effectively
+//var maps = initmap();
+/*environmentMap=maps[0];
 cmdsMap=maps[1];
 eqLabNums=maps[2];
-cit_table = maps[3]
+cit_table = maps[3]*/
+
 labelsMap = {};
 
 /******************************************************************************
@@ -176,15 +192,14 @@ labelsMap = {};
 function reset_counters() {
     // reset counters
     $.each(environmentMap, function(ind, val) {
-        if (environmentMap[ind].counter)
-            environmentMap[ind].counter.num = 1;
+        if (environmentMap[ind].counterName)
+            envCounters[environmentMap[ind].counterName].num = 1;
     })
 }
 
 function renumberAllEnvs() {
     if (report_style_numbering) {
         var listH1 = $.find('h1');
-        //console.log("LIST H1", listH1)
         var old_sec_number = '';
     }
 
@@ -194,9 +209,8 @@ function renumberAllEnvs() {
         sec_number = $(elt).parent().parent().siblings('h1').find('.toc-item-num').contents()[0].nodeValue
         }*/
         if (report_style_numbering) {
-            var section = $(elt).parents('.text_cell').find('h1')[0] //$(elt).parent().siblings('h1')
-            console.log("Section 1", section)
-            console.log($(elt).parents('.text_cell'))
+            var section = $(elt).parents('.text_cell').find('h1') //$(elt).parent().siblings('h1')
+            section = section[section.length-1]
             if (typeof section == "undefined") {
                 section = $(elt).parents('.text_cell').prevAll().find('h1') //parent().parent().siblings('h1')
                 section = section[section.length-1]
@@ -207,7 +221,7 @@ function renumberAllEnvs() {
                 old_sec_number = sec_number;
             }
         }
-        var num = environmentMap[$(elt).data('envname')].counter.num++;
+        var num = envCounters[environmentMap[$(elt).data('envname')].counterName].num++;
         report_style_numbering ? $(elt).text(sec_number + '.' + num) : $(elt).text(num);
     })
 
@@ -327,10 +341,10 @@ function thmsInNbConv(marked,text) {
                         }
 
                         var title = environment.title;
-                        if (environment.counter) {
-                            environment.counter.num++;
+                        if (environment.counterName) {
+                            envCounters[environment.counterName].num++;
                             title += ' ' + `<span class="latex_envs_num" data-envname="${m1}">` 
-                            + environment.counter.num + '</span>' + opt;
+                            + envCounters[environment.counterName].num + '</span>' + opt;
                             // title += ' ' + environment.counter.num + opt;
                         }
                         //The conversion machinery (see marked.js or mathjaxutils.js) extracts text and math and converts text to markdown. 
@@ -355,10 +369,10 @@ function thmsInNbConv(marked,text) {
                                                             // so we replace the </p> by a <br>
 
                         //LABELS -- replace all labels by an anchor and build a Map
-                        // linking label to environment.counter value
+                        // linking label to environment counter value
                         var m2 = m2.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
                             m2 = m2.replace(/<[/]?em>/g, "_");
-                            labelsMap[m1+m2] = environment.counter.num;
+                            labelsMap[m1+m2] = envCounters[environment.counterName].num;
                             $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
                             return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>'
                             + '<a id="' + m1 + m2 + '_">' + '</a>';;
@@ -541,7 +555,7 @@ function thmsInNbConv(marked,text) {
                 var text = text.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
                     if (m1=="eq") return wholeMatch  //excepted in equations
                     m2 = m2.replace(/<[/]?em>/g, "_");
-                    labelsMap[m1+m2] = '[' + m1 + ':' + m2 + ']' //environment.counter.num;
+                    labelsMap[m1+m2] = '[' + m1 + ':' + m2 + ']' //environment counter number
                     $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
                     return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>'
                     + '<a id="' + m1 + m2 + '_">' + '</a>';;
@@ -553,7 +567,8 @@ function thmsInNbConv(marked,text) {
                     m2 = m2.replace(/<[/]?em>/g, "_");
                     if (m1 == "eq") {
                         if (!eqLabelWithNumbers) { // this is for displaying the label
-                            return '<a class="latex_ref" href="#mjx-eqn-' + m1 + m2 + '">' + m2 + '</a>'; //m1 + ':' + m2;
+                            return '<a class="latex_lbl_ref" href="#mjx-eqn-' + m1 + m2 + '">' + m2 + '</a>'; //m1 + ':' + m2;
+
                         } else return wholeMatch;
                     }
                     if (labelsMap[m1 + m2]) {

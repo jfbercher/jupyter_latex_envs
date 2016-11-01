@@ -212,6 +212,22 @@ class LenvsHTMLExporter(HTMLExporter):
             pass
         return text
 
+    def include_userenvs_cfg(self):
+        '''This function is used to include the user environment configuration
+        in the html template, using the syntax
+        {{ include_userenvs_cfg() }}
+        This function is included in jinja2 environment'''
+        import jupyter_core, os
+        datadir = jupyter_core.paths.jupyter_data_dir()
+        user_envs_file = os.path.join(datadir, 'nbextensions', 'latex_envs', 'user_envs.json')
+        text = ''
+        try:
+            f=open(user_envs_file,'rt')
+            text=f.read();
+        except:
+            pass
+        return text
+
     @property
     def default_config(self):
         # import jupyter_core.paths

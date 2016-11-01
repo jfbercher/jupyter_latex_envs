@@ -13,7 +13,15 @@ Parameters:
 - name: latex_envs.eqLabelWithNumbers
   description: Label equation with numbers (otherwise with their \label{} key)
   input_type: checkbox
-  default: true  
+  default: true 
+- name: latex_envs.report_style_numbering
+  description: Number environments as section.num
+  input_type: checkbox
+  default: false   
+- name: latex_envs.user_envs_cfg
+  description: Use customized environments as given in 'user_envs.json' (in the extension directory)
+  input_type: checkbox
+  default: false  
 - name: latex_envs.bibliofile
   description: BibTeX filename (in current directory)
   input_type: text

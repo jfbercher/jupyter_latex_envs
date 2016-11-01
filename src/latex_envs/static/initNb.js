@@ -25,6 +25,16 @@ function toggleLatexMenu() {
     }
 }
 
+function toggleLabelsAnchors() {
+    if (!labels_anchors) {
+        $('#toggleLabelsAnchorsVisibility').css('color', 'grey')
+            .attr('title', 'Show labels anchors');
+    } else {
+        $('#toggleLabelsAnchorsVisibility').css('color', 'black')
+            .attr('title', 'Hide labels anchors');
+    }
+}
+
 function loadLatexUserDefs() {
     $.get('latexdefs.tex').done(function(data) {
         data = data.replace(/^/gm, '\$\$\$').replace(/$/gm, '\$\$\$');
@@ -37,6 +47,26 @@ function loadLatexUserDefs() {
     });
     
 }
+
+function loadUserEnvsCfg(callback) {
+        var jqxhr = $.getJSON( "/nbextensions/latex_envs/user_envs.json", function(data) {
+        //var jqxhr = $.getJSON( "example.json", function(data) { //in current directory
+          environmentMap = $.extend(true,{}, environmentInitialMap,data) 
+          //console.log( "success" );
+        })
+          .done(function() {
+           // console.log( "second success" );
+          })
+          .fail(function(data) {
+            environmentMap = $.extend(true, {}, environmentInitialMap) //deep copy
+            console.log( "latex_envs: error loading /nbextensions/latex_envs/user_envs.json");
+          })
+          .always(function() {
+            callback && callback();
+            //console.log( "complete" );
+          });
+      }
+
 
 var init_nb = function() {
     readBibliography(function() {
@@ -55,13 +85,7 @@ var init_cells = function() {
     var ncells = Jupyter.notebook.ncells();
     var cells = Jupyter.notebook.get_cells();
     var MarkdownCell = require('notebook/js/textcell').MarkdownCell;
-    var maps = initmap(); // this is to reset the counters in case of reload
-    var venvironmentMap = maps[0];
-    var vcit_table = maps[3];
-    environmentMap = maps[0];
-    cit_table = maps[3];
-    cmdsMap = maps[1];
-    eqLabNums = maps[2];
+
     eqNum = eqNumInitial;
     current_cit = current_citInitial;
     var noevent = true;
@@ -93,9 +117,11 @@ function init_config(Jupyter,utils,configmod) {
             // LaTeX_envs_menu 
             'LaTeX_envs_menu_present': true,
             // Show anchors for labels
-            'labels_anchors':false,
+            'labels_anchors': false,
             // Load LaTeX user definitions
-            'latex_user_defs': false,
+            'latex_user_defs' : false,
+            // Load user_envs configuration
+            'user_envs_cfg' : false,
             // Use section numbers for numbering environments
             // ie Book/Report numbering style
             'report_style_numbering' : false
@@ -120,10 +146,18 @@ function init_config(Jupyter,utils,configmod) {
         LaTeX_envs_menu_present = cfg.LaTeX_envs_menu_present;
         labels_anchors = cfg.labels_anchors; 
         latex_user_defs = cfg.latex_user_defs;
+        user_envs_cfg = cfg.user_envs_cfg 
         report_style_numbering = cfg.report_style_numbering;
         reprocessEqs = true;
-        // and initialize bibliography and cells 
-        init_nb();
+        // and initialize maps, bibliography and cells
+        initmap();
+        if (user_envs_cfg) {
+            loadUserEnvsCfg(init_nb)
+        } 
+        else {
+            environmentMap = $.extend(true, {}, environmentInitialMap) //deep copy
+            init_nb()
+        }
     })
     config.load();
 }
@@ -381,7 +415,8 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                     .on('click',function (){
                         cfg.labels_anchors = labels_anchors = !labels_anchors
                         $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors);
-                        $('.latex_label_anchor').toggle(labels_anchors)
+                        $('.latex_label_anchor').toggle(labels_anchors);
+                        toggleLabelsAnchors();
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
@@ -400,6 +435,26 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                             setTimeout(function(){ //there is a race condition somewhere
                                 init_cells(); 
                                 onMarkdownCellRendering();},1000);                            
+                        }
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )
+            .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','user_envs_cfg')
+                    .text('User envs config')
+                    .attr('href', '#')
+                    .attr('title', 'Load user envs configuration (file user_envs.json)')
+                    .on('click',function (){
+                        cfg.user_envs_cfg = user_envs_cfg = !user_envs_cfg
+                        $('#user_envs_cfg > .fa').toggleClass('fa-check', user_envs_cfg);
+                        if (user_envs_cfg) {
+                            loadUserEnvsCfg(init_cells);
+                        }
+                        else{
+                            environmentMap = $.extend(true, {}, environmentInitialMap) //deep copy
+                            init_cells();
                         }
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
@@ -433,6 +488,16 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .css('color', 'black')
         .attr('id', 'toggleLatexMenu')
         .append($("<i/>").addClass('fa fa-caret-square-o-down'))
+
+
+    // toggle the latex_envs dropdown menu
+    var labels_anchors_toggle_button = $("<a/>")
+        .addClass("btn btn-default")
+        .attr('href', "#")
+        .attr('title', 'Toogle Labels anchors')
+        .css('color', 'black')
+        .attr('id', 'toggleLabelsAnchorsVisibility')
+        .append($("<i/>").addClass('fa fa-bullseye'))
     
     // close button
     var suicide_button = $("<a/>")
@@ -456,6 +521,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .append(eqLabelStyle)
         .append(vertical_separator)
         .append(latex_envs_menu_button)
+        .append(labels_anchors_toggle_button)
         .append(configMenu)
         .append(suicide_button)
 
@@ -469,14 +535,24 @@ rgba(102, 175, 233, 0.6);}</style>')
 
     // Initializing toogles checks
     $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors)
+    toggleLabelsAnchors();
     $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
+    $('#user_envs_cfg> .fa').toggleClass('fa-check', user_envs_cfg);
     $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
     $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
     
     // Now the callback functions --------------------------------------------  
 
+    $('#toggleLabelsAnchorsVisibility').on('click', function() {
+        cfg.labels_anchors = labels_anchors = !labels_anchors
+        $('#labels_anchors_menu > .fa').toggleClass('fa-check', labels_anchors);
+        $('.latex_label_anchor').toggle(labels_anchors)
+        toggleLabelsAnchors();
+    })
+
     $('#toggleLatexMenu').on('click', function() {
         cfg.LaTeX_envs_menu_present = LaTeX_envs_menu_present = !LaTeX_envs_menu_present
+        $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
         toggleLatexMenu();
     })
 

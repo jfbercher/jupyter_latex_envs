@@ -66,6 +66,15 @@ $( document ).ready(function(){
         //var document={}
         document.bibliography={};
 
+        // Read environment map config
+        initmap();
+        // Read user envs config, if specified
+        {% if nb['metadata']['latex_envs']['user_envs_cfg'] == True %}
+                var data = {{ include_userenvs_cfg() }}
+                environmentMap = $.extend(true,{}, environmentInitialMap,data)
+        {% else %}
+                environmentMap = $.extend(true,{}, environmentInitialMap)        
+        {% endif %}
 
         // fire the main function with these parameters
         var html_to_analyse = $('body').html()
