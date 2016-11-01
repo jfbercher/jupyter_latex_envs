@@ -25,9 +25,10 @@ and environments markdown cells.
 5. **LaTeX\_envs dropdown menu for a quick insertion of environments**
 6. **User's LaTeX definitions** file can be loaded and used
 7. **Export to HTML and LaTeX with a customized exporter**
-8. Styles can be customized in the ``latex_env.css`` stylesheet
+8. Environments title/numbering can be customized by users in ``user_envs.json`` config file.
+9. Styles can be customized in the ``latex_env.css`` stylesheet
 
-More environments can be simply added in the source file
+More environments can be simply added in ``user_envs.json`` or in the source file
 (``thmsInNb4.js``).
 
 It is possible to export the notebooks to plain :math:`\LaTeX` and html
