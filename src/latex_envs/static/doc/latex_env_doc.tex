@@ -4,42 +4,47 @@
     
     
 
-%~\par
-%\newpage 
 
     
 
-    
-    \section{(some) LaTeX environments for Jupyter
-notebook}\label{some-latex-environments-for-jupyter-notebook}
 
-    This extension for IPython 3.x or Jupyter enables to use some LaTeX
+    
+    \title{(some) LaTeX environments \par for Jupyter notebook}\author{@jfbercher}
+
+    \section{Introduction}\label{introduction}
+
+    This extension for IPython 4.x or Jupyter enables to use some LaTeX
 commands and environments in the notebook's markdown cells.
 \begin{enumerate} \item \textbf{LaTeX commands and environments}
 \begin{itemize} \item support for some LaTeX commands within
 markdown cells, \emph{e.g.} \texttt{\textbackslash{}textit},
-\texttt{\textbackslash{}textbf}, \texttt{\textbackslash{}underline}
-\item support for \textbf{theorems-like environments}, support for
-labels and cross references \item support for \textbf{lists}:
+\texttt{\textbackslash{}textbf}, \texttt{\textbackslash{}underline},
+\texttt{author}, \texttt{\textbackslash{}title}, LaTeX comments \item
+support for \textbf{theorems-like environments}, support for labels and
+\textbf{cross references} \item support for \textbf{lists}:
 \emph{enumerate, itemize},\\
 \item limited support for a \textbf{figure environment}, \item support
 for an environment \emph{listing}, \item additional \emph{textboxa}
 environment \end{itemize} \item \textbf{Citations and
 bibliography} \begin{itemize} \item support for
 \texttt{\textbackslash{}cite} with creation of a References section
-\end{itemize} \item \textbf{Document-wide numbering of
-equations and environments, support for \texttt{\textbackslash{}label}
-and \texttt{\textbackslash{}ref}} \item \textbf{Configuration toolbar}
-\item \textbf{LaTeX\_envs dropdown menu for a quick insertion of
-environments} \item \textbf{Export to HTML and LaTeX with a customized
-exporter} \item Styles can be customized in the \texttt{latex\_env.css}
-stylesheet \end{enumerate}
+\end{itemize} \item it is possible mix markdown and LaTeX
+markup \item \textbf{Document-wide numbering of equations and
+environments, support for \texttt{\textbackslash{}label} and
+\texttt{\textbackslash{}ref}} \item \textbf{Configuration toolbar} \item
+\textbf{LaTeX\_envs dropdown menu for a quick insertion of environments}
+\item Support for \textbf{User \(\LaTeX\) definitions file} \item
+Environments title/numbering can be customized by users in
+\texttt{user\_envs.json} config file \item \textbf{Export to HTML and
+LaTeX with a customized exporter} \item Styles can be customized in the
+\texttt{latex\_env.css} stylesheet \end{enumerate}
 
-A simple illustration is as follows: on can type the following in a
+A simple illustration is as follows: one can type the following in a
 markdown cell
 
 \begin{listing}
-\begin{theorem} \label{theo:dotp}
+The dot-product is defined by equation (\ref{eq:dotp}) in theorem \ref{theo:dotp} just below:
+\begin{theorem}[Dot Product] \label{theo:dotp}
 Let $u$ and $v$ be two vectors of $\mathbb{R}^n$. The dot product can be expressed as
 \begin{equation}
 \label{eq:dotp}
@@ -47,13 +52,14 @@ u^Tv = |u||v| \cos \theta,
 \end{equation}
 where $\theta$ is the angle between $u$ and $v$ ...
 \end{theorem}
-Then one can reference the equation (\ref{eq:dotp}) in theorem \ref{theo:dotp}.
 \end{listing}
 
 and have it rendered as
 
-\begin{theorem} \label{theo:dotp} Let \(u\) and \(v\) be two
-vectors of \(\mathbb{R}^n\). The dot product can be expressed as
+The dot-product is defined by equation (\ref{eq:dotp}) in theorem
+\ref{theo:dotp} just below: \begin{theorem}[Dot Product]
+\label{theo:dotp} Let \(u\) and \(v\) be two vectors of
+\(\mathbb{R}^n\). The dot product can be expressed as
 
 \begin{equation}
 \label{eq:dotp}
@@ -61,10 +67,77 @@ u^Tv = |u||v| \cos \theta,
 \end{equation}
 
 where \(\theta\) is the angle between \(u\) and \(v\) \ldots{}
-\end{theorem} Then one can reference the equation
-(\ref{eq:dotp}) in theorem \ref{theo:dotp}.
+\end{theorem}
 
     \subsection{** What's new **}\label{whats-new}
+
+\textbf{November 2, 2016} - version 1.3.1
+
+\begin{itemize}
+\tightlist
+\item
+  Support for \textbf{user environments configuration} file
+  (\texttt{user\_envs.json} in nbextensions/latex\_envs directory). This
+  file is included by the html export template.\\
+\item
+  Support for \textbf{book/report style numbering} of environments, e.g.
+  ``Example 4.2'' is example 2 in section 4.
+\item
+  Support for \texttt{\textbackslash{}author},
+  \texttt{\textbackslash{}title}, and \texttt{maketitle}. Author and
+  title are saved in notebook metadata, used in html/latex exports. The
+  maketitle command also formats a title in the LiveNotebook.\\
+\item
+  Added a Toogle menu in the config toolbar to:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    toggle use of user's environments config file
+  \item
+    toggle \texttt{report-style} numbering
+  \end{itemize}
+\end{itemize}
+
+\textbf{September 18, 2016} - version 1.3
+
+\begin{itemize}
+\tightlist
+\item
+  Support for \textbf{user personal LaTeX definitions} file
+  (\texttt{latexdefs.tex} in current directory). This file is included
+  by the html and latex export templates.\\
+\item
+  Style for nested enumerate environments added in
+  \texttt{latex\_envs.css}
+\item
+  Added a Toogle menu in the config toolbar to:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    toggle the display of the LaTeX\_envs dropdown menu,
+  \item
+    toggle the display of labels keys,
+  \item
+    toggle use of user's LaTeX definition file
+  \end{itemize}
+\item
+  \textbf{Cross references now use the true environment number instead
+  of the reference//label key}. \textbf{References are updated
+  immediately}. This works \textbf{document wide} and works for pre and
+  post references
+\item
+  Support for optional parameters in theorem-like environments
+\item
+  Support for spacings in textmode, eg \texttt{\textbackslash{}par},
+  \texttt{\textbackslash{}vspace,\ \textbackslash{}hspace}
+\item
+  Support for LaTeX comments % in markdown cells
+\item
+  Reworked loading and merging of system/document configuration
+  parameters
+\end{itemize}
 
 \textbf{August 28, 2016} - version 1.2
 
@@ -148,7 +221,7 @@ jupyter nbconvert --to html_toclenvs FILE.ipynb
 
 \subsection{Implementation principle}\label{implementation-principle}
 
-    The main idea is to override the standard Markdown renderer in order to
+The main idea is to override the standard Markdown renderer in order to
 add a \emph{small} parsing of LaTeX expressions and environments. This
 heavily uses regular expressions. The LaTeX expression are then rendered
 using an html version. For instance
@@ -167,8 +240,13 @@ commands}\label{support-for-simple-latex-commands}
 
     We also added some LaTeX commands (e.g. \texttt{\textbackslash{}textit},
 \texttt{\textbackslash{}textbf}, \texttt{\textbackslash{}underline}) --
-this is useful in the case of copy-paste from a LaTeX document. Labels
-and references are supported, including for equations.
+this is useful in the case of copy-paste from a LaTeX document. The
+extension also supports some textmode spacings, namely
+\texttt{\textbackslash{}par},
+\texttt{\textbackslash{}vspace,\ \textbackslash{}hspace} as well as
+\texttt{\textbackslash{}title}, \texttt{\textbackslash{}author},
+\texttt{maketitle} and LaTeX comments % in markdown cells. Labels and
+cross-references are supported, including for equations.
 
     \subsection{Available environments}\label{available-environments}
 
@@ -189,29 +267,37 @@ and references are supported, including for equations.
   demonstration (see below).
 \end{itemize}
 
-More environments can be added easily in the javascript source file
+More environments can be added easily in the user\_envs config file
+\texttt{user\_envs.json} or directly in the javascript source file
 \texttt{thmsInNb4.js}. The rendering is done according to the stylesheet
 \texttt{latex\_env.css}, which can be customized.
-
 \begin{remark} When exporting to html, the
-\texttt{latex\_env.css} file honored is the file on the
-Jupyter-notebook-extensions CDN. However, customized css can be added in
-a \texttt{custom.css} file that must reside in the same directory as the
-notebook itself. \end{remark}
+\texttt{latex\_env.css} file honored is the file on the github CDN.
+However, customized css can be added in a \texttt{custom.css} file that
+must reside in the same directory as the notebook itself. The reason for
+that is that the \texttt{css} file must be in the same directory as the
+notebook file for inclusion, which means copying it in each working
+directory. As the rendering of the html file obtained is done using the
+original javascript code, the same is true for the source files;
+therefore it is better to curstomize environments in
+\texttt{user\_envs.json} which is taken into account when exporting to
+html.\\
+\end{remark}
 
     \subsection{Automatic numerotation, labels and
 references}\label{automatic-numerotation-labels-and-references}
 
-    Counters for numerotation are implemented: one for theorems-like
-environments, a second for exercises-like environments and a third one
-for numbering figures.\\
-Mathjax-equations with a label are also numbered document-wide. An
-anchor is created for any label which enables to links things within the
-document: \texttt{\textbackslash{}label} and
-\texttt{\textbackslash{}ref} are both supported. A limitation is that
-numbering is updated (incremented) each time a cell is rendered. A
-toolbar button is provided to reset the counters and refresh the
-rendering of the whole document.
+    Several counters for numerotation are implemented: counters for problem,
+exercise, example, property, theorem, lemma, corollary, proposition,
+definition, remark, and figure are available. Mathjax-equations with a
+label are also numbered document-wide. An anchor is created for any
+label which enables to links things within the document:
+\texttt{\textbackslash{}label} and \texttt{\textbackslash{}ref} are both
+supported. A limitation was that numbering was updated (incremented)
+each time a cell is rendered. Document-wide automatic updating is
+implemented since version 1.3. A toolbar button is provided to reset the
+counters and refresh the rendering of the whole document (this is still
+useful for citations and bibliography refresh).
 
     \label{example:mixing} A simple example is as follows, featuring
 automatic numerotation, and the use of labels and references. Also note
@@ -230,7 +316,7 @@ X[k]= \frac{1}{N} \sum_{n=0}^{N-1} x[n] e^{-j2\pi \frac{kn}{N}}
 \end{definition}
 \end{listing}
 
-    \begin{definition} \label{def:FT} Let \(x[n]\) be a sequence of
+\begin{definition} \label{def:FT} Let \(x[n]\) be a sequence of
 length \(N\). Then, its \textbf{Fourier transform} is given by
 
 \begin{equation}
@@ -342,7 +428,7 @@ output \(Y_2\) and an impulse response denoted as \(h_2(n)\)
 
     \subsection{figcaption}\label{figcaption}
 
-    For Python user, we have added in passing a simple function in the
+    For Python users, we have added in passing a simple function in the
 \texttt{latex\_envs.py} library.
 
 This function can be imported classically, eg
@@ -353,8 +439,7 @@ if you installed from the jupyter\_contrib repo).
 Then, this function enables to specify a caption and a label for the
 next plot. In turn, when exporting to \(\LaTeX\), the corresponding plot
 is converted to a nice figure environement with a label and a caption.
-% No prompt!
-%\textbf{Input \#{}}%
+%
 \begin{lstlisting}
 %matplotlib inline
 import matplotlib.pyplot as plt
@@ -362,9 +447,7 @@ from jupyter_contrib_nbextensions.nbconvert_support.latex_envs import figcaption
 from numpy import pi, sin, arange
 
 plt.plot(sin(2*pi*0.01*arange(100)))
-\end{lstlisting}% No prompt!
-%\textbf{Output \#{}}
-%
+\end{lstlisting}%
     
     
 
@@ -380,7 +463,7 @@ plt.plot(sin(2*pi*0.01*arange(100)))
     
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{latex_env_doc_files/latex_env_doc_24_2.png}
+\includegraphics[width=0.6\linewidth]{latex_env_doc_files/latex_env_doc_23_2.png}
 \caption{This is a nice sine wave}
 \label{fig:mysin}
 \end{figure}
@@ -394,11 +477,11 @@ plt.plot(sin(2*pi*0.01*arange(100)))
   \textbf{it is possible to mix LaTeX and markdown markup in
   environments}
 \item
-  Support for \textbf{line-comments} (within environments): lines
-  beginning with a % will be masked when rendering
+  Support for \textbf{line-comments}: lines beginning with a % will
+  be masked when rendering
 \item
-  Support for \textbf{linebreaks}: \\\\\_, where \_ denotes
-  any space, tab, linefeed, cr, is replaced by a linebreak
+  Support for \textbf{linebreaks}: \texttt{\textbackslash{}par\_}, where
+  \_ denotes any space, tab, linefeed, cr, is replaced by a linebreak
 \item
   Environments can be nested. egg:
 
@@ -455,17 +538,52 @@ button that opens or closes the configuration toolbar.
 
     \subsubsection{Configuration toolbar}\label{configuration-toolbar}
 
-    The configuration toolbar \includegraphics{configuration_toolbar.png}
-enables to enter some configuration options for the extension. First,
-one can indicate the name of the bibtex file. If this file is not found
-and the user creates the reference section, then this section will
-indicate that the file was not found. The references drop-down menu
-enables to choose the type of reference calls. The Equations input box
-enable to initiate numbering of equations at the given number (this may
-be useful for complex documents in several files/parts). Finally the
-last drop-down menu let the user choose to number equation or to display
-their label instead. These configuration options are then stored in the
-notebook's metadata (and restored on reload).
+    The configuration toolbar \includegraphics{config_toolbar.png} enables
+to enter some configuration options for the extension.
+
+First, the \texttt{LaTeX\textbackslash{}\_envs} title links to this
+documentation. Then, the bibliography text input can be used to indicate
+the name of the bibtex file. If this file is not found and the user
+creates the reference section, then this section will indicate that the
+file was not found. The \texttt{References} drop-down menu enables to
+choose the type of reference calls. The Equations input box enables to
+initiate numbering of equations at the given number (this may be useful
+for complex documents in several files/parts). The \texttt{Equations}
+drop-down menu let the user choose to number equation or to display
+their label instead. The two next buttons enable to toogle display of
+the LaTeX\_envs environments insertion menu or to toggle the displau of
+LaTeX labels. Finally The \texttt{Toogles} dropdown menu enable to
+toogle the state of several parameters. All these configuration options
+are then stored in the notebook's metadata (and restored on reload).
+
+    The \texttt{Toggles} dropdown menu \includegraphics{Toggles.png}
+
+enables to toggle the state of several configuration options:
+
+\begin{itemize}
+\tightlist
+\item
+  display the \texttt{LaTeX\_envs} insertion menu or not,
+\item
+  show labels anchors,
+\item
+  use \(\LaTeX\) user own LaTeX defintions (loads \texttt{latexdefs.tex}
+  file from current document directory),
+\item
+  load user's environments configuration (file \texttt{user\_envs.json}
+  in \texttt{nbextensions/latex\_envs} directory),
+\item
+  select ``report style'' numbering of environments
+\end{itemize}
+
+    \subsection{\texorpdfstring{The \texttt{LaTeX\_envs} insertion
+menu}{The LaTeX\_envs insertion menu}}\label{the-latexux5fenvs-insertion-menu}
+
+The \texttt{LaTeX\_envs} insertion menu
+\includegraphics{LaTeX_envs_menu.png} enables a quick insertion of LaTeX
+environments, some with a keyboard shorcut (this can be customized in
+\texttt{envsLatex.js}). Besides, selected text will be inserted in the
+environment.
 
     \section{Conversion to LaTeX and
 HTML}\label{conversion-to-latex-and-html}
@@ -679,6 +797,66 @@ jupyter nbextension enable latex_envs/latex_envs
 where \texttt{\textless{}output\ source\ directory\textgreater{}} is the
 output of the python command.
 
+    \section{Customization}\label{customization}
+
+\subsection{Configuration parameters}\label{configuration-parameters}
+
+Some configuration parameters can be specified system-wide, using the
+\texttt{nbextension\_configurator}. For that, open a browser at
+\url{http://localhost:8888/nbextensions/} -- the exact address may
+change eg if you use jupyterhub or if you use a non standard port. You
+will then be able to change default values for the boolean values -
+LaTeX\_envs menu (insert environments) present - Label equation with
+numbers (otherwise with their \label{} key) - Number environments as
+section.num - Use customized environments as given in `user\_envs.json'
+(in the extension directory) and enter a default filename for the bibtex
+file (in document directory).
+
+All these values can also be changed per documents and these values are
+stored in the notebook's metadata.
+
+\subsection{User environments
+configuration}\label{user-environments-configuration}
+
+Environments can be customized in the file \texttt{user\_envs.json},
+located in the \texttt{nbextensions/latex\_envs} directory. It is even
+possible to add \emph{new} environments. This file is read at startup
+(or when using the corresponding toggle option in the \texttt{Toggles}
+menu) and merged with the standard configuration. An example is provided
+as \texttt{example\_user\_envs.json}. For each (new/modified)
+environment, one has to provide (i) the name of the environment (ii) its
+title (iii) the name of the associated counter for numbering it; eg
+
+\begin{verbatim}
+    "myenv": {
+        "title": "MyEnv",
+        "counterName": "example"
+    },
+\end{verbatim}
+
+Available counters are problem, exercise, example, property, theorem,
+lemma, corollary, proposition, definition, remark, and figure.
+
+\subsection{Styling}\label{styling}
+
+The document title and the document author (as specified by
+\texttt{\textbackslash{}title} and \texttt{\textbackslash{}author} are
+formatted using the \texttt{maketitle} command according to the
+\texttt{.latex\_maintitle} and \texttt{.latex\_author} div styles.
+
+Each environment is formatted according to the div style
+\texttt{.latex\_environmentName}, e.g. \texttt{.latex\_theorem},
+\texttt{.latex\_example}, etc. The titles of environments are formatted
+with respect to \texttt{.latex\_title} and the optional parameter wrt
+\texttt{.latex\_title\_opt}. Images are displayed using the style
+specified by \texttt{.latex\_img} and thir caption using
+\texttt{.caption}. Finally, enumerate environments are formatted
+according to the \texttt{.enum} style. Similarly, itemize environments
+are formatted using \texttt{.item} style.
+
+These styles can be customized either in the \texttt{latex\_envs.css}
+file, or better in a \texttt{custom.css} in the document directory.
+
     \section{Usage and further examples}\label{usage-and-further-examples}
 
     \subsection{First example (continued)}\label{first-example-continued}
@@ -703,8 +881,7 @@ The Fourier transform is an extremely useful tool to have in your toolbox!
     The Fourier transform of a pure cosine is given by \[
 X[k] = \frac{1}{2} \left( \delta[k-k_0] + \delta[k-k_0] \right), 
 \] modulo \(N\). This is illustrated in the following simple script:
-% No prompt!
-%\textbf{Input \#{}}%
+%
 \begin{lstlisting}
 %matplotlib inline
 import numpy as np
@@ -717,11 +894,9 @@ plt.stem(k,np.abs(X))
 plt.xlim([0, 20])
 plt.title("Fourier transform of a cosine")
 _=plt.xlabel("Frequency index (k)")
-\end{lstlisting}% No prompt!
-%\textbf{Output \#{}}
-%
+\end{lstlisting}%
     \begin{center}
-    \adjustimage{max size={0.6\linewidth}{0.6\paperheight}}{latex_env_doc_files/latex_env_doc_44_0.png}
+    \adjustimage{max size={0.6\linewidth}{0.6\paperheight}}{latex_env_doc_files/latex_env_doc_46_0.png}
     \end{center}
 %    { \hspace*{\fill} \\}
     
@@ -771,50 +946,44 @@ Consider the filter defined in Example \ref{ex:IIR1}. Using the **function** `lf
 \end{listing}
 
     The lines above are rendered as follows (of course everything can be
-tailored in the stylesheet):
-
-\begin{definition} \label{def:diffeq} We call
-\textbf{difference equation} an equation of the form
+tailored in the stylesheet): % \begin{definition}
+\label{def:diffeq} We call \textbf{difference equation} an equation of
+the form
 
 \begin{equation}
 \label{eq:diffeq}
 y[n]= \sum_{k=1}^{p} a_k y[n-k] + \sum_{i=0}^q b_i x[n-i]
 \end{equation}
 
-\end{definition} Properties of the filter are linked to the
-coefficients of the difference equation. For instance, an immediate
-property is
+\end{definition}
 
+Properties of the filter are linked to the coefficients of the
+difference equation. For instance, an immediate property is %
 \begin{property} If all the \(a_k\) in equation
 (\ref{eq:diffeq}) of definition \ref{def:diffeq} are zero, then the
 filter has a \textbf{finite impulse response}. \end{property}
-
-\begin{proof} Let \(\delta[n]\) denote the Dirac impulse. Take
-\(x[n]=\delta[n]\) in (\ref{eq:diffeq}). This yields, by definition, the
-impulse response:
+% \begin{proof} Let \(\delta[n]\) denote the Dirac impulse.
+Take \(x[n]=\delta[n]\) in (\ref{eq:diffeq}). This yields, by
+definition, the impulse response:
 
 \begin{equation}
 \label{eq:fir}
 h[n]= \sum_{i=0}^q b_i \delta[n-i],
 \end{equation}
 
-which has finite support. \end{proof}
-
+which has finite support. \end{proof} %
 \begin{theorem} The poles of a causal stable filter are located
-within the unit circle in the complex plane. \end{theorem}
-
+within the unit circle in the complex plane. \end{theorem} %
 \begin{example} \label{ex:IIR1} Consider
 \(y[n]= a y[n-1] + x[n]\). The pole of the transfer function is \(z=a\).
 The impulse response \(h[n]=a^n\) has infinite support.
 \end{example}
 
 In the following exercise, you will check that the filter is stable iff
-\(a\)\textless{}1.
-
-\begin{exercise}\label{ex:exofilter} Consider the filter
-defined in Example \ref{ex:IIR1}. Using the \textbf{function}
-\texttt{lfilter} of scipy, compute and plot the impulse response for
-several values of \(a\). \end{exercise}
+\(a\)\textless{}1. % \begin{exercise}\label{ex:exofilter}
+Consider the filter defined in Example \ref{ex:IIR1}. Using the
+\textbf{function} \texttt{lfilter} of scipy, compute and plot the
+impulse response for several values of \(a\). \end{exercise}
 
     \begin{listing}
 The solution of exercise \ref{ex:exofilter}, which uses a difference equation as in Definition \ref{def:diffeq}:
@@ -822,8 +991,7 @@ The solution of exercise \ref{ex:exofilter}, which uses a difference equation as
 
 The solution of exercise \ref{ex:exofilter}, which uses a difference
 equation as in Definition \ref{def:diffeq}:
-% No prompt!
-%\textbf{Input \#{}}%
+%
 \begin{lstlisting}
 %matplotlib inline
 import numpy as np
@@ -837,11 +1005,9 @@ for a in alist:
 plt.ylim([0,1.5])
 plt.xlabel('Time')
 _=plt.legend()
-\end{lstlisting}% No prompt!
-%\textbf{Output \#{}}
-%
+\end{lstlisting}%
     \begin{center}
-    \adjustimage{max size={0.6\linewidth}{0.6\paperheight}}{latex_env_doc_files/latex_env_doc_50_0.png}
+    \adjustimage{max size={0.6\linewidth}{0.6\paperheight}}{latex_env_doc_files/latex_env_doc_52_0.png}
     \end{center}
 %    { \hspace*{\fill} \\}
     
