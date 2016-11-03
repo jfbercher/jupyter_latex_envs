@@ -131,7 +131,6 @@ function initmap(){
         "definition" : {num: 0},
         "remark" : {num: 0},
         "figure" : {num: 0},
-        "definition" : {num: 0},
     }
 
 

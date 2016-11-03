@@ -271,6 +271,7 @@ class LenvsHTMLExporter(HTMLExporter):
                              Highlight2HTML(pygments_lexer=lexer,
                                             parent=self))
         self.environment.globals['include_latexdefs'] = self.include_latexdefs
+        self.environment.globals['include_userenvs_cfg'] = self.include_userenvs_cfg
         lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
 
         self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)

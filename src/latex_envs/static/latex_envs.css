@@ -8,6 +8,7 @@ LaTeX things
     color:blue;
     text-align: center; 
     font-weight: bold;
+    line-height: 100%;
 }
 .latex_author{
     margin-top: 22px;

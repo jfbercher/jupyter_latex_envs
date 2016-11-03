@@ -75,6 +75,10 @@
         "title": "Example",
         "counterName": "example"
     },
+    "myenv": {
+        "title": "MyEnv",
+        "counterName": "example"
+    },    
     "figure": {
         "title": "Figure",
         "counterName": "figure"
