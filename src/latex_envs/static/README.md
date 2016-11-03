@@ -32,7 +32,7 @@ or
 ```bash
 jupyter nbconvert --to latex_with_lenvs FILE.ipynb
 ```
-to convert `FILE.ipynb` into html/latex while keeping all the features of the `latex_envs` notebook extension in the converted version. The LaTeX converter also expose several conversion options (read the [docs](https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_envs_doc.html). 
+to convert `FILE.ipynb` into html/latex while keeping all the features of the `latex_envs` notebook extension in the converted version. The LaTeX converter also expose several conversion options (read the [docs](https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html)). 
 
 
 Demo/documentation
