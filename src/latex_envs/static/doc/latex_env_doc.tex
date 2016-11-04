@@ -33,7 +33,7 @@ markup \item \textbf{Document-wide numbering of equations and
 environments, support for \texttt{\textbackslash{}label} and
 \texttt{\textbackslash{}ref}} \item \textbf{Configuration toolbar} \item
 \textbf{LaTeX\_envs dropdown menu for a quick insertion of environments}
-\item Support for \textbf{User \(\LaTeX\) definitions file} \item
+\item Support for \textbf{User \LaTeX definitions file} \item
 Environments title/numbering can be customized by users in
 \texttt{user\_envs.json} config file \item \textbf{Export to HTML and
 LaTeX with a customized exporter} \item Styles can be customized in the
@@ -134,9 +134,8 @@ where \(\theta\) is the angle between \(u\) and \(v\) \ldots{}
   \texttt{\textbackslash{}vspace,\ \textbackslash{}hspace}
 \item
   Support for LaTeX comments % in markdown cells
-\item
-  Reworked loading and merging of system/document configuration
-  parameters
+- Reworked
+  loading and merging of system/document configuration parameters
 \end{itemize}
 
 \textbf{August 28, 2016} - version 1.2
@@ -202,7 +201,7 @@ jupyter nbconvert --to html_toclenvs FILE.ipynb
   numbers). The numbering is automatically updated and is document-wide.
 \item
   I have completely reworked the \textbf{notebook conversion} to plain
-  \(\LaTeX\) and html. We provide specialized exporters, pre and post
+  \LaTeX and html. We provide specialized exporters, pre and post
   processors, templates. We also added entry-points to simplify the
   conversion process. It is now as simple as
 
@@ -245,7 +244,7 @@ extension also supports some textmode spacings, namely
 \texttt{\textbackslash{}par},
 \texttt{\textbackslash{}vspace,\ \textbackslash{}hspace} as well as
 \texttt{\textbackslash{}title}, \texttt{\textbackslash{}author},
-\texttt{maketitle} and LaTeX comments % in markdown cells. Labels and
+\texttt{maketitle} and LaTeX comments \% in markdown cells. Labels and
 cross-references are supported, including for equations.
 
     \subsection{Available environments}\label{available-environments}
@@ -387,11 +386,11 @@ var cit_tpl = {
 \end{verbatim}
 
 The keys are the main types of documents, eg inproceedings, article,
-inbook, etc. To each key is associated a string where the
-%KEYWORDS% are the fields of the bibtex entry. The keywords are
-replaced by the correponding bibtex entry value. The template string can
-formatted with additional words and effects (markdown or LaTeX are
-commands are supported)
+inbook, etc. To each key is associated a string where the \%KEYWORDS\%
+are the fields of the bibtex entry. The keywords are replaced by the
+correponding bibtex entry value. The template string can formatted with
+additional words and effects (markdown or LaTeX are commands are
+supported)
 
     \subsection{Figure environment}\label{figure-environment}
 
@@ -437,8 +436,8 @@ This function can be imported classically, eg
 if you installed from the jupyter\_contrib repo).
 
 Then, this function enables to specify a caption and a label for the
-next plot. In turn, when exporting to \(\LaTeX\), the corresponding plot
-is converted to a nice figure environement with a label and a caption.
+next plot. In turn, when exporting to \LaTeX, the corresponding plot is
+converted to a nice figure environement with a label and a caption.
 %
 \begin{lstlisting}
 %matplotlib inline
@@ -478,10 +477,10 @@ plt.plot(sin(2*pi*0.01*arange(100)))
   environments}
 \item
   Support for \textbf{line-comments}: lines beginning with a % will
-  be masked when rendering
-\item
-  Support for \textbf{linebreaks}: \texttt{\textbackslash{}par\_}, where
-  \_ denotes any space, tab, linefeed, cr, is replaced by a linebreak
+  be masked when rendering 
+- Support for \textbf{linebreaks}:
+  \texttt{\textbackslash{}par\_}, where \_ denotes any space, tab,
+  linefeed, cr, is replaced by a linebreak
 \item
   Environments can be nested. egg:
 
@@ -489,7 +488,7 @@ plt.plot(sin(2*pi*0.01*arange(100)))
   This is an example of nested environments, with equations inside\\
   \begin{proof} Demo
   % This is a comment
-  \begin{enumerate}
+\begin{enumerate}
   \item $$ \left\{ p_1, p_2, p_3 \ldots p_n \right\} $$
   \item A **nested enumerate**
   \item second item 
@@ -510,8 +509,9 @@ plt.plot(sin(2*pi*0.01*arange(100)))
 \end{itemize}
 
     This is an example of nested environments, with equations inside\\
-\begin{proof} Demo % This is a comment \begin{enumerate}
-\item
+\begin{proof} Demo % This is a
+comment
+\begin{enumerate} \item
 
 \begin{equation}\label{eq:}
 \left\{ p_1, p_2, p_3 \ldots p_n \right\}
@@ -567,7 +567,7 @@ enables to toggle the state of several configuration options:
 \item
   show labels anchors,
 \item
-  use \(\LaTeX\) user own LaTeX defintions (loads \texttt{latexdefs.tex}
+  use \LaTeX user own LaTeX defintions (loads \texttt{latexdefs.tex}
   file from current document directory),
 \item
   load user's environments configuration (file \texttt{user\_envs.json}
@@ -946,7 +946,8 @@ Consider the filter defined in Example \ref{ex:IIR1}. Using the **function** `lf
 \end{listing}
 
     The lines above are rendered as follows (of course everything can be
-tailored in the stylesheet): % \begin{definition}
+tailored in the stylesheet): %
+\begin{definition}
 \label{def:diffeq} We call \textbf{difference equation} an equation of
 the form
 
@@ -955,32 +956,37 @@ the form
 y[n]= \sum_{k=1}^{p} a_k y[n-k] + \sum_{i=0}^q b_i x[n-i]
 \end{equation}
 
-\end{definition}
-
-Properties of the filter are linked to the coefficients of the
-difference equation. For instance, an immediate property is %
-\begin{property} If all the \(a_k\) in equation
-(\ref{eq:diffeq}) of definition \ref{def:diffeq} are zero, then the
-filter has a \textbf{finite impulse response}. \end{property}
-% \begin{proof} Let \(\delta[n]\) denote the Dirac impulse.
-Take \(x[n]=\delta[n]\) in (\ref{eq:diffeq}). This yields, by
-definition, the impulse response:
+\end{definition} %
+Properties of the filter are linked to
+the coefficients of the difference equation. For instance, an immediate
+property is %
+% this is a comment
+\begin{property}
+If all the \(a_k\) in equation (\ref{eq:diffeq}) of definition
+\ref{def:diffeq} are zero, then the filter has a \textbf{finite impulse
+response}. \end{property} %
+\begin{proof} Let
+\(\delta[n]\) denote the Dirac impulse. Take \(x[n]=\delta[n]\) in
+(\ref{eq:diffeq}). This yields, by definition, the impulse response:
 
 \begin{equation}
 \label{eq:fir}
 h[n]= \sum_{i=0}^q b_i \delta[n-i],
 \end{equation}
 
-which has finite support. \end{proof} %
-\begin{theorem} The poles of a causal stable filter are located
-within the unit circle in the complex plane. \end{theorem} %
-\begin{example} \label{ex:IIR1} Consider
-\(y[n]= a y[n-1] + x[n]\). The pole of the transfer function is \(z=a\).
-The impulse response \(h[n]=a^n\) has infinite support.
+which has finite support. \end{proof}
+%
+\begin{theorem} The poles of a causal stable filter are
+located within the unit circle in the complex plane.
+\end{theorem} %
+\begin{example} \label{ex:IIR1}
+Consider \(y[n]= a y[n-1] + x[n]\). The pole of the transfer function is
+\(z=a\). The impulse response \(h[n]=a^n\) has infinite support.
 \end{example}
 
 In the following exercise, you will check that the filter is stable iff
-\(a\)\textless{}1. % \begin{exercise}\label{ex:exofilter}
+\(a\)\textless{}1. %
+\begin{exercise}\label{ex:exofilter}
 Consider the filter defined in Example \ref{ex:IIR1}. Using the
 \textbf{function} \texttt{lfilter} of scipy, compute and plot the
 impulse response for several values of \(a\). \end{exercise}
