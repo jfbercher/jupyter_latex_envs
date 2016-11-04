@@ -105,6 +105,7 @@ class LenvsLatexPreprocessor(Preprocessor):
         """
         if cell.cell_type == "markdown":
             data = cell.source
+            data = data.replace(r"$\LaTeX$", r"\LaTeX")
             data = data.replace(r"{enumerate}", r"{enum}")
             code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
             while (code is not None):
@@ -115,7 +116,8 @@ class LenvsLatexPreprocessor(Preprocessor):
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
             #data = data.replace('\n', '!nl!\n')
             data = data.replace('\\\\', '!sl!!sl!')
-            data = data.replace('%', '!cc!')
+            data = re.sub(r'%([\S\s ]*?)\n', r'!cc!\1!nl!',data)
+            #data = data.replace('%', '!cc!')
             data = data.replace("/begin", "\\begin")
             data = data.replace("/end", "\\end")
             cell.source = data
