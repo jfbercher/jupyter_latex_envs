@@ -8,7 +8,8 @@ var conversion_to_html = false;
 var config_toolbar_present = false;
 var reprocessEqs; 
 //These variables are initialized in init_config()
-var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, latex_user_defs, user_envs_cfg;
+var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, labels_anchors, latex_user_defs, user_envs_cfg;
+var environmentMap = {};
 
 if (typeof add_edit_shortcuts === "undefined")
     var add_edit_shortcuts = {}
@@ -108,16 +109,9 @@ define(function(require, exports, module) {
 
     };
 
- function load_ipython_extension() {
-    //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
-
-    "use strict";
-    if (Jupyter.version[0] < 3) {
-        console.log("This extension requires Jupyter or IPython >= 3.x")
-        return
-    }
-
-    var _on_reload = true; /* make sure cells render on reload */
+function override_md_renderer()
+{
+        var _on_reload = true; /* make sure cells render on reload */
     
 
     /* Override original markdown render function to include latex_envs 
@@ -163,31 +157,37 @@ define(function(require, exports, module) {
         return cont;
     };
     
+}
 
-    //var maps = initmap();
-    /*environmentMap = maps[0];
-    cmdsMap = maps[1];
-    eqLabNums = maps[2];
-    cit_table = maps[3];*/
+ function load_ipython_extension() {
+    //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
 
-   // var initcfg = init_config(Jupyter, utils, configmod);
-   // cfg = Jupyter.notebook.metadata.latex_envs;
+    "use strict";
+    if (Jupyter.version[0] < 3) {
+        console.log("This extension requires Jupyter or IPython >= 3.x")
+        return
+    }
 
-    if (Jupyter.notebook.save_notebook instanceof Function) {  
-        // save function available: this tests if the notebook is fully loaded      
+
+    if (Jupyter.notebook._fully_loaded) {  
+        // this tests if the notebook is fully loaded      
         var initcfg = init_config(Jupyter, utils, configmod);
+        override_md_renderer();
         cfg = Jupyter.notebook.metadata.latex_envs;
-        console.log("Notebook fully loaded -- latex_envs initialized ")
+        // reset eq numbers on each markdown cell modification
+        $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
+        console.log("[latex_envs] Notebook fully loaded -- latex_envs initialized ")
     } else {
         $([Jupyter.events]).on("notebook_loaded.Notebook", function() {
             init_config(Jupyter, utils, configmod);
+            override_md_renderer();
             cfg = Jupyter.notebook.metadata.latex_envs;
-            console.log("latex_envs initialized (via notebook_loaded)")
+            // reset eq numbers on each markdown cell modification
+            $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
+            console.log("[latex_envs] latex_envs initialized (via notebook_loaded)")
         })
     }
 
-    // reset eq numbers on each markdown cell modification
-    $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
 
     // toolbar buttons
         Jupyter.toolbar.add_buttons_group([{
