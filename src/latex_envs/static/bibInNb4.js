@@ -25,7 +25,7 @@ require(["nbextensions/latex_envs/bibtex2"], function () {
         return document.bibtex_parser.getEntries();
     }
 
-    $.get(bibliofile, function (data){
+    $.get(bibliofile).done(function (data){
         var json = parse_bibtex(data)
         $.extend(document.bibliography, json);
     }).fail(function () {bibmsg="The bib file "+bibliofile+" was not found\n\n"; console.log(bibmsg)})
