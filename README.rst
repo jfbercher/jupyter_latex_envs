@@ -86,10 +86,6 @@ From the github repo or from Pypi,
    -   or ``pip3 install jupyter_latex_envs [--user][--upgrade]``
    -   or clone the repo and install ``git clone https://github.com/jfbercher/jupyter_latex_envs.git  python3 setup.py install``
 
-With Jupyter >= 4.2, step 1 should sufficient as the files will be
-automatically copied to the target drectories and the extension enabled.
-For ealier versions of Jupyter or if something fails, you will have to
-add two more steps.
 
 -  **step 2**: install the notebook extension
 

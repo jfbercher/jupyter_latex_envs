@@ -40,7 +40,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.3.3',
+      version='1.3.4',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
@@ -74,26 +74,26 @@ setup(name='jupyter_latex_envs',
             ],
   )
 
-if 'install' in argv:
-    import sys
-    x=sys.stdout.write(msg)
-    import site 
-    try: 
-        import importlib
-        importlib.reload(site)
-    except:
-        reload(site)
-    import latex_envs
-    import notebook.nbextensions as nb
-    user = False
-    sys_prefix = False
-    if "--user" in argv: 
-        user=True
-    if "--sys-prefix" in argv: 
-        sys_prefix=True
-    x=sys.stdout.write("[Step 2]: Installing the javascript nbextension"+"\n")
-    nb.install_nbextension_python('latex_envs',
-            user=user, sys_prefix=sys_prefix)
-    x=sys.stdout.write("[Step 3]: Enabing the nbextension"+"\n")
-    nb.enable_nbextension_python('latex_envs',
-            user=user, sys_prefix=sys_prefix)
+#if 'install' in argv:
+#    import sys
+x=sys.stdout.write(msg)
+#    import site 
+#    try: 
+#        import importlib
+#        importlib.reload(site)
+#    except:
+#        reload(site)
+#    import latex_envs
+#    import notebook.nbextensions as nb
+#    user = False
+#    sys_prefix = False
+#    if "--user" in argv: 
+#        user=True
+#    if "--sys-prefix" in argv: 
+#        sys_prefix=True
+#    x=sys.stdout.write("[Step 2]: Installing the javascript nbextension"+"\n")
+#    nb.install_nbextension_python('latex_envs',
+#            user=user, sys_prefix=sys_prefix)
+#    x=sys.stdout.write("[Step 3]: Enabing the nbextension"+"\n")
+#    nb.enable_nbextension_python('latex_envs',
+#            user=user, sys_prefix=sys_prefix)
