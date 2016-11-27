@@ -112,8 +112,10 @@ class LenvsLatexPreprocessor(Preprocessor):
                 data = re.sub(r'\\begin{(\w+)}(\[[\S\s]*?\])?([\s\S]*?)\\end{\1}',
                 #data = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
                               self.replacement, data)
+                data = re.sub(r'\n\s*\\item', r'//item',data)
                 data = data.replace(r'\item', r'/item')
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
+            data = re.sub(r'\\\[([\s\S]*?)\\\]', r'/begin{equation*}\1/end{equation*}', data)
             #data = data.replace('\n', '!nl!\n')
             data = data.replace('\\\\', '!sl!!sl!')
             data = re.sub(r'%([\S\s ]*?)\n', r'!cc!\1!nl!',data)
@@ -121,6 +123,7 @@ class LenvsLatexPreprocessor(Preprocessor):
             data = data.replace("/begin", "\\begin")
             data = data.replace("/end", "\\end")
             cell.source = data
+            #print("DATA",data)
         return cell, resources
 
 
@@ -157,6 +160,8 @@ class LenvsHTMLPreprocessor(Preprocessor):
         # this has unwanted consequences for equations
         # ref: https://github.com/jupyter/nbconvert/issues/160
         if cell.cell_type == "markdown":
+            cell.source = re.sub(r'\\\[([\s\S]*?)\\\]', r'$$\1$$', cell.source)
+            cell.source = re.sub(r'\\begin{equation\*}([\s\S]*?)\\end{equation\*}', r'$$\1$$', cell.source)
             cell.source = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
                                  self.replacement, cell.source)
         return cell, resources
@@ -431,13 +436,14 @@ class LenvsLatexExporter(LatexExporter):
         nb_text = nb_text.replace('!sl!', '\\')
         nb_text = nb_text.replace('!lb!', '[')
         nb_text = nb_text.replace('!rb!', ']')
+        nb_text = nb_text.replace(r'//item', '\n\\item')
         nb_text = nb_text.replace(r'/item', r'\item')
         nb_text = nb_text.replace(r"{enum}", r"{enumerate}")
 
         if self.removeHeaders:
             tex_text = re.search('begin{document}([\s\S]*?)\\\\end{document}', nb_text, flags=re.M)  # noqa
             newtext = tex_text.group(1)
-            newtext = newtext.replace('\maketitle', '')
+            newtext = newtext.replace('\\maketitle', '')
             newtext = newtext.replace('\\tableofcontents', '')
             nb_text = newtext
         if self.figcaptionProcess:
