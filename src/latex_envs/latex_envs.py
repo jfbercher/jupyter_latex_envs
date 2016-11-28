@@ -442,6 +442,7 @@ class LenvsLatexExporter(LatexExporter):
         nb_text = nb_text.replace('!lb!', '[')
         nb_text = nb_text.replace('!rb!', ']')
         nb_text = nb_text.replace(r'//item', '\n\\item')
+        nb_text = nb_text.replace('\\[', '\n\\[').replace('\\]', '\\]\n')
         nb_text = nb_text.replace(r'/item', r'\item')
         nb_text = nb_text.replace(r"{enum}", r"{enumerate}")
 
