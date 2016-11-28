@@ -89,6 +89,9 @@ class LenvsLatexPreprocessor(Preprocessor):
         else:
             return match.group(0).replace('\\begin', '/begin').replace('\\end', '/end')#out
 
+    def inline_math_strip_space(self,match):
+        return "$"+match.group(1).replace(' ','')+"$"
+
     def preprocess_cell(self, cell, resources, index):
         """
         Preprocess cell
@@ -115,7 +118,8 @@ class LenvsLatexPreprocessor(Preprocessor):
                 data = re.sub(r'\n\s*\\item', r'//item',data)
                 data = data.replace(r'\item', r'/item')
                 code = re.search(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}', data)
-            data = re.sub(r'\\\[([\s\S]*?)\\\]', r'/begin{equation*}\1/end{equation*}', data)
+            data = re.sub(r'\\\[([\s\S]*?)\\\]', r'$$\1$$', data) #$$.$$ is converted into \[.\] #noqa
+            data = re.sub(r'\\\(([\s\S]*?)\\\)', self.inline_math_strip_space, data) #$.$ converted into \(.\) #noqa
             #data = data.replace('\n', '!nl!\n')
             data = data.replace('\\\\', '!sl!!sl!')
             data = re.sub(r'%([\S\s ]*?)\n', r'!cc!\1!nl!',data)
@@ -161,6 +165,7 @@ class LenvsHTMLPreprocessor(Preprocessor):
         # ref: https://github.com/jupyter/nbconvert/issues/160
         if cell.cell_type == "markdown":
             cell.source = re.sub(r'\\\[([\s\S]*?)\\\]', r'$$\1$$', cell.source)
+            cell.source = re.sub(r'\\\(([\s\S]*?)\\\)', r'$\1$', cell.source)
             cell.source = re.sub(r'\\begin{equation\*}([\s\S]*?)\\end{equation\*}', r'$$\1$$', cell.source)
             cell.source = re.sub(r'\\begin{(\w+)}([\s\S]*?)\\end{\1}',
                                  self.replacement, cell.source)
