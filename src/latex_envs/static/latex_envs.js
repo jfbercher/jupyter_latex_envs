@@ -124,6 +124,11 @@ function override_md_renderer()
         if (cont || Jupyter.notebook.dirty || _on_reload) {
             var that = this;
             var text = this.get_text();
+            // interpret \[..\] and \(\) as LaTeX
+            text = text.replace(/\\\[([\s\S]*?)\\\]/gm, function(w,m1){
+                return "$$"+m1+"$$"})
+            text = text.replace(/\\\(([\s\S]*?)\\\)/gm, function(w,m1){
+                return "$"+m1+"$"})
             var math = null;
             if (text === "") { text = this.placeholder; }
             var text_and_math = mathjaxutils.remove_math(text);
