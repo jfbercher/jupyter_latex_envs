@@ -82,6 +82,8 @@ function insert_text(identifier) { //must be available in the main scope
 }
 
 // use AMD-style simplified define wrapper to avoid http://requirejs.org/docs/errors.html#notloaded
+ `define(['notebook'], function(notebookApp) { var module =  notebookApp['base/js/utils']});`
+
 define(function(require, exports, module) {
     var Jupyter = require('base/js/namespace');
     var MarkdownCell = require('notebook/js/textcell').MarkdownCell;
@@ -113,13 +115,11 @@ function override_md_renderer()
 {
         var _on_reload = true; /* make sure cells render on reload */
     
-
     /* Override original markdown render function to include latex_envs 
     processing */
 
     MarkdownCell.prototype.render = function(noevent) {
         if (typeof noevent === "undefined") noevent = false;
-
         var cont = TextCell.prototype.render.apply(this);
         if (cont || Jupyter.notebook.dirty || _on_reload) {
             var that = this;
@@ -161,7 +161,12 @@ function override_md_renderer()
         }
         return cont;
     };
-    
+    if (IPython.version[0]>'4') {
+        // seems that the original prototype is copied to IPython.MarkdownCell
+        // have to override it. 
+        // TODO - define new prototype, including modifs in 5.x
+        IPython.MarkdownCell.prototype.render = MarkdownCell.prototype.render;
+    }
 }
 
  function load_ipython_extension() {
@@ -175,17 +180,17 @@ function override_md_renderer()
 
 
     if (Jupyter.notebook._fully_loaded) {  
-        // this tests if the notebook is fully loaded      
-        var initcfg = init_config(Jupyter, utils, configmod);
+        // this tests if the notebook is fully loaded              
         override_md_renderer();
+        var initcfg = init_config(Jupyter, utils, configmod);
         cfg = Jupyter.notebook.metadata.latex_envs;
         // reset eq numbers on each markdown cell modification
         $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
         console.log("[latex_envs] Notebook fully loaded -- latex_envs initialized ")
     } else {
-        $([Jupyter.events]).on("notebook_loaded.Notebook", function() {
-            init_config(Jupyter, utils, configmod);
+        $([Jupyter.events]).on("notebook_loaded.Notebook", function() {        
             override_md_renderer();
+            init_config(Jupyter, utils, configmod);
             cfg = Jupyter.notebook.metadata.latex_envs;
             // reset eq numbers on each markdown cell modification
             $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);

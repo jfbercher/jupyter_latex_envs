@@ -2,7 +2,7 @@
 // Initializations
 
 function onMarkdownCellRendering(event, data) {
-    // console.log("recomputing eqs")
+    //console.log("recomputing eqs")
     if (MathJaxDefined) MathJax.Hub.Queue(
         ["resetEquationNumbers", MathJax.InputJax.TeX], ["PreProcess", MathJax.Hub], ["Reprocess", MathJax.Hub]
     );

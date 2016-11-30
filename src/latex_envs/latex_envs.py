@@ -127,7 +127,6 @@ class LenvsLatexPreprocessor(Preprocessor):
             data = data.replace("/begin", "\\begin")
             data = data.replace("/end", "\\end")
             cell.source = data
-            #print("DATA",data)
         return cell, resources
 
 
