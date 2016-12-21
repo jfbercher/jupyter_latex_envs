@@ -1,8 +1,3 @@
-.. default-role:: code
-.. role:: math(raw)
-   :format: html latex
-..
-
 (some) LaTeX environments for Jupyter notebook
 ==============================================
 
