@@ -2,10 +2,22 @@
 // Initializations
 
 function onMarkdownCellRendering(event, data) {
-    //console.log("recomputing eqs")
-    if (MathJaxDefined) MathJax.Hub.Queue(
+    // console.log("recomputing eqs")
+    if (MathJaxDefined)  
+        // see answer in https://groups.google.com/forum/#!topic/mathjax-users/7x-SzrezCaY       
+        MathJax.Hub.Queue(
+          function () {
+            if (MathJax.InputJax.TeX.resetEquationNumbers) {
+              MathJax.InputJax.TeX.resetEquationNumbers();
+            }
+          },
+          ["PreProcess", MathJax.Hub], ["Reprocess", MathJax.Hub]
+        );
+
+
+    /*    MathJax.Hub.Queue(
         ["resetEquationNumbers", MathJax.InputJax.TeX], ["PreProcess", MathJax.Hub], ["Reprocess", MathJax.Hub]
-    );
+    );*/
     $('.latex_label_anchor').toggle(labels_anchors);
     
     reset_counters();
@@ -92,7 +104,8 @@ var init_cells = function() {
     var lastmd_cell;
     for (var i = 0; i < ncells; i++) {
         var cell = cells[i]; 
-        if (cell instanceof MarkdownCell) {
+        // render visible markdown cells
+        if (cell instanceof MarkdownCell && $(cell.element).is(":visible") ) {
             cell.render(noevent);
             lastmd_cell = cell;
         };
@@ -105,7 +118,7 @@ var init_cells = function() {
 
 // ** load configuration (1) default config, (2) system config (3) document config
 // and save at document level
-function init_config(Jupyter,utils,configmod) {
+function init_config(Jupyter,utils,configmod, callback) {
     var cfg = { // default config
             //EQUATIONS
             'eqNumInitial': 1, // begins equation numbering at eqNum
@@ -152,10 +165,16 @@ function init_config(Jupyter,utils,configmod) {
         // and initialize maps, bibliography and cells
         initmap();
         if (user_envs_cfg) {
+            callback && callback();
+            // reset eq numbers on each markdown cell modification
+            $([Jupyter.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
             loadUserEnvsCfg(init_nb)
         } 
         else {
             environmentMap = $.extend(true, {}, environmentInitialMap) //deep copy
+            callback && callback();
+            // reset eq numbers on each markdown cell modification
+            $([Jupyter.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
             init_nb()
         }
     })
@@ -506,8 +525,15 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
         .attr('title', 'Close LaTeX_envs toolbar')
         .css('float', 'right')
         .attr('id', 'suicide')
-        .attr('title','Close the LaTeX-envs configuration toolbar')
+        .attr('title', 'Close the LaTeX-envs configuration toolbar')
         .append($("<i/>").addClass('fa fa-power-off'))
+        .on('click', function() {
+            config_toolbar_present = false;
+            $("#LaTeX_envs_toolbar").remove();
+            $(site).height($(window).height() - $('#header').height() - $('#footer').height())
+            return
+        })
+
 
     // Finally the toolbar itself
     LaTeX_envs_toolbar.append(LaTeX_envs_help_link)
@@ -678,11 +704,5 @@ rgba(102, 175, 233, 0.6);}</style>')
 
         })
         .tooltip({ title: 'Apply the selected values', trigger: "hover", delay: { show: 500, hide: 50 } });
-
-    $('#suicide').on('click', function() {
-        config_toolbar_present = false;
-        $("#LaTeX_envs_toolbar").remove();
-        $(site).height($(window).height() - $('#header').height() - $('#footer').height())
-    })
 
 }

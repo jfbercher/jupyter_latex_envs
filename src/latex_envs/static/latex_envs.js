@@ -111,7 +111,8 @@ define(function(require, exports, module) {
 
     };
 
-function override_md_renderer()
+
+function override_mdrenderer()
 {
         var _on_reload = true; /* make sure cells render on reload */
     
@@ -169,7 +170,7 @@ function override_md_renderer()
     }
 }
 
- function load_ipython_extension() {
+function load_ipython_extension() {
     //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
 
     "use strict";
@@ -178,23 +179,18 @@ function override_md_renderer()
         return
     }
 
-
+    var environmentMap = {};
+    
     if (Jupyter.notebook._fully_loaded) {  
         // this tests if the notebook is fully loaded              
-        override_md_renderer();
-        var initcfg = init_config(Jupyter, utils, configmod);
+        var initcfg = init_config(Jupyter, utils, configmod, override_mdrenderer);
         cfg = Jupyter.notebook.metadata.latex_envs;
-        // reset eq numbers on each markdown cell modification
-        $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
-        console.log("[latex_envs] Notebook fully loaded -- latex_envs initialized ")
+        console.log("Notebook fully loaded -- latex_envs initialized ")
     } else {
-        $([Jupyter.events]).on("notebook_loaded.Notebook", function() {        
-            override_md_renderer();
-            init_config(Jupyter, utils, configmod);
+        $([Jupyter.events]).on("notebook_loaded.Notebook", function() {
+            init_config(Jupyter, utils, configmod, override_mdrenderer);
             cfg = Jupyter.notebook.metadata.latex_envs;
-            // reset eq numbers on each markdown cell modification
-            $([IPython.events]).on("rendered.MarkdownCell", onMarkdownCellRendering);
-            console.log("[latex_envs] latex_envs initialized (via notebook_loaded)")
+            console.log("latex_envs initialized (via notebook_loaded)")
         })
     }
 
