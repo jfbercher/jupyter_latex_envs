@@ -342,7 +342,7 @@ function thmsInNbConv(marked,text) {
                         var title = environment.title;
                         if (environment.counterName) {
                             envCounters[environment.counterName].num++;
-                            title += ' ' + `<span class="latex_envs_num" data-envname="${m1}">` 
+                            title += ' ' + '<span class="latex_envs_num" data-envname="${m1}">' 
                             + envCounters[environment.counterName].num + '</span>' + opt;
                             // title += ' ' + environment.counter.num + opt;
                         }
@@ -602,9 +602,8 @@ function thmsInNbConv(marked,text) {
                         if (liveNotebook) Jupyter.notebook.metadata.author= title_match[1]
                     } 
                     if (text.match(/\\maketitle/)) {
-                        var maketitle = `<div class = "latex_maintitle"> ${title_match[1]} </div>\
-                        <div class="latex_author">\ 
-                        ${author_match[1]} </div>`
+                        var maketitle = '<div class = "latex_maintitle"> ${title_match[1]} </div>\
+                        <div class="latex_author"> ${author_match[1]} </div>'
                         text = text.replace(/\\maketitle/, maketitle)
                     }
                      
