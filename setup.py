@@ -40,7 +40,7 @@ def read(*names, **kwargs):
 
 
 setup(name='jupyter_latex_envs',
-      version='1.3.6',
+      version='1.3.7',
       description=("Jupyter notebook extension which supports (some) LaTeX environments "  # noqa
       "within markdown cells. Also provides support for labels and crossreferences, "  # noqa
       "document wide numbering, bibliography, and more..."),
@@ -53,6 +53,13 @@ setup(name='jupyter_latex_envs',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       include_package_data=True,
+      install_requires=[
+      'ipython',
+      'jupyter_core',
+      'nbconvert',
+      'notebook >=4.0',
+      'traitlets >=4.1',
+      ],
       zip_safe=False,
       entry_points={
         'nbconvert.exporters': [
