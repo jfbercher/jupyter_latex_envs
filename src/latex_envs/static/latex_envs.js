@@ -10,6 +10,7 @@ var reprocessEqs;
 //These variables are initialized in init_config()
 var cite_by, bibliofile, eqNumInitial, eqNum, eqLabelWithNumbers, LaTeX_envs_menu_present, labels_anchors, latex_user_defs, user_envs_cfg;
 var environmentMap = {};
+var envsLatex = {};
 
 if (typeof add_edit_shortcuts === "undefined")
     var add_edit_shortcuts = {}
@@ -31,7 +32,7 @@ if (MathJaxDefined) {
             }
         }
     });
-    MathJax.Hub.processSectionDelay = 0;
+   // MathJax.Hub.processSectionDelay = 0; //commented For Jupyter 5.0 ??
 }
 
 /* *************************************************************************************
@@ -82,7 +83,7 @@ function insert_text(identifier) { //must be available in the main scope
 }
 
 // use AMD-style simplified define wrapper to avoid http://requirejs.org/docs/errors.html#notloaded
- `define(['notebook'], function(notebookApp) { var module =  notebookApp['base/js/utils']});`
+// `define(['notebook'], function(notebookApp) { var module =  notebookApp['base/js/utils']});`
 
 define(function(require, exports, module) {
     var Jupyter = require('base/js/namespace');
@@ -93,10 +94,11 @@ define(function(require, exports, module) {
     var configmod = require("services/config");
     var utils = require('base/js/utils');
     var marked = require('components/marked/lib/marked');
+    // var completer = require('notebook/js/completer')
 
     var thmsInNb = require('nbextensions/latex_envs/thmsInNb4');
     var bibsInNb = require('nbextensions/latex_envs/bibInNb4');
-    require('nbextensions/latex_envs/envsLatex');
+    //require('nbextensions/latex_envs/envsLatex');
     var initNb = require('nbextensions/latex_envs/initNb');
 
     cfg = Jupyter.notebook.metadata.latex_envs;
@@ -112,8 +114,7 @@ define(function(require, exports, module) {
     };
 
 
-function override_mdrenderer()
-{
+function override_mdrenderer() {
         var _on_reload = true; /* make sure cells render on reload */
     
     /* Override original markdown render function to include latex_envs 
@@ -137,8 +138,8 @@ function override_mdrenderer()
             math = text_and_math[1];
             marked(text, function(err, html) {
                 html = mathjaxutils.replace_math(html, math);
-                var htmlout = thmsInNbConv(marked, html); //<----- thmsInNb patch here
-                html = security.sanitize_html(htmlout);
+                html = thmsInNbConv(marked, html); //<----- thmsInNb patch here
+                html = security.sanitize_html(html);
                 html = $($.parseHTML(html));
                 // add anchors to headings
                 html.find(":header").addBack(":header").each(function(i, h) {
@@ -168,6 +169,41 @@ function override_mdrenderer()
         // TODO - define new prototype, including modifs in 5.x
         IPython.MarkdownCell.prototype.render = MarkdownCell.prototype.render;
     }
+
+
+    MarkdownCell.prototype.handle_codemirror_keyevent = function(editor, event) {
+
+        require('notebook/js/cell').Cell.prototype.handle_codemirror_keyevent.apply(this, [editor, event]);
+        var cur = editor.getCursor();
+        console.log("CUR", cur)
+        var inWord_re = /[%0-9a-z._/\\:~-]/i;
+
+
+            if (editor.somethingSelected() || editor.getSelections().length > 1) return;
+            var line = editor.getLine(cur.line);
+            var pre_cursor = editor.getRange({
+                line: cur.line,
+                ch: cur.ch - 1
+            }, cur);
+
+            var tst = inWord_re.test(pre_cursor)
+
+            var array_completion = ['$$', '()', '[]', '{}']
+            var matches = array_completion.filter(function(elt) {
+                return elt.startsWith(event.key)
+            })
+
+            if (matches.length == 1) {
+                event.codemirrorIgnore = true;
+                event.preventDefault();
+                editor.replaceRange(matches[0], cur); editor.setCursor(cur.line, cur.ch+1);
+                return true
+            }
+        
+         return false;   
+        
+    };
+
 }
 
 function load_ipython_extension() {
