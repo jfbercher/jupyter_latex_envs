@@ -175,7 +175,6 @@ function override_mdrenderer() {
 
         require('notebook/js/cell').Cell.prototype.handle_codemirror_keyevent.apply(this, [editor, event]);
         var cur = editor.getCursor();
-        console.log("CUR", cur)
         var inWord_re = /[%0-9a-z._/\\:~-]/i;
 
 
