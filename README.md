@@ -25,6 +25,7 @@ environments markdown cells.
 8.  Environments title/numbering can be customized by users in
     `user_envs.json` config file.
 9.  Styles can be customized in the `latex_env.css` stylesheet
+10. Limited **autocompletion** for \$, (, {, [ 
 
 More environments can be simply added in `user_envs.json` or in the source file
 (`thmsInNb4.js`).
