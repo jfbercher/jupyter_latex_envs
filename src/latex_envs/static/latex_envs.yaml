@@ -25,4 +25,12 @@ Parameters:
 - name: latex_envs.bibliofile
   description: BibTeX filename (in current directory)
   input_type: text
-  default: biblio.bib  
+  default: biblio.bib
+- name: latex_envs.hotkeys.equation
+  description: Hotkey used to insert equation environment
+  input_type: hotkey
+  default: Ctrl-E
+- name: latex_envs.hotkeys.itemize
+  description: Hotkey used to insert itemize environment
+  input_type: hotkey
+  default: Ctrl-I

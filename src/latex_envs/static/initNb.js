@@ -57,7 +57,6 @@ function loadLatexUserDefs() {
     }).fail(function() {
         console.log('latex_envs: failed to load user LaTeX definitions latexdefs.tex')
     });
-    
 }
 
 function loadUserEnvsCfg(callback) {
@@ -80,15 +79,33 @@ function loadUserEnvsCfg(callback) {
       }
 
 
+function loadEnvsLaTeX(callback) {
+    var jqxhr = $.getJSON("/nbextensions/latex_envs/envsLatex.json")
+        .done(function(data) {
+            envsLatex = $.extend(true, {}, data) //deep copy
+            create_latex_menu(); // then create LaTeX menu
+        })
+        .fail(function(jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log("latex_envs: error loading /nbextensions/latex_envs/envsLatex.json");
+            console.log("Request Failed: " + err);
+        })
+        .always(function() {
+            callback && callback();
+            //console.log( "complete" );
+        });
+}
+
+
+
 var init_nb = function() {
     readBibliography(function() {
-        create_latex_menu();
+        loadEnvsLaTeX();
         if (!LaTeX_envs_menu_present) toggleLatexMenu();
         if (latex_user_defs) loadLatexUserDefs();
         add_help_menu_item();
         createReferenceSection();
         init_cells();
-        Jupyter.keyboard_manager.edit_shortcuts.add_shortcuts(add_edit_shortcuts);
     });
 }
 
@@ -137,7 +154,12 @@ function init_config(Jupyter,utils,configmod, callback) {
             'user_envs_cfg' : false,
             // Use section numbers for numbering environments
             // ie Book/Report numbering style
-            'report_style_numbering' : false
+            'report_style_numbering' : false,
+            // Hotkeys -- more hotkeys can be added directly in envsLatex.json
+            'hotkeys' : {
+            'equation' : 'Ctrl-E',
+            'itemize' : 'Ctrl-I'
+            }
         }
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
@@ -150,6 +172,8 @@ function init_config(Jupyter,utils,configmod, callback) {
         // and save in nb metadata (then can be modified per document)
         cfg = IPython.notebook.metadata.latex_envs = $.extend(true, cfg,
             IPython.notebook.metadata.latex_envs);
+        // hotkeys taken from system
+        cfg.hotkeys = IPython.notebook.metadata.latex_envs.hotkeys = $.extend(true, {}, config.data.latex_envs.hotkeys);
         // update global variables
         cite_by = cfg.cite_by; //global
         bibliofile = cfg.bibliofile;
@@ -213,6 +237,7 @@ function create_latex_menu(callback) {
         return;
     }
 
+    cfg = Jupyter.notebook.metadata.latex_envs
     $('#help_menu').parent().before('<li id="Latex_envs"/>')
     $('#Latex_envs').addClass('dropdown')
             .append($('<a/>').attr('href', '#')
@@ -230,7 +255,7 @@ function create_latex_menu(callback) {
         var current_env_name = envsLatex[p]['name']
         var current_hint = envsLatex[p]['hint']
         var current_env = envsLatex[p]['env']
-        var current_shortcut = envsLatex[p]['shortcut']
+        var current_shortcut = cfg['hotkeys'][current_env_name] != undefined ? cfg['hotkeys'][current_env_name] : envsLatex[p]['shortcut']
         var current_id = "env_" + p
         current_env_name = current_shortcut == "" ? current_env_name : current_env_name + '  (' + current_shortcut + ')'
 
@@ -259,6 +284,7 @@ function create_latex_menu(callback) {
         }
     }
     callback && callback();
+    Jupyter.keyboard_manager.edit_shortcuts.add_shortcuts(add_edit_shortcuts);
 }
 
 /********************************************************************************************
