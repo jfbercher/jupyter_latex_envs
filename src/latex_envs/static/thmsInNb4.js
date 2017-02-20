@@ -330,10 +330,11 @@ function thmsInNbConv(marked,text) {
                         var environment = environmentMap[m1];
                         if (!environment) return wholeMatch;
 
-                        // get optional parameter
+                        // get optional parameter except for envs listed in opt_excluded_envs
                         var opt_tst=m2.match(/^\[([\S\s]*?)\]/)
-                        var opt=''; 
-                        if (opt_tst) {
+                        var opt='';
+                        var opt_excluded_envs = ['Figure'] 
+                        if (opt_tst && !opt_excluded_envs.includes(environment.title)) {
                             opt = '<span class="latex_title_opt">' +
                              opt_tst[1] + '</span>';
                             m2 = m2.replace(/^\[([\S\s]*?)\]/,'')
