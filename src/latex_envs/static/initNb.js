@@ -155,6 +155,8 @@ function init_config(Jupyter,utils,configmod, callback) {
             // Use section numbers for numbering environments
             // ie Book/Report numbering style
             'report_style_numbering' : false,
+            // Autocomplete LaTeX commands
+            'autocomplete' : true,
             // Hotkeys -- more hotkeys can be added directly in envsLatex.json
             'hotkeys' : {
             'equation' : 'Ctrl-E',
@@ -444,7 +446,7 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                     .attr('href', '#')
                     .attr('title', 'Toogle visibility of LaTeX_envs menu')
                     .on('click',function (){
-                        cfg.LaTeX_envs_menu_present = LaTeX_envs_menu_present = LaTeX_envs_menu_present = !LaTeX_envs_menu_present
+                        cfg.LaTeX_envs_menu_present = LaTeX_envs_menu_present = !LaTeX_envs_menu_present
                         $('#latex_envs_Menu > .fa').toggleClass('fa-check', LaTeX_envs_menu_present);
                         toggleLatexMenu();
                     })
@@ -515,6 +517,19 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                         cfg.report_style_numbering = report_style_numbering = !report_style_numbering
                         $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
                         onMarkdownCellRendering();                           
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )            
+            .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','autocomplete')
+                    .text('Autocomplete')
+                    .attr('href', '#')
+                    .attr('title', 'Autocomplete LaTeX commands while typing')
+                    .on('click',function (){
+                        cfg.autocomplete = !cfg.autocomplete
+                        $('#autocomplete > .fa').toggleClass('fa-check', cfg.autocomplete);
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
@@ -592,6 +607,7 @@ rgba(102, 175, 233, 0.6);}</style>')
     $('#user_envs_cfg> .fa').toggleClass('fa-check', user_envs_cfg);
     $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
     $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
+    $('#autocomplete > .fa').toggleClass('fa-check', cfg.autocomplete);
     
     // Now the callback functions --------------------------------------------  
 

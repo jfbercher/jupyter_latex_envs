@@ -95,6 +95,9 @@ define(function(require, exports, module) {
     var utils = require('base/js/utils');
     var marked = require('components/marked/lib/marked');
     // var completer = require('notebook/js/completer')
+    var codemirror = require('codemirror/lib/codemirror');
+    var showhint  = require("codemirror/addon/hint/show-hint")
+    var anyword  = require("codemirror/addon/hint/anyword-hint")
 
     var thmsInNb = require('nbextensions/latex_envs/thmsInNb4');
     var bibsInNb = require('nbextensions/latex_envs/bibInNb4');
@@ -114,68 +117,70 @@ define(function(require, exports, module) {
     };
 
 
-function override_mdrenderer() {
+    function override_mdrenderer() {
         var _on_reload = true; /* make sure cells render on reload */
-    
-    /* Override original markdown render function to include latex_envs 
-    processing */
 
-    MarkdownCell.prototype.render = function(noevent) {
-        if (typeof noevent === "undefined") noevent = false;
-        var cont = TextCell.prototype.render.apply(this);
-        if (cont || Jupyter.notebook.dirty || _on_reload) {
-            var that = this;
-            var text = this.get_text();
-            // interpret \[..\] and \(\) as LaTeX
-            text = text.replace(/\\\[([\s\S]*?)\\\]/gm, function(w,m1){
-                return "$$"+m1+"$$"})
-            text = text.replace(/\\\(([\s\S]*?)\\\)/gm, function(w,m1){
-                return "$"+m1+"$"})
-            var math = null;
-            if (text === "") { text = this.placeholder; }
-            var text_and_math = mathjaxutils.remove_math(text);
-            text = text_and_math[0];
-            math = text_and_math[1];
-            marked(text, function(err, html) {
-                html = mathjaxutils.replace_math(html, math);
-                html = thmsInNbConv(marked, html); //<----- thmsInNb patch here
-                html = security.sanitize_html(html);
-                html = $($.parseHTML(html));
-                // add anchors to headings
-                html.find(":header").addBack(":header").each(function(i, h) {
-                    h = $(h);
-                    var hash = h.text().replace(/ /g, '-');
-                    h.attr('id', hash);
-                    h.append(
-                        $('<a/>')
-                        .addClass('anchor-link')
-                        .attr('href', '#' + hash)
-                        .text('¶')
-                    );
+        /* Override original markdown render function to include latex_envs 
+        processing */
+
+        MarkdownCell.prototype.render = function(noevent) {
+            if (typeof noevent === "undefined") noevent = false;
+            var cont = TextCell.prototype.render.apply(this);
+            if (cont || Jupyter.notebook.dirty || _on_reload) {
+                var that = this;
+                var text = this.get_text();
+                // interpret \[..\] and \(\) as LaTeX
+                text = text.replace(/\\\[([\s\S]*?)\\\]/gm, function(w, m1) {
+                    return "$$" + m1 + "$$"
+                })
+                text = text.replace(/\\\(([\s\S]*?)\\\)/gm, function(w, m1) {
+                    return "$" + m1 + "$"
+                })
+                var math = null;
+                if (text === "") { text = this.placeholder; }
+                var text_and_math = mathjaxutils.remove_math(text);
+                text = text_and_math[0];
+                math = text_and_math[1];
+                marked(text, function(err, html) {
+                    html = mathjaxutils.replace_math(html, math);
+                    html = thmsInNbConv(marked, html); //<----- thmsInNb patch here
+                    html = security.sanitize_html(html);
+                    html = $($.parseHTML(html));
+                    // add anchors to headings
+                    html.find(":header").addBack(":header").each(function(i, h) {
+                        h = $(h);
+                        var hash = h.text().replace(/ /g, '-');
+                        h.attr('id', hash);
+                        h.append(
+                            $('<a/>')
+                            .addClass('anchor-link')
+                            .attr('href', '#' + hash)
+                            .text('¶')
+                        );
+                    });
+                    // links in markdown cells should open in new tabs
+                    html.find("a[href]").not('[href^="#"]').attr("target", "_blank");
+                    that.set_rendered(html);
+                    that.typeset();
+                    if (!noevent)
+                        that.events.trigger("rendered.MarkdownCell", { cell: that });
                 });
-                // links in markdown cells should open in new tabs
-                html.find("a[href]").not('[href^="#"]').attr("target", "_blank");
-                that.set_rendered(html);
-                that.typeset();
-                if (!noevent)
-                    that.events.trigger("rendered.MarkdownCell", { cell: that });
-            });
+            }
+            return cont;
+        };
+        if (IPython.version[0] > '4') {
+            // seems that the original prototype is copied to IPython.MarkdownCell
+            // have to override it. 
+            // TODO - define new prototype, including modifs in 5.x
+            IPython.MarkdownCell.prototype.render = MarkdownCell.prototype.render;
         }
-        return cont;
-    };
-    if (IPython.version[0]>'4') {
-        // seems that the original prototype is copied to IPython.MarkdownCell
-        // have to override it. 
-        // TODO - define new prototype, including modifs in 5.x
-        IPython.MarkdownCell.prototype.render = MarkdownCell.prototype.render;
-    }
 
 
-    MarkdownCell.prototype.handle_codemirror_keyevent = function(editor, event) {
+        MarkdownCell.prototype.handle_codemirror_keyevent = function(editor, event) {
 
-        require('notebook/js/cell').Cell.prototype.handle_codemirror_keyevent.apply(this, [editor, event]);
-        var cur = editor.getCursor();
-        var inWord_re = /[%0-9a-z._/\\:~-]/i;
+            require('notebook/js/cell').Cell.prototype.handle_codemirror_keyevent.apply(this, [editor, event]);
+            var cur = editor.getCursor();
+            var inWord_re = /[%0-9a-z._/\\:~-]/i;
 
 
             if (editor.somethingSelected() || editor.getSelections().length > 1) return;
@@ -195,15 +200,59 @@ function override_mdrenderer() {
             if (matches.length == 1) {
                 event.codemirrorIgnore = true;
                 event.preventDefault();
-                editor.replaceRange(matches[0], cur); editor.setCursor(cur.line, cur.ch+1);
+                editor.replaceRange(matches[0], cur);
+                editor.setCursor(cur.line, cur.ch + 1);
                 return true
             }
-        
-         return false;   
-        
-    };
 
-}
+            // if not a word character, then return immediately (type it in) 
+            if (!/\w/.test(event.key) || event.key.length > 1) return false
+            if (cfg.autocomplete) {
+                var inchar = event.key.length == 1 ? event.key : ""
+                var posx = cur.ch
+                var ch = line[cur.ch]
+                    // get the current word
+                if (!editor.somethingSelected()) {
+                    var re = /[\w]/
+                    var cur = editor.getCursor(),
+                        line = editor.getLine(cur.line),
+                        start = cur.ch,
+                        end = start;
+                    while (start && re.test(line.charAt(start - 1))) {
+                        --start;
+                    }
+                    while (end < line.length && re.test(line.charAt(end))) {
+                        ++end;
+                    }
+                    if (start < end) {
+                        var word_before = line.slice(start, posx) + inchar
+                        var word_after = line.slice(posx, end)
+                        var str = word_before + word_after
+                    }
+                    // if word starts with \, then autocomplete
+                    if (line[start - 1] == "\\") {
+                        // console.log("Completion in order");
+                        var array_completion = ['text ', 'textit{}', 'textbf{}', 'texttt{}', 'emph{}',
+                            'cite{}', 'ref{}', 'underline{}', 'title{}', 'begin{}', 'end{}', 'label{}'
+                        ]
+                        var matches = array_completion.filter(function(elt) {
+                            return elt.startsWith(word_before)
+                        })
+                        if (matches.length > 0) {
+                            event.codemirrorIgnore = true;
+                            event.preventDefault();
+                            editor.replaceRange(matches[0], { line: cur.line, ch: start }, { line: cur.line, ch: cur.ch });
+                            editor.setCursor(cur.line, start + matches[0].length - 1);
+                            return true
+                        }
+                    }
+                }
+
+            }
+            return false;
+        };
+    }
+
 
 function load_ipython_extension() {
     //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
