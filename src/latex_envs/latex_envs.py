@@ -78,9 +78,6 @@ class LenvsLatexPreprocessor(Preprocessor):
         """
         
         #process metadata
-        if'latex_metadata' in nb.metadata and "author" in nb.metadata["latex_metadata"]:
-            iniauth =  ''.join([c[0] for c in  nb.metadata["latex_metadata"]["author"].split()]) #get initials
-            nb.metadata["latex_metadata"].update(iniauth=iniauth)
 
         
         for index, cell in enumerate(nb.cells):
