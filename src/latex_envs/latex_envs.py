@@ -16,7 +16,7 @@ import os
 import re
 
 # IPython imports
-from IPython.display import HTML, display
+from IPython.display import HTML, display,JSON
 from nbconvert.exporters.exporter import Exporter
 from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.latex import LatexExporter
@@ -31,6 +31,10 @@ from traitlets.config import Config
 def figcaption(text, label=" "):
     display(HTML("<div class=caption><b> Caption: </b> %s</div>"
                  % text.replace('\n', '<br>')))
+    text = text.replace('<b>',r'\textbf{').replace('</b>','}') #some replacement of HTML formatting
+    text = text.replace('<i>',r'\textit{').replace('</i>','}')
+    text = text.replace('<tt>',r'\texttt{').replace('</tt>','}')
+    display(JSON({'caption': text, 'label':label}),include=["application/json"])
 
 # -----------------------------------------------------------------------------
 # Preprocessors, Exporters, PostProcessors
@@ -72,6 +76,13 @@ class LenvsLatexPreprocessor(Preprocessor):
             Additional resources used in the conversion process.  Allows
             preprocessors to pass variables into the Jinja engine.
         """
+        
+        #process metadata
+        if'latex_metadata' in nb.metadata and "author" in nb.metadata["latex_metadata"]:
+            iniauth =  ''.join([c[0] for c in  nb.metadata["latex_metadata"]["author"].split()]) #get initials
+            nb.metadata["latex_metadata"].update(iniauth=iniauth)
+
+        
         for index, cell in enumerate(nb.cells):
             nb.cells[index], resources = self.preprocess_cell(cell,
                                                               resources, index)
@@ -91,7 +102,8 @@ class LenvsLatexPreprocessor(Preprocessor):
 
     def inline_math_strip_space(self,match):
         return "$"+match.group(1).replace(' ','')+"$"
-
+    
+    
     def preprocess_cell(self, cell, resources, index):
         """
         Preprocess cell
@@ -127,6 +139,18 @@ class LenvsLatexPreprocessor(Preprocessor):
             data = data.replace("/begin", "\\begin")
             data = data.replace("/end", "\\end")
             cell.source = data
+        elif cell.cell_type == "code" and "outputs" in cell:
+            json_metadata = []
+            mime_types  = ['image/svg+xml','image/png','image/jpeg','application/pdf']
+            for output in cell.outputs:
+                if "data" in output:
+                    if  'application/json' in output.data and 'caption' in output.data['application/json']: #found a json field with caption
+                        json_metadata.append(output.data['application/json'])
+                        
+                    if any(x in output.data for x in mime_types) and len(json_metadata)>0:
+                        output.metadata.update(json_metadata.pop()) # write caption to data field metadata
+                
+            
         return cell, resources
 
 
@@ -403,34 +427,6 @@ class LenvsLatexExporter(LatexExporter):
         newtext = re.sub('\\\\begin{center}\\\\rule{3in}{0.4pt}\\\\end{center}[\s]*?\\\\href{toc.ipynb}{Index}[\S\s ]*?.ipynb}{Next}', '', newtext, flags=re.M)  # noqa
         return newtext
 
-    def figcaption(self, nb_text):
-        # Looks for figcaption in the text. Then for the included image
-        # with \adjustimage...Then extracts caption and label from the
-        # figcaption and redraws the figure using a figure environment
-        # and an \includegraphics figcaption(text,label=)
-        tofind = "figcaption\(([\s\S]*?)\)\n([\s\S]*?)\\\\begin{center}\s*\\\\adjustimage[\s\S]*?}}{([\S]*?)}\s*\\\\end{center}"  # noqa
-
-        def replacement(text):
-            cap = re.match("\"([\S\s]*?)\",[\S\s]*?label=\"([\S]*?)\"", text.group(1))  # noqa
-            if cap is None:
-                cap = re.match("\"([\S\s]*?)\"", text.group(1), re.M)
-                if cap is not None:
-                    caption = cap.group(1)
-                else:
-                    caption = '""'
-                label = ""
-                rep = "\n%s\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.6\\linewidth]{%s}\n\\caption{%s}\n\\end{figure}" % (text.group(2), text.group(3), caption)  # noqa
-            else:
-                caption = cap.group(1)
-                label = cap.group(2)
-                rep = "\n%s\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.6\\linewidth]{%s}\n\\caption{%s}\n\\label{%s}\n\\end{figure}" % (text.group(2), text.group(3), caption, label)  # noqa
-            return rep
-
-        code = re.search(tofind, nb_text)
-        while (code is not None):
-            nb_text = re.sub(tofind, replacement, nb_text, flags=re.M)
-            code = re.search(tofind, nb_text)
-        return nb_text
 
     def postprocess(self, nb_text):
         nb_text = nb_text.replace('!nl!', '\n')
@@ -451,8 +447,6 @@ class LenvsLatexExporter(LatexExporter):
             newtext = newtext.replace('\\maketitle', '')
             newtext = newtext.replace('\\tableofcontents', '')
             nb_text = newtext
-        if self.figcaptionProcess:
-            nb_text = self.figcaption(nb_text)
         if self.tocrefRemove:
             nb_text = self.tocrefrm(nb_text)
         return nb_text
@@ -470,7 +464,7 @@ class LenvsLatexExporter(LatexExporter):
         nb, resources = lenvslatexpreprocessor(nb, resources)
         output, resources = super(LenvsLatexExporter, self).from_notebook_node(nb, resources, **kw)  # noqa
         postout = self.postprocess(output)
-        # print(postout[0:200]) #WORKS
+        #print(postout[0:200]) #WORKS
 
         return postout, resources
 

@@ -156,14 +156,41 @@ framesep=10pt,
 %\bibliography{Thesis}
 ((* endblock bibliography *))
 
+((*- block data_png -*))
+     ((( draw_figure_with_caption(output,'image/png',cell) )))
+((*- endblock -*))
+((*- block data_jpg -*))
+     ((( draw_figure_with_caption(output,'image/jpeg',cell) )))
+((*- endblock -*))
+((*- block data_svg -*))
+     ((( draw_figure_with_caption(output,'image/svg+xml',cell) )))
+((*- endblock -*))
+((*- block data_pdf -*))
+     ((( draw_figure_with_caption(output,'application/pdf',cell) )))
+((*- endblock -*))
+
 % Draw a figure using the graphicx package.
-((* macro draw_figure(filename) -*))
-((* set filename = filename | posix_path *))
-((*- block figure scoped -*))
+((*- macro draw_figure_with_caption(output,mimetype,cell) -*))
+((*- set filename = output.metadata.filenames[ mimetype ] | posix_path -*))
+((*- if cell.metadata.widefigure: -*))
+    ((*- set wscale = 0.9 -*))
+    ((*- set hscale = 0.4 -*))
+((*- else -*))
+    ((*- set wscale = 0.7 -*))
+    ((*- set hscale = 0.3 -*))
+((*- endif -*))
+((*- block figure scoped *))
+\begin{figure}
     \begin{center}
-    \adjustimage{max size={0.6\linewidth}{0.6\paperheight}}{((( filename )))}
+        \adjustimage{max size={((( wscale )))\linewidth}{((( hscale )))\paperheight}}{((( filename )))}
     \end{center}
-%    { \hspace*{\fill} \\}
+((*- if output.metadata.caption: *))
+    \caption{((( output.metadata.caption )))}
+((*- endif *))
+((*- if output.metadata.label: *))      
+    \label{((( output.metadata.label )))}
+((*- endif *))
+\end{figure}
 ((*- endblock figure -*))
 ((*- endmacro *))
 
