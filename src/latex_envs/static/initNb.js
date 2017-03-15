@@ -80,7 +80,8 @@ function loadUserEnvsCfg(callback) {
 
 
 function loadEnvsLaTeX(callback) {
-    var jqxhr = $.getJSON("/nbextensions/latex_envs/envsLatex.json")
+    var baseUrl = require('base/js/utils').get_body_data("baseUrl")
+    var jqxhr = $.getJSON(baseUrl + "/nbextensions/latex_envs/envsLatex.json")
         .done(function(data) {
             envsLatex = $.extend(true, {}, data) //deep copy
             create_latex_menu(); // then create LaTeX menu
