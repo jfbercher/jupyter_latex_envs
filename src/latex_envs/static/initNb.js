@@ -175,7 +175,10 @@ function init_config(Jupyter,utils,configmod, callback) {
         cfg = IPython.notebook.metadata.latex_envs = $.extend(true, cfg,
             IPython.notebook.metadata.latex_envs);
         // hotkeys taken from system
-        cfg.hotkeys = IPython.notebook.metadata.latex_envs.hotkeys = $.extend(true, {}, config.data.latex_envs.hotkeys);
+        if (config.data.latex_envs) {
+            if (typeof config.data.latex_envs.hotkeys !== "undefined") {
+               cfg.hotkeys = IPython.notebook.metadata.latex_envs.hotkeys = $.extend(true, {}, config.data.latex_envs.hotkeys);
+            }
         // update global variables
         cite_by = cfg.cite_by; //global
         bibliofile = cfg.bibliofile;
