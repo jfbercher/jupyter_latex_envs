@@ -370,8 +370,8 @@ function thmsInNbConv(marked,text) {
 
                         //LABELS -- replace all labels by an anchor and build a Map
                         // linking label to environment counter value
-                        var m2 = m2.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
-                            m2 = m2.replace(/<[/]?em>/g, "_");
+                        var m2 = m2.replace(/\\label{(\S+?):(\S+)}/g, function(wholeMatch, m1, m2) {
+                            m2 = m2.replace(/<[/]?em>/g, "_"); 
                             labelsMap[m1+m2] = envCounters[environment.counterName].num;
                             $(".latex_ref_" + m1 + m2).text(labelsMap[m1+m2])
                             return '<a class="latex_label_anchor" id="' + m1 + m2 + '">' + '[' + m1 + ':' + m2 + ']' + '</a>'
@@ -475,7 +475,7 @@ function thmsInNbConv(marked,text) {
                 return '<a id="mjx-eqn-' + 'eq' + m2 + '">'+'</a>' + wholeMatch; //+withoutLabel;
                 }); 
 
-                var text = text.replace(/\\label{eq:(\S+)}/g, function(wholeMatch, m1) {
+                var text = text.replace(/\\label{eq:([\S\s]*?)}/g, function(wholeMatch, m1) {
                         if (eqLabelWithNumbers) {
                             return wholeMatch;
                             // This is now delegated to MathJax
@@ -552,7 +552,8 @@ function thmsInNbConv(marked,text) {
 //********************************************************************
                 //LABELS -- After envs replacements, it can remain \labels
                 // in plain text. Still replace them by an anchor and update the labelsMap
-                var text = text.replace(/\\label{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                
+                var text = text.replace(/\\label{(\S+?):(\S+)}/g, function(wholeMatch, m1, m2) {
                     if (m1=="eq") return wholeMatch  //excepted in equations
                     m2 = m2.replace(/<[/]?em>/g, "_");
                     labelsMap[m1+m2] = '[' + m1 + ':' + m2 + ']' //environment counter number
@@ -563,7 +564,7 @@ function thmsInNbConv(marked,text) {
 
                 // This is to replace references by links to the correct environment, 
                 //REFERENCES
-                var text = text.replace(/\\ref{(\S+):(\S+)}/g, function(wholeMatch, m1, m2) {
+                var text = text.replace(/\\ref{(\S+?):(\S+)}/g, function(wholeMatch, m1, m2) {
                     m2 = m2.replace(/<[/]?em>/g, "_");
                     if (m1 == "eq") {
                         if (!eqLabelWithNumbers) { // this is for displaying the label
