@@ -60,7 +60,8 @@ function loadLatexUserDefs() {
 }
 
 function loadUserEnvsCfg(callback) {
-        var jqxhr = $.getJSON( "/nbextensions/latex_envs/user_envs.json", function(data) {
+        var baseUrl = require('base/js/utils').get_body_data("baseUrl")
+        var jqxhr = $.getJSON( baseUrl + "nbextensions/latex_envs/user_envs.json", function(data) {
         //var jqxhr = $.getJSON( "example.json", function(data) { //in current directory
           environmentMap = $.extend(true,{}, environmentInitialMap,data) 
           //console.log( "success" );
@@ -81,7 +82,7 @@ function loadUserEnvsCfg(callback) {
 
 function loadEnvsLaTeX(callback) {
     var baseUrl = require('base/js/utils').get_body_data("baseUrl")
-    var jqxhr = $.getJSON(baseUrl + "/nbextensions/latex_envs/envsLatex.json")
+    var jqxhr = $.getJSON(baseUrl + "nbextensions/latex_envs/envsLatex.json")
         .done(function(data) {
             envsLatex = $.extend(true, {}, data) //deep copy
             create_latex_menu(); // then create LaTeX menu
