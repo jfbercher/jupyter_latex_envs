@@ -212,7 +212,7 @@ function BibtexParser() {
   }
 
   this.comment = function() {
-    this.value(); // this is wrong
+    while(!this.tryMatch("}")) {this.pos++;}
   }
 
   this.entry = function(d) {
