@@ -101,18 +101,18 @@ function loadEnvsLaTeX(callback) {
 
 
 var init_nb = function() {
+    cit_table = {};
     readBibliography(function() {
         loadEnvsLaTeX();
         if (!LaTeX_envs_menu_present) toggleLatexMenu();
         if (latex_user_defs) loadLatexUserDefs();
         add_help_menu_item();
-        createReferenceSection();
-        init_cells();
+        init_cells(createReferenceSection);
     });
 }
 
 
-var init_cells = function() {
+var init_cells = function(callback) {
     var ncells = Jupyter.notebook.ncells();
     var cells = Jupyter.notebook.get_cells();
     var MarkdownCell = require('notebook/js/textcell').MarkdownCell;
@@ -132,6 +132,7 @@ var init_cells = function() {
     if(typeof lastmd_cell !== "undefined") lastmd_cell.render(); // re-render last md cell and issue rendered.MarkdownCell event
     onMarkdownCellRendering();
     //$('.latex_label_anchor').toggle(labels_anchors); 
+    callback && callback();
 }
 
 
