@@ -156,6 +156,7 @@ function authorSplit(singleAuthor) {
 
 
 function makeAuthorsArray(bibtexAuthors){
+    if (typeof bibtexAuthors === 'undefined') return [];
     var listSingleAuthors=bibtexAuthors.split(' and ');
     var authorsArray=listSingleAuthors.map(
     function(x) {
@@ -165,30 +166,32 @@ function makeAuthorsArray(bibtexAuthors){
 }
 
 
-function formatSingleAuthorObject(author,format){
-        var str;
-        switch (format){
-            case 'InitialsGiven':
-                str = author.firstName.split(' ').reduce(function (x,y){return x+y[0].toUpperCase()+'.'},'')
-                + ' '+ author.givenName;
-                break;
-            case 'GivenInitials':
-                str = author.givenName + ' '+ author.firstName.split(' ').reduce(function (x,y){return x+y[0].toUpperCase()+'.'},'') ;
-                break;
-            case 'FirstGiven':
-                str =  author.firstName + ' '+ author.givenName;
-                break;
-            case 'GivenFirst':
-                str =  author.givenName +' '+ author.firstName;
-                break;
-            case 'Given':
-                str =  author.givenName;
-                break;
-            default:
-                str =  author.firstName +' '+ author.givenName;
-        }
-     return str;
+function formatSingleAuthorObject(author, format) {
+    if (typeof author === 'undefined') return '';
+    var str;
+    switch (format) {
+        case 'InitialsGiven':
+            str = author.firstName.split(' ').reduce(function(x, y) {
+                return x + y[0].toUpperCase() + '.' }, '') + ' ' + author.givenName;
+            break;
+        case 'GivenInitials':
+            str = author.givenName + ' ' + author.firstName.split(' ').reduce(function(x, y) {
+                return x + y[0].toUpperCase() + '.' }, '');
+            break;
+        case 'FirstGiven':
+            str = author.firstName + ' ' + author.givenName;
+            break;
+        case 'GivenFirst':
+            str = author.givenName + ' ' + author.firstName;
+            break;
+        case 'Given':
+            str = author.givenName;
+            break;
+        default:
+            str = author.firstName + ' ' + author.givenName;
     }
+    return str;
+}
 
 
 function formatAuthors(authorsArray, format, etal){
