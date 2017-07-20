@@ -90,7 +90,11 @@ for (key in  cit_table) {  // cit_table is populated during the edition and rend
     if (!(citation==undefined)){
 		//check the type of citation, eg ARTICLE, INPROCEEDINGS, INBOOK, etc
         if (citation['reftype'] in cit_tpl) {var type=citation['reftype']} else {var type='UNKNOWN'};
-
+        //add a YEAR field if it does not exist but DATE exists
+        if (typeof citation['YEAR'] === 'undefined' && typeof citation['DATE'] !== 'undefined') {
+            document.bibliography[key.toUpperCase()]['YEAR'] = citation['DATE'].slice(0,4); 
+            citation['YEAR'] = citation['DATE'].slice(0,4);
+        } 
 		//replace %words% in template
         str += cit_tpl[type].replace(/%([\w:]+)+%/g, function(rep) {
 				//case of %AUTHOR:format%
