@@ -305,6 +305,10 @@ function thmsInNbConv(marked,text) {
                                wholeMatch = wholeMatch.replace(/&gt;/gm,'>');
                             return wholeMatch
                         })
+                    // Replace $$.$$ by begin-end equation
+                    message = message.replace(/\$\$([\S\s]*?)\$\$/gm,
+                                '\\begin{equation}$1\\end{equation}')   
+
                     //Look for pairs [ ]
                     var message = message.replace(/^(?:<p>)?\[([\s\S]*?)^(?:<p>)?\]/gm,
                         function(wholeMatch, m1) {
