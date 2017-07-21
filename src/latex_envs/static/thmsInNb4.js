@@ -425,6 +425,7 @@ function thmsInNbConv(marked,text) {
                         // ITERATE
                         if (m1 != "listing") {
                             result = restore_maths([math, result])
+
                             result = EnvReplace(result);
                         }; //try to do further replacements
 
@@ -492,6 +493,7 @@ function thmsInNbConv(marked,text) {
 				var keys = keys.split(',');
 				for (var k in keys) {
 				key=keys[k].trim();
+          
                 if (!(key in cit_table)){
 					switch (cite_by) {
 						case 'number':
@@ -504,6 +506,10 @@ function thmsInNbConv(marked,text) {
 							var apacit="?"
 							if (key.toUpperCase() in document.bibliography){
 								var cc=document.bibliography[key.toUpperCase()];
+                                //add a YEAR field if it does not exist but DATE exists
+                                if (typeof cc['YEAR'] === 'undefined' && typeof cc['DATE'] !== 'undefined') {
+                                    document.bibliography[key.toUpperCase()]['YEAR'] = cc['DATE'].slice(0,4); 
+                                } 
 								var apacit=formatAuthors(makeAuthorsArray(cc['AUTHOR']),'Given',2)+', '+ cc['YEAR']}
 							cit_table[key]={'key':apacit, 'citobj':{}}
 							break;
