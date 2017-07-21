@@ -159,6 +159,7 @@ function initmap(){
              enumerate:    { title: "Enumerate"    },
              listing:      { title: " "    },
              textboxa:     { title: " "  },
+             comment:     { title: "Comment -"  },
              proof:        { title: "Proof" }
          };
 

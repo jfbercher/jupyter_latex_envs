@@ -101,6 +101,22 @@ LaTeX things
         border-radius: 8px
     }
 
+    .latex_comment {
+        display: block;
+        width: 95%;
+        margin: auto;
+        border: 2px solid;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: #F0E68C;
+        border-color: #F0E99F;
+        color: black;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px
+    }
+
+
     img.latex_img {
         display: block;
         margin:  auto;
