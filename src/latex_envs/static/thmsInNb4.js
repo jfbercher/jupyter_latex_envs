@@ -571,13 +571,13 @@ function thmsInNbConv(marked,text) {
 
                 // This is to replace references by links to the correct environment, 
                 //REFERENCES
-                var text = text.replace(/\\ref{(\S+?):(\S+)}/g, function(wholeMatch, m1, m2) {
+                var text = text.replace(/\\[a-z]{0,1}ref{(\S+?):(\S+)}/g, function(wholeMatch, m1, m2) {
                     m2 = m2.replace(/<[/]?em>/g, "_");
                     if (m1 == "eq") {
                         if (!eqLabelWithNumbers) { // this is for displaying the label
                             return '<a class="latex_lbl_ref" href="#mjx-eqn-' + m1 + m2 + '">' + m2 + '</a>'; //m1 + ':' + m2;
 
-                        } else return wholeMatch;
+                        } else return wholeMatch; // processed by MathJax
                     }
                     if (labelsMap[m1 + m2]) {
                         var indata = labelsMap[m1 + m2]
