@@ -335,12 +335,13 @@ class LenvsLatexExporter(LatexExporter):
     Exports to an html document, embedding latex_env extension (.html)
     """
 
-    removeHeaders = Bool(False, shortname="rh",
-                         help="Remove headers and footers").tag(config=True)
-    figcaptionProcess = Bool(True, shortname="fc",
-                             help="Process figcaptions").tag(config=True)
-    tocrefRemove = Bool(True, shortname="fc",
-        help="Remove tocs and ref sections, + some cleaning").tag(config=True)  # noqa
+    removeHeaders = Bool(
+        False, help="Remove headers and footers").tag(config=True, alias="rh")
+    figcaptionProcess = Bool(
+        True, help="Process figcaptions").tag(config=True, alias="fc")
+    tocrefRemove = Bool(
+        True, help="Remove tocs and ref sections, + some cleaning").tag(
+        config=True, alias="trr")
     flags = Dict(dict(enable=({'Bar': {'enabled': True}}, "Enable Bar")))
 
     def __init__(self, config=None, **kw):
