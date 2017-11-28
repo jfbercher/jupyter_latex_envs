@@ -1,8 +1,10 @@
 # coding: utf-8
 
-__version__ = '1.2.0'
-
 from . import latex_envs
+
+
+__version__ = '1.4.0'
+
 
 def _jupyter_nbextension_paths():
     return [dict(
