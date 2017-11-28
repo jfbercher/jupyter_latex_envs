@@ -280,21 +280,27 @@ function load_ipython_extension() {
 
 
     // toolbar buttons
-        Jupyter.toolbar.add_buttons_group([{
-            id: 'doReload',
-            label: 'LaTeX_envs: Refresh rendering of labels, equations and citations',
-            icon: 'fa-refresh',
-            callback: init_cells
-        }, {
-            'label': 'Read bibliography and generate references section',
-            'icon': 'fa-book',
-            'callback': generateReferences
-        }, {
-            'label': 'LaTeX_envs: Some configuration options (toogle toolbar)',
-            'icon': 'fa-wrench',
-            'callback': config_toolbar
-        }]);
+        var toolbarButtons = Jupyter.toolbar.add_buttons_group([
 
+			Jupyter.keyboard_manager.actions.register ({
+		        help: 'LaTeX_envs: Refresh rendering of labels, equations and citations',
+		        icon: 'fa-refresh',
+		        handler: init_cells
+        }, 'init_cells', 'latex_envs'),
+
+		Jupyter.keyboard_manager.actions.register ({
+             help: 'Read bibliography and generate references section',
+             icon: 'fa-book',
+             handler: generateReferences
+        }, 'generateReferences', 'latex_envs'),
+
+		 Jupyter.keyboard_manager.actions.register ({
+             	help: 'LaTeX_envs: Some configuration options (toogle toolbar)',
+             	icon: 'fa-wrench',
+            	handler: config_toolbar}, 'confToolbar', 'latex_envs')
+		]);
+
+	toolbarButtons.find('.btn').eq(0).attr('id', 'doReload');
 
     }  //end of load_ipython_extension function
 
