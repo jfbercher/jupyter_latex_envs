@@ -196,13 +196,14 @@ define(function(require, exports, module) {
             var matches = array_completion.filter(function(elt) {
                 return elt.startsWith(event.key)
             })
-
-            if (matches.length == 1) {
-                event.codemirrorIgnore = true;
-                event.preventDefault();
-                editor.replaceRange(matches[0], cur);
-                editor.setCursor(cur.line, cur.ch + 1);
-                return true
+            if (cfg.autoclose) {
+                if (matches.length == 1) {
+                    event.codemirrorIgnore = true;
+                    event.preventDefault();
+                    editor.replaceRange(matches[0], cur);
+                    editor.setCursor(cur.line, cur.ch + 1);
+                    return true
+                }
             }
 
             // if not a word character, then return immediately (type it in) 

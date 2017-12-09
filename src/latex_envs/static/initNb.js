@@ -158,6 +158,8 @@ function init_config(Jupyter,utils,configmod, callback) {
             // Use section numbers for numbering environments
             // ie Book/Report numbering style
             'report_style_numbering' : false,
+            // Autoclose '$$', '()', '[]', '{}'
+            'autoclose' : false,
             // Autocomplete LaTeX commands
             'autocomplete' : true,
             // Hotkeys -- more hotkeys can be added directly in envsLatex.json
@@ -527,7 +529,20 @@ vertical-align:bottom; width: 0; height: 1.8em;border-left:2px solid #cccccc"></
                     })
                     .prepend($('<i/>').addClass('fa menu-icon pull-right'))
                 )
-            )            
+            )   
+            .append($('<li/>')
+                .append($('<a/>')
+                    .attr('id','autoclose')
+                    .text('Autoclose $,(,{,[')
+                    .attr('href', '#')
+                    .attr('title', 'Autoclose $,(,{,[ while typing')
+                    .on('click',function (){
+                        cfg.autoclose = !cfg.autoclose
+                        $('#autoclose > .fa').toggleClass('fa-check', cfg.autoclose);
+                    })
+                    .prepend($('<i/>').addClass('fa menu-icon pull-right'))
+                )
+            )         
             .append($('<li/>')
                 .append($('<a/>')
                     .attr('id','autocomplete')
@@ -614,6 +629,7 @@ rgba(102, 175, 233, 0.6);}</style>')
     $('#user_envs_cfg> .fa').toggleClass('fa-check', user_envs_cfg);
     $('#latex_user_defs > .fa').toggleClass('fa-check', latex_user_defs);
     $('#report_style_numbering > .fa').toggleClass('fa-check', report_style_numbering);
+    $('#autoclose > .fa').toggleClass('fa-check', cfg.autoclose);
     $('#autocomplete > .fa').toggleClass('fa-check', cfg.autocomplete);
     
     // Now the callback functions --------------------------------------------  

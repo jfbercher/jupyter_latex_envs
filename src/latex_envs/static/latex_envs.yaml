@@ -22,6 +22,10 @@ Parameters:
   description: Automatically complete LaTeX commands while typing
   input_type: checkbox
   default: true    
+- name: latex_envs.autoclose
+  description: Automatically close '$$, '()', '{}', '[]' while typing
+  input_type: checkbox
+  default: false  
 - name: latex_envs.user_envs_cfg
   description: Use customized environments as given in 'user_envs.json' (in the extension directory)
   input_type: checkbox
