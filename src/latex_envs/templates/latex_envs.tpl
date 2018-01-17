@@ -37,7 +37,7 @@ MathJax.Hub.Config({ TeX: { equationNumbers: {
 
 
 
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 
 <!-- stylesheet from CDN -->
