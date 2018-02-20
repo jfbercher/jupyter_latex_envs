@@ -74,7 +74,7 @@ installed
 - from the master version on the github repo (this will be always the
   most recent version)
 - via pip for the version hosted on Pypi
-- via conda, from the [conda-forge](https://conda-forge.github.io/) [channel](https://anaconda.org/conda-forge)
+- via conda, from the [conda-forge](https://conda-forge.org) [channel](https://anaconda.org/conda-forge)
 - as part of the great
   [jupyter_contrib_nbextensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions)
   collection. Follow the instructions there for installing. Once this
@@ -120,7 +120,7 @@ Disclaimer, sources and acknowledgments
 
 
 Originally, I used a piece of code from the nice online markdown editor
-[stackedit](https://github.com/benweet/stackedit/issue/187), where the authors
+[stackedit](https://github.com/benweet/stackedit/issues/187), where the authors
 also considered the problem of incorporating LaTeX markup in their markdown.
 
 I also studied and used examples and code from

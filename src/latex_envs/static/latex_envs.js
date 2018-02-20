@@ -82,7 +82,7 @@ function insert_text(identifier) { //must be available in the main scope
     selected_cell.code_mirror.replaceRange(selectedText, cursorPos);    
 }
 
-// use AMD-style simplified define wrapper to avoid http://requirejs.org/docs/errors.html#notloaded
+// use AMD-style simplified define wrapper to avoid https://requirejs.org/docs/errors.html#notloaded
 // `define(['notebook'], function(notebookApp) { var module =  notebookApp['base/js/utils']});`
 
 define(function(require, exports, module) {
