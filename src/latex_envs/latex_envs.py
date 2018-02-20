@@ -141,13 +141,17 @@ class LenvsLatexPreprocessor(Preprocessor):
             mime_types  = ['image/svg+xml','image/png','image/jpeg','application/pdf']
             for output in cell.outputs:
                 if "data" in output:
-                    if  'application/json' in output.data and 'caption' in output.data['application/json']: #found a json field with caption
+                    if 'text/html' in output.data and 'img src' in output.data['text/html']:
+                        data = output.data['text/html']
+                        data = re.sub(r'<img src="data:image/png;base[\d]+,','',data)
+                        data = re.sub(r'" width="[\d]+">','',data)
+                        output.data['image/png'] = data # make png data from html data
+                    elif  'application/json' in output.data and 'caption' in output.data['application/json']: #found a json field with caption
                         json_metadata.append(output.data['application/json'])
                         
                     if any(x in output.data for x in mime_types) and len(json_metadata)>0:
                         output.metadata.update(json_metadata.pop()) # write caption to data field metadata
                 
-            
         return cell, resources
 
 
