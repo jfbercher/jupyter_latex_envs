@@ -24,11 +24,11 @@ commands and environments markdown cells.
 4. **Configuration toolbar**
 5. **LaTeX\_envs dropdown menu for a quick insertion of environments**
 6. **User's LaTeX definitions** file can be loaded and used
-7. **Export to HTML and LaTeX with a customized exporter**
+7. **Export to plain HTML, Slides and LaTeX with a customized exporter**
 8. Environments title/numbering can be customized by users in
    ``user_envs.json`` config file.
 9. Styles can be customized in the ``latex_env.css`` stylesheet
-10. Limited **autocompletion** for \$, (, {, [ 
+10. **Autocompletion** for \$, (, {, [, for LaTeX commands and environments
 
 More environments can be simply added in ``user_envs.json`` or in the
 source file (``thmsInNb4.js``).
@@ -130,7 +130,7 @@ Disclaimer, sources and acknowledgments
 ---------------------------------------
 
 Originally, I used a piece of code from the nice online markdown editor
-`stackedit <https://github.com/benweet/stackedit/issue/187>`__, where
+`stackedit <https://github.com/benweet/stackedit/issues/187>`__, where
 the authors also considered the problem of incorporating LaTeX markup in
 their markdown.
 
