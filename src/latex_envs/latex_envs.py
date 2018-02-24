@@ -20,6 +20,8 @@ from IPython.display import HTML, display,JSON
 from nbconvert.exporters.exporter import Exporter
 from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.latex import LatexExporter
+from nbconvert.exporters.slides import SlidesExporter
+
 # from nbconvert.postprocessors.base import PostProcessorBase
 from nbconvert.filters.highlight import Highlight2HTML, Highlight2Latex
 from nbconvert.preprocessors import Preprocessor
@@ -196,6 +198,38 @@ class LenvsHTMLPreprocessor(Preprocessor):
         return cell, resources
 
 
+def include_latexdefs(name):
+    '''This function is used to include latex user definitions
+    in the html template, using the syntax
+    {{ include_latexdefs('latexdefs.tex') }}
+    This function is included in jinja2 environment'''
+    text = ''
+    try:
+        with open(name) as f:
+            for line in f:
+                text += '$' + line[:-1] + '$\n'
+    except:
+        pass
+    return text
+
+def include_userenvs_cfg():
+    '''This function is used to include the user environment configuration
+    in the html template, using the syntax
+    {{ include_userenvs_cfg() }}
+    This function is included in jinja2 environment'''
+    import jupyter_core, os
+    datadir = jupyter_core.paths.jupyter_data_dir()
+    user_envs_file = os.path.join(datadir, 'nbextensions', 'latex_envs', 'user_envs.json')
+    text = ''
+    try:
+        f=open(user_envs_file,'rt')
+        text=f.read();
+    except:
+        pass
+    return text
+
+
+
 class LenvsHTMLExporter(HTMLExporter):
     """
     Exports to an html document, embedding latex_env extension (.html)
@@ -234,35 +268,6 @@ class LenvsHTMLExporter(HTMLExporter):
     def _raw_mimetypes_default(self):
         return ['text/markdown', 'text/html', '']
 
-    def include_latexdefs(self, name):
-        '''This function is used to include latex user definitions
-        in the html template, using the syntax
-        {{ include_latexdefs('latexdefs.tex') }}
-        This function is included in jinja2 environment'''
-        text = ''
-        try:
-            with open(name) as f:
-                for line in f:
-                    text += '$$' + line[:-1] + '$$\n'
-        except:
-            pass
-        return text
-
-    def include_userenvs_cfg(self):
-        '''This function is used to include the user environment configuration
-        in the html template, using the syntax
-        {{ include_userenvs_cfg() }}
-        This function is included in jinja2 environment'''
-        import jupyter_core, os
-        datadir = jupyter_core.paths.jupyter_data_dir()
-        user_envs_file = os.path.join(datadir, 'nbextensions', 'latex_envs', 'user_envs.json')
-        text = ''
-        try:
-            f=open(user_envs_file,'rt')
-            text=f.read();
-        except:
-            pass
-        return text
 
     @property
     def default_config(self):
@@ -306,8 +311,8 @@ class LenvsHTMLExporter(HTMLExporter):
         self.register_filter('highlight_code',
                              Highlight2HTML(pygments_lexer=lexer,
                                             parent=self))
-        self.environment.globals['include_latexdefs'] = self.include_latexdefs
-        self.environment.globals['include_userenvs_cfg'] = self.include_userenvs_cfg
+        self.environment.globals['include_latexdefs'] = include_latexdefs
+        self.environment.globals['include_userenvs_cfg'] = include_userenvs_cfg
         lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
 
         self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)
@@ -320,12 +325,77 @@ class LenvsHTMLExporter(HTMLExporter):
         # print(postout[0:200]) #WORKS
         return output, resources
 
+
+###################
+class LenvsSlidesExporter(SlidesExporter):
+    """
+    Exports to a reveal-js/slides document, embedding latex_env extension (.html)
+    """
+
+    @property
+    def default_config(self):
+        # import jupyter_core.paths
+        # import os
+        c = Config({
+            'NbConvertBase': {
+                'display_data_priority': ['application/javascript',
+                                          'text/html',
+                                          'text/markdown',
+                                          'image/svg+xml',
+                                          'text/latex',
+                                          'image/png',
+                                          'image/jpeg',
+                                          'text/plain'
+                                          ]
+            },
+            'CSSHTMLHeaderPreprocessor': {
+                'enabled': True
+            },
+            'HighlightMagicsPreprocessor': {
+                'enabled': True
+            },
+            'ExtractOutputPreprocessor': {'enabled': False},
+            'latex_envs.LenvsHTMLPreprocessor': {'enabled': True}}
+        )
+        c.merge(super(LenvsSlidesExporter, self).default_config)
+        if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
+            c.TemplateExporter.template_path = ['.',
+                                                os.path.join(os.path.dirname(__file__), 'templates')]
+        else:
+            from jupyter_contrib_nbextensions.nbconvert_support import (
+                templates_directory)
+            c.TemplateExporter.template_path = ['.', templates_directory()]
+
+        return c
+
+    def _template_file_default(self):
+        return 'slides_latex_envs.tpl'
+
+    def from_notebook_node(self, nb, resources=None, **kw):
+        langinfo = nb.metadata.get('language_info', {})
+        lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
+        self.register_filter('highlight_code',
+                             Highlight2HTML(pygments_lexer=lexer,
+                                            parent=self))
+        self.environment.globals['include_latexdefs'] = include_latexdefs
+        self.environment.globals['include_userenvs_cfg'] = include_userenvs_cfg
+        lenvshtmlpreprocessor = LenvsHTMLPreprocessor()
+
+        self.register_preprocessor(lenvshtmlpreprocessor, enabled=True)
+        self._init_preprocessors()
+        nb, resources = lenvshtmlpreprocessor(nb, resources)
+        output, resources = super(LenvsSlidesExporter,
+                                  self).from_notebook_node(
+                                      nb, resources, **kw)
+
+        return output, resources
+
 ###################
 
 
 class LenvsTocHTMLExporter(LenvsHTMLExporter):
     """
-    Exports to an html document, embedding latex_env and toc extensions (.html)
+    Exports to a html document, embedding latex_env and toc extensions (.html)
     """
 
     def _template_file_default(self):
@@ -336,7 +406,7 @@ class LenvsTocHTMLExporter(LenvsHTMLExporter):
 
 class LenvsLatexExporter(LatexExporter):
     """
-    Exports to an html document, embedding latex_env extension (.html)
+    Exports to a LaTeX document
     """
 
     removeHeaders = Bool(

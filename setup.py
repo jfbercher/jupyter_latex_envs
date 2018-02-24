@@ -65,6 +65,7 @@ setup(name='jupyter_latex_envs',
         'nbconvert.exporters': [
             'html_with_lenvs = latex_envs.latex_envs:LenvsHTMLExporter',
             'latex_with_lenvs = latex_envs.latex_envs:LenvsLatexExporter',
+            'slides_with_lenvs = latex_envs.latex_envs:LenvsSlidesExporter',
             'html_with_toclenvs = latex_envs.latex_envs:LenvsTocHTMLExporter',
                  ],
       },
