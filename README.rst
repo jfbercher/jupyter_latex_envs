@@ -61,8 +61,8 @@ The ``doc`` subdirectory that constains an example notebook and its html
 and pdf versions. This serves as the documentation. A demo notebook
 ``latex_env_doc.ipynb`` is provided. Its html version is
 `latex\_env\_doc.html <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html>`__
-and a pdf resulting from conversion to LaTeX is available as
-`documentation <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/documentation.pdf>`__.
+serves as 
+`documentation <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html>`__.
 
 Installation
 ------------
