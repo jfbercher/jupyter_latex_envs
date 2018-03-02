@@ -18,6 +18,7 @@ var CLOSINGENV = '#!>',
     CLOSINGENVre = new RegExp(CLOSINGENV, 'g');
 
 function envSearch(text, env_open, env_close) {
+
     var reg = new RegExp(env_open + '[\\S\\s]*?' + env_close, 'gm');
     var start = text.match(reg);
     var env_open_re = new RegExp(env_open);
@@ -58,7 +59,12 @@ function nestedEnvSearch(text, env_open, env_close) {
         env_close = env_close.replace(/\\\d/g, function(x) {
             return inmatches[parseInt(x.substr(1))]
         })
-        var output = envSearch(text, env_open, env_close)
+        output = text;
+        currentText = "";
+        while (currentText !== output) {
+            currentText = output;
+            var output = envSearch(currentText, env_open, env_close)         
+        }
         var matches = output.match(env_open + '([\\S\\s]*?)' + env_close);
         matches[0] = matches[0].replace(OPENINGENVre, env_open.replace('\\\\', '\\'))
             .replace(CLOSINGENVre, env_close.replace('\\\\', '\\'))
