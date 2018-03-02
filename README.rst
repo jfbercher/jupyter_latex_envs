@@ -50,7 +50,9 @@ or
     jupyter nbconvert --to latex_with_lenvs FILE.ipynb
 
 to convert ``FILE.ipynb`` into html/latex while keeping all the features
-of the ``latex_envs`` notebook extension in the converted version. The
+of the ``latex_envs`` notebook extension in the converted version. Other options are 
+``slides_with_lenvs`` for converting to reveal-js presentations, and ``html_with_toclenvs`` to include a 
+table of contents. The 
 LaTeX converter also expose several conversion options (read the
 `docs <https://rawgit.com/jfbercher/jupyter_latex_envs/master/src/latex_envs/static/doc/latex_env_doc.html>`__).
 
