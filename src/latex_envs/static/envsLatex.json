@@ -14,7 +14,7 @@
    "definition": {
        "name": "definition",
        "hint": "Insert a definition",
-       "shortcut": "Ctrl-D",
+       "shortcut": "",
        "env": "\\begin{definition}\\label{def:}\n\n\\end{definition}\n"
    },
    "theorem": {
