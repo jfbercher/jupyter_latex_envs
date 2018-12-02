@@ -9,8 +9,6 @@
 
 ((* block abstract *))
 \tableofcontents
-%~\par
-%\newpage
 ((* endblock abstract *))
 
 %or?
@@ -139,6 +137,7 @@ framesep=10pt,
 % Display latex
 
 ((* block data_latex -*))
+    ((*- if output.latex: -*)) 
     ((*- if output.latex.startswith('$'): -*)) 
         ((= Replace $ symbols with more explicit, equation block. =))
         \begin{equation}
@@ -146,6 +145,7 @@ framesep=10pt,
         \end{equation}
     ((*- else -*))
         ((( output.latex )))
+    ((*- endif *))
     ((*- endif *))
 ((* endblock data_latex *))
 
@@ -180,7 +180,7 @@ framesep=10pt,
     ((*- set hscale = 0.3 -*))
 ((*- endif -*))
 ((*- block figure scoped *))
-\begin{figure}
+\begin{figure}[Htbp]
     \begin{center}
         \adjustimage{max size={((( wscale )))\linewidth}{((( hscale )))\paperheight}}{((( filename )))}
     \end{center}
