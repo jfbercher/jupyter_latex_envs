@@ -139,7 +139,7 @@ function generateReferences() {
 // ........... Other utilitary functions for formatting authors and references .........
 
 function authorSplit(singleAuthor) {
-    var firstName, givenName, jr;
+    var firstName='', givenName='', jr='';
 	switch (singleAuthor.split(',').length) {
 		case 1:
 		    firstName=singleAuthor.split(' ')[0];
@@ -155,12 +155,21 @@ function authorSplit(singleAuthor) {
 		    jr=singleAuthor.split(', ')[1];
 		    break;
 	}
+
 	return {firstName:firstName.trim(), givenName:givenName.trim()}
 }
 
 
 function makeAuthorsArray(bibtexAuthors){
+    // no author defined
     if (typeof bibtexAuthors === 'undefined') return [];
+    // author field is protect between {}. 
+    if (bibtexAuthors[0]=='{' && bibtexAuthors[bibtexAuthors.length-1]=='}') {
+       return [{firstName:'', 
+               givenName:bibtexAuthors.substr(1,bibtexAuthors.length-2)
+               }]
+    }
+    //
     var listSingleAuthors=bibtexAuthors.split(' and ');
     var authorsArray=listSingleAuthors.map(
     function(x) {
