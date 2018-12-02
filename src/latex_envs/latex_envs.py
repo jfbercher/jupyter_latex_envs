@@ -1,7 +1,7 @@
 """latex_envs Exporter class"""
 
 # -----------------------------------------------------------------------------
-# Copyright (c) 2016, J.-F. Bercher
+# Copyright (c) 2016-18, J.-F. Bercher
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -141,6 +141,11 @@ class LenvsLatexPreprocessor(Preprocessor):
         elif cell.cell_type == "code" and "outputs" in cell:
             json_metadata = []
             mime_types  = ['image/svg+xml','image/png','image/jpeg','application/pdf']
+            # Below just an ad hoc personnal filter 
+            if "%run nbinit.ipy" in cell.source:
+                cell.source = ''
+                cell.cell_type = "raw"                
+                return cell, resources
             for output in cell.outputs:
                 if "data" in output:
                     if 'text/html' in output.data and 'img src' in output.data['text/html']:
@@ -488,7 +493,7 @@ class LenvsLatexExporter(LatexExporter):
 
     def tocrefrm(self, text):
         # Remove Table of Contents section
-        newtext = re.sub(r'\\section{Table of Contents}([\s\S]*?)(?=(?:\\[sub]?section|\\chapter))', '', text, flags=re.M)  # noqa
+        newtext = re.sub(r'(?:\\[sub]?section|\\chapter){Table of Contents}([\s\S]*?)(?=(?:\\[sub]?section|\\chapter))', '', text, flags=re.M)  # noqa
         # Remove References section
         newtext = re.sub(r'\\section{References}[\S\s]*?(?=(?:\\[sub]*section|\\chapter|\\end{document}|\Z))', '', newtext, flags=re.M)   # noqa
         # Cleaning
@@ -496,7 +501,7 @@ class LenvsLatexExporter(LatexExporter):
         newtext = re.sub('\\\\begin{verbatim}[\s]*?<IPython\.core\.display[\S ]*?>[\s]*?\\\\end{verbatim}', '', newtext, flags=re.M)  # noqa
         # bottom page with links to Index/back/next (suppress this)
         # '----[\s]*?<div align=right> [Index](toc.ipynb)[\S ]*?.ipynb\)</div>'
-        newtext = re.sub('\\\\begin{center}\\\\rule{3in}{0.4pt}\\\\end{center}[\s]*?\\\\href{toc.ipynb}{Index}[\S\s ]*?.ipynb}{Next}', '', newtext, flags=re.M)  # noqa
+        newtext = re.sub('\\\\begin{center}\\\\rule{[\S\s]*?\\\\end{center}[\s]*?\S*\href{toc.ipynb}{Index}[\S\s ]*?.ipynb}{Next}', '', newtext, flags=re.M)  # noqa
         return newtext
 
 
