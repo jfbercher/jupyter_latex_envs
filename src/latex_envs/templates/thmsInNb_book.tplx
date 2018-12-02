@@ -180,7 +180,7 @@ framesep=10pt,
     ((*- set hscale = 0.3 -*))
 ((*- endif -*))
 ((*- block figure scoped *))
-\begin{figure}[Htbp]
+\begin{figure}[htbp]
     \begin{center}
         \adjustimage{max size={((( wscale )))\linewidth}{((( hscale )))\paperheight}}{((( filename )))}
     \end{center}
