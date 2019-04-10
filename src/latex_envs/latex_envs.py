@@ -240,6 +240,9 @@ class LenvsHTMLExporter(HTMLExporter):
     Exports to an html document, embedding latex_env extension (.html)
     """
 
+     
+    export_from_notebook = "html w/ LaTeX envs"
+
     def __init__(self, config=None, **kw):
         """
         Public constructor
@@ -337,6 +340,8 @@ class LenvsSlidesExporter(SlidesExporter):
     Exports to a reveal-js/slides document, embedding latex_env extension (.html)
     """
 
+    export_from_notebook = "slides w/ LaTeX envs"
+
     @property
     def default_config(self):
         # import jupyter_core.paths
@@ -403,6 +408,7 @@ class LenvsTocHTMLExporter(LenvsHTMLExporter):
     Exports to a html document, embedding latex_env and toc extensions (.html)
     """
 
+    export_from_notebook = "html w/ LaTeX envs & toc"
     def _template_file_default(self):
         return 'latex_envs_toc'
 
@@ -414,6 +420,7 @@ class LenvsLatexExporter(LatexExporter):
     Exports to a LaTeX document
     """
 
+    export_from_notebook = "LaTeX w/ envs"
     removeHeaders = Bool(
         False, help="Remove headers and footers").tag(config=True, alias="rh")
     figcaptionProcess = Bool(
