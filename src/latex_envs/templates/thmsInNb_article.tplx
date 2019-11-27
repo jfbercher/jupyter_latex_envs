@@ -7,13 +7,6 @@
 ((* block h5 -*))\subparagraph((* endblock h5 -*))
 
 
-((* block abstract *))
-\tableofcontents
-((* endblock abstract *))
-
-%or?
-%((* block toc *))\tableofcontents((* endblock toc *))
-
 
 %===============================================================================
 % My custom output style
@@ -38,19 +31,12 @@
 %((*- block output_prompt -*))
 %((*- endblock output_prompt -*))
 
-
-((* block author *))
-\author{J.-F. Bercher}
-((* endblock author *))
-
-((* block title *))
-\title{ }
-((* endblock title *))
-
 ((* block packages *))
 ((( super() )))
     \usepackage{listings} % Used to define pretty listings for code sections [jfb]
     \usepackage{float}   
+    \usepackage{amsthm}
+    \newtheorem{theorem}{Theorem}   
 ((* endblock packages *))
 
 %or -- both work

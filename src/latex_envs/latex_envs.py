@@ -414,6 +414,8 @@ class LenvsLatexExporter(LatexExporter):
     Exports to a LaTeX document
     """
 
+    config_title = Bool(
+        True, help="Proper Title Format").tag(config=True, alias="rh")
     removeHeaders = Bool(
         False, help="Remove headers and footers").tag(config=True, alias="rh")
     figcaptionProcess = Bool(
@@ -501,8 +503,15 @@ class LenvsLatexExporter(LatexExporter):
         newtext = re.sub('\\\\begin{verbatim}[\s]*?<IPython\.core\.display[\S ]*?>[\s]*?\\\\end{verbatim}', '', newtext, flags=re.M)  # noqa
         # bottom page with links to Index/back/next (suppress this)
         # '----[\s]*?<div align=right> [Index](toc.ipynb)[\S ]*?.ipynb\)</div>'
-        newtext = re.sub('\\\\begin{center}\\\\rule{[\S\s]*?\\\\end{center}[\s]*?\S*\href{toc.ipynb}{Index}[\S\s ]*?.ipynb}{Next}', '', newtext, flags=re.M)  # noqa
+        newtext = re.sub('\\\\begin{center}\\\\rule{[\S\s]*?\\\\end{center}[\s]*?\S*\\\\href{toc.ipynb}{Index}[\S\s ]*?.ipynb}{Next}', '', newtext, flags=re.M)  # noqa
         return newtext
+
+    def configure_title(self, nb_text):
+        # get rid of the first \maketitle command which is in the wrong place
+        nb_text = nb_text.replace('\\maketitle', '',  1)
+        # replace the second (correctly placed) \maketitle command with itself, and make a TOC (table of contents) on the next line
+        nb_text = nb_text.replace('\\maketitle', '\\maketitle\n\\tableofcontents',  1)
+        return nb_text
 
 
     def postprocess(self, nb_text):
@@ -524,6 +533,8 @@ class LenvsLatexExporter(LatexExporter):
             newtext = newtext.replace('\\maketitle', '')
             newtext = newtext.replace('\\tableofcontents', '')
             nb_text = newtext
+        if self.config_title:
+            nb_text = self.configure_title(nb_text)
         if self.tocrefRemove:
             nb_text = self.tocrefrm(nb_text)
         return nb_text
