@@ -33,9 +33,11 @@
 
 ((* block packages *))
 ((( super() )))
+    \usepackage[nottoc,numbib]{tocbibind} % add the bibliography to the TOC
     \usepackage{listings} % Used to define pretty listings for code sections [jfb]
     \usepackage{float}   
     \usepackage{amsthm}
+    \usepackage{amsmath}
     \newtheorem{theorem}{Theorem}  
     \newtheorem{definition}{Definition}   
     \newtheorem{proposition}{Proposition}   
@@ -142,9 +144,11 @@ framesep=10pt,
 
 
 ((* block bibliography *))
-%\bibliographystyle{ieetran}
-%\bibliography{Thesis}
+% EDIT THE 2 LINES BELOW TO CUSTOMIZE BIBLIOGRAPHY 
+%\bibliographystyle{unsrt}
+%\bibliography{math}
 ((* endblock bibliography *))
+
 
 ((*- block data_png -*))
      ((( draw_figure_with_caption(output,'image/png',cell) )))

@@ -415,7 +415,9 @@ class LenvsLatexExporter(LatexExporter):
     """
 
     config_title = Bool(
-        True, help="Proper Title Format").tag(config=True, alias="rh")
+        True, help="Proper Title Format").tag(config=True, alias="ct")
+    config_biblio = Bool(
+        True, help="Easy Bibliography Formatting").tag(config=True, alias="cb")
     removeHeaders = Bool(
         False, help="Remove headers and footers").tag(config=True, alias="rh")
     figcaptionProcess = Bool(
@@ -513,6 +515,16 @@ class LenvsLatexExporter(LatexExporter):
         nb_text = nb_text.replace('\\maketitle', '\\maketitle\n\\tableofcontents',  1)
         return nb_text
 
+    def configure_bibliography(self, nb_text):
+        # enter your bibliography name here
+        bibliography_name = "math"
+        # enter your preferred bibliography style here 
+        bibliography_style = "unsrt"
+        # construct the string which will insert this information into the document 
+        str = '\n\\bibliographystyle{' + bibliography_style + '}\n\\bibliography{' + bibliography_name +'}'
+        # replace the current generated text (which causes errors) with the desired text
+        nb_text = nb_text.replace(r'\hypertarget{references}{%', str)
+        return nb_text
 
     def postprocess(self, nb_text):
         nb_text = nb_text.replace('!nl!', '\n')
@@ -535,6 +547,8 @@ class LenvsLatexExporter(LatexExporter):
             nb_text = newtext
         if self.config_title:
             nb_text = self.configure_title(nb_text)
+        if self.config_biblio:
+            nb_text = self.configure_bibliography(nb_text)
         if self.tocrefRemove:
             nb_text = self.tocrefrm(nb_text)
         return nb_text
