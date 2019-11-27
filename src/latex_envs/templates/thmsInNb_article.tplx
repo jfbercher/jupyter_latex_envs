@@ -7,13 +7,6 @@
 ((* block h5 -*))\subparagraph((* endblock h5 -*))
 
 
-((* block abstract *))
-\tableofcontents
-((* endblock abstract *))
-
-%or?
-%((* block toc *))\tableofcontents((* endblock toc *))
-
 
 %===============================================================================
 % My custom output style
@@ -38,19 +31,23 @@
 %((*- block output_prompt -*))
 %((*- endblock output_prompt -*))
 
-
-((* block author *))
-\author{J.-F. Bercher}
-((* endblock author *))
-
-((* block title *))
-\title{ }
-((* endblock title *))
-
 ((* block packages *))
 ((( super() )))
+    \usepackage[nottoc,numbib]{tocbibind} % add the bibliography to the TOC
     \usepackage{listings} % Used to define pretty listings for code sections [jfb]
     \usepackage{float}   
+    \usepackage{amsthm}
+    \usepackage{amsmath}
+    \newtheorem{theorem}{Theorem}  
+    \newtheorem{definition}{Definition}   
+    \newtheorem{proposition}{Proposition}   
+    \newtheorem{lemma}{Lemma}   
+    \newtheorem{corollary}{Corollary}   
+    \newtheorem{property}{Property}
+    \newtheorem{problem}{Promlem}
+    \newtheorem{exercise}{Exercise}
+    \newtheorem{example}{Example}
+    \newtheorem{remark}{Remark} 
 ((* endblock packages *))
 
 %or -- both work
@@ -147,9 +144,11 @@ framesep=10pt,
 
 
 ((* block bibliography *))
-%\bibliographystyle{ieetran}
-%\bibliography{Thesis}
+% EDIT THE 2 LINES BELOW TO CUSTOMIZE BIBLIOGRAPHY 
+%\bibliographystyle{unsrt}
+%\bibliography{math}
 ((* endblock bibliography *))
+
 
 ((*- block data_png -*))
      ((( draw_figure_with_caption(output,'image/png',cell) )))
