@@ -76,10 +76,10 @@ function insert_text(identifier) { //must be available in the main scope
     selected_cell.code_mirror.replaceSelection(
         String($(identifier).data('text')), 'start');
     if (typeof $(identifier).data('position') !== "undefined") {
-        var deltaPos = $(identifier).data('position').split(',').map(Number)
+        deltaPos = $(identifier).data('position').split(',').map(Number)
     }
     selected_cell.code_mirror.setCursor(cursorPos['line'] + deltaPos[0], deltaPos[1])
-    var cursorPos = selected_cell.code_mirror.getCursor();
+    cursorPos = selected_cell.code_mirror.getCursor();
     selected_cell.code_mirror.replaceRange(selectedText, cursorPos);
 }
 
