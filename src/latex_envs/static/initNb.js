@@ -223,13 +223,15 @@ function init_config(Jupyter,utils,configmod, callback) {
         if ($('#latex_envs_help').length > 0) {
             return;
         }
+
+        var baseUrl = require('base/js/utils').get_body_data("baseUrl")
         var menu_item = $('<li/>')
             .insertAfter('#keyboard_shortcuts');
         var menu_link = $('<a/>')
             .text('LaTeX_envs help')
             .attr('title', 'LaTeX_envs documentation')
             .attr('id', "latex_envs_help")
-            .attr('href', '/nbextensions/latex_envs/doc/latex_env_doc.html')
+            .attr('href', baseUrl + 'nbextensions/latex_envs/doc/latex_env_doc.html')
             .attr('target', "_blank")
             .appendTo(menu_item);
         $('<i/>')

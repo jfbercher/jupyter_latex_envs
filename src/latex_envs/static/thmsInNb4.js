@@ -1,6 +1,6 @@
 
 /*
-This script goes through the input text (actually it is triggered each time a markdown cell is rendered. The imput text is the content of the cell.
+This script goes through the input text (actually it is triggered each time a markdown cell is rendered. The input text is the content of the cell.
 It replaces the latex structures by html tags, typically with a <div class="latex_environment_name> ... </div>. Then the html rendering 
 can be customized using a devoted css. The original idea comes from
 https://github.com/benweet/stackedit/issues/187
