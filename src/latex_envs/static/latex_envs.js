@@ -217,10 +217,10 @@ define(function (require, exports, module) {
                 var ch = line[cur.ch]
                 // get the current word
                 if (!editor.somethingSelected()) {
-                    var re = /[\w]/
-                    var cur = editor.getCursor(),
-                        line = editor.getLine(cur.line),
-                        start = cur.ch,
+                    var re = /[\w]/;
+                    cur = editor.getCursor();
+                    line = editor.getLine(cur.line);
+                    var start = cur.ch,
                         end = start;
                     while (start && re.test(line.charAt(start - 1))) {
                         --start;
@@ -236,10 +236,10 @@ define(function (require, exports, module) {
                     // if word starts with \, then autocomplete
                     if (line[start - 1] == "\\") {
                         // console.log("Completion in order");
-                        var array_completion = ['text ', 'textit{}', 'textbf{}', 'texttt{}', 'emph{}',
+                        array_completion = ['text ', 'textit{}', 'textbf{}', 'texttt{}', 'emph{}',
                             'cite{}', 'ref{}', 'underline{}', 'title{}', 'begin{}', 'end{}', 'label{}'
                         ]
-                        var matches = array_completion.filter(function (elt) {
+                        matches = array_completion.filter(function (elt) {
                             return elt.startsWith(word_before)
                         })
                         if (matches.length > 0) {
