@@ -163,6 +163,20 @@ define(function (require, exports, module) {
                     });
                     // links in markdown cells should open in new tabs
                     html.find("a[href]").not('[href^="#"]').attr("target", "_blank");
+                    // replace attachment:<key> by the corresponding entry
+                    // in the cell's attachments
+                    html.find('img[src^="attachment:"]').each(function (i, h) {
+                        h = $(h);
+                        var key = h.attr('src').replace(/^attachment:/, '');
+
+                        if (that.attachments.hasOwnProperty(key)) {
+                            var att = that.attachments[key];
+                            var mime = Object.keys(att)[0];
+                            h.attr('src', 'data:' + mime + ';base64,' + att[mime]);
+                        } else {
+                            h.attr('src', '');
+                        }
+                    });
                     that.set_rendered(html);
                     that.typeset();
                     if (!noevent)
