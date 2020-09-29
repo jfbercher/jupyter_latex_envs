@@ -301,12 +301,12 @@ class LenvsHTMLExporter(HTMLExporter):
         )
         c.merge(super(LenvsHTMLExporter, self).default_config)
         if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
-            c.TemplateExporter.template_path = ['.',
+            c.TemplateExporter.template_paths = ['.',
                                                 os.path.join(os.path.dirname(__file__), 'templates')]
         else:
             from jupyter_contrib_nbextensions.nbconvert_support import (
                 templates_directory)
-            c.TemplateExporter.template_path = ['.', templates_directory()]
+            c.TemplateExporter.template_paths = ['.', templates_directory()]
 
         return c
 
@@ -364,12 +364,12 @@ class LenvsSlidesExporter(SlidesExporter):
         )
         c.merge(super(LenvsSlidesExporter, self).default_config)
         if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
-            c.TemplateExporter.template_path = ['.',
+            c.TemplateExporter.template_paths = ['.',
                                                 os.path.join(os.path.dirname(__file__), 'templates')]
         else:
             from jupyter_contrib_nbextensions.nbconvert_support import (
                 templates_directory)
-            c.TemplateExporter.template_path = ['.', templates_directory()]
+            c.TemplateExporter.template_paths = ['.', templates_directory()]
 
         return c
 
@@ -483,12 +483,12 @@ class LenvsLatexExporter(LatexExporter):
         c.merge(super(LenvsLatexExporter, self).default_config)
 
         if os.path.isdir(os.path.join(os.path.dirname(__file__), 'templates')):
-            c.TemplateExporter.template_path = ['.',
+            c.TemplateExporter.template_paths = ['.',
                                                 os.path.join(os.path.dirname(__file__), 'templates')]
         else:
             from jupyter_contrib_nbextensions.nbconvert_support import (
                 templates_directory)
-            c.TemplateExporter.template_path = ['.', templates_directory()]
+            c.TemplateExporter.template_paths = ['.', templates_directory()]
         return c
 
     def tocrefrm(self, text):
