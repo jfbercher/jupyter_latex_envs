@@ -1,3 +1,9 @@
+
+**Maintainer(s) wanted**... 
+Unfortunately, I, @jfbercher, don't have the time to continue the development of this extension, which I still use very often. 
+Are there any volunteers to maintain it or continue the development? A big project would be to port it to jupyter-lab. 
+- - - 
+
 (some) LaTeX environments for Jupyter notebook
 ==============================================
 
