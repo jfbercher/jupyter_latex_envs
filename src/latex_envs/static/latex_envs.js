@@ -276,10 +276,11 @@ define(function (require, exports, module) {
         //var load_ipython_extension = require(['base/js/namespace'], function(Jupyter) {
 
         "use strict";
+        /* Error with new versions of Jupyter [October 2023] 
         if (Jupyter.version[0] < 3) {
             console.log("This extension requires Jupyter or IPython >= 3.x")
             return
-        }
+        } */
 
         var environmentMap = {};
 
